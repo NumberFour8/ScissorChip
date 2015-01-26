@@ -138,9 +138,6 @@ _findj  TST 0x0(R13)
 ; Now B is shifted left, so that the MSDs of A and B have the same order.
 
 ; First we try to subtract A-beta^m*B
-; This could be also done (and might be a better way to do) by comparison and conditional jumps, we resolve this later
-; Or perhaps not :)
-
 
 _pre    SUB  0x1e(R13),0x1e(R12)
         SUBC 0x1c(R13),0x1c(R12)
@@ -220,6 +217,152 @@ _sub    SUB  0x1e(R13),0x1e(R12)
         
 ; Do a single addition to get positive
 _add    ADD  0x1e(R13),0x1e(R12)
+        ADDC 0x1c(R13),0x1c(R12)
+        ADDC 0x1a(R13),0x1a(R12)
+        ADDC 0x18(R13),0x18(R12)
+        ADDC 0x16(R13),0x16(R12)
+        ADDC 0x14(R13),0x14(R12)
+        ADDC 0x12(R13),0x12(R12)
+        ADDC 0x10(R13),0x10(R12)
+        ADDC 0xe(R13),0xe(R12)
+        ADDC 0xc(R13),0xc(R12)
+        ADDC 0xa(R13),0xa(R12)
+        ADDC 0x8(R13),0x8(R12)
+        ADDC 0x6(R13),0x6(R12)
+        ADDC 0x4(R13),0x4(R12)
+        ADDC 0x2(R13),0x2(R12)
+        ADDC 0x0(R13),0x0(R12)
+
+; Now decrease R2 (the number of times B was shifted left)
+DEC R4
+JNZ _div
+
+; Now A contains the proper remainder
+RETA
+
+
+; Computes the remainder after the division of A by B and stores the remainder in A.
+; Assume that A >= B. 
+; This is an extended version, which works with 272 bit number.
+; B is pointed by R13, A is pointed by R12
+PUBLIC mp_modex
+RSEG CODE       
+
+mp_mod
+
+; Determine the difference of orders (number m). We find first non-zero digit in B: MSD -> LSD
+; During this process also shift B to the left, so the order difference is compensated
+
+CLR R4   
+_findj  TST 0x0(R13)
+        JNZ _pre
+        INC R4
+        MOV 0x2(R13),0x0(R13)
+        MOV 0x4(R13),0x2(R13)
+        MOV 0x6(R13),0x4(R13)
+        MOV 0x8(R13),0x6(R13)
+        MOV 0xa(R13),0x8(R13)
+        MOV 0xc(R13),0xa(R13)
+        MOV 0xe(R13),0xc(R13)
+        MOV 0x10(R13),0xe(R13)
+        MOV 0x12(R13),0x10(R13)
+        MOV 0x14(R13),0x12(R13)
+        MOV 0x16(R13),0x14(R13)
+        MOV 0x18(R13),0x16(R13)
+        MOV 0x1a(R13),0x18(R13)
+        MOV 0x1c(R13),0x1a(R13)
+        MOV 0x1e(R13),0x1c(R13)
+        MOV 0x20(R13),0x1e(R13)
+        MOV #0x0000,0x20(R13)
+        JMP _findj
+
+; Now B is shifted left, so that the MSDs of A and B have the same order.
+
+; First we try to subtract A-beta^m*B
+
+_pre    SUB  0x20(R13),0x20(R12)
+        SUBC 0x1e(R13),0x1e(R12)
+        SUBC 0x1c(R13),0x1c(R12)
+        SUBC 0x1a(R13),0x1a(R12)
+        SUBC 0x18(R13),0x18(R12)
+        SUBC 0x16(R13),0x16(R12)
+        SUBC 0x14(R13),0x14(R12)
+        SUBC 0x12(R13),0x12(R12)
+        SUBC 0x10(R13),0x10(R12)
+        SUBC 0xe(R13),0xe(R12)
+        SUBC 0xc(R13),0xc(R12)
+        SUBC 0xa(R13),0xa(R12)
+        SUBC 0x8(R13),0x8(R12)
+        SUBC 0x6(R13),0x6(R12)
+        SUBC 0x4(R13),0x4(R12)
+        SUBC 0x2(R13),0x2(R12)
+        SUBC 0x0(R13),0x0(R12)
+        
+        JN _addb    ; If we got negative, add back
+        JMP _div    ; Otherwise start division    
+        
+; This occurs whenever our assumption that A > beta^m*B was wrong
+_addb   ADD  0x20(R13),0x20(R12)
+        ADDC 0x1e(R13),0x1e(R12)
+        ADDC 0x1c(R13),0x1c(R12)
+        ADDC 0x1a(R13),0x1a(R12)
+        ADDC 0x18(R13),0x18(R12)
+        ADDC 0x16(R13),0x16(R12)
+        ADDC 0x14(R13),0x14(R12)
+        ADDC 0x12(R13),0x12(R12)
+        ADDC 0x10(R13),0x10(R12)
+        ADDC 0xe(R13),0xe(R12)
+        ADDC 0xc(R13),0xc(R12)
+        ADDC 0xa(R13),0xa(R12)
+        ADDC 0x8(R13),0x8(R12)
+        ADDC 0x6(R13),0x6(R12)
+        ADDC 0x4(R13),0x4(R12)
+        ADDC 0x2(R13),0x2(R12)
+        ADDC 0x0(R13),0x0(R12)
+
+; Shift B one digit right (decrease the beta coefficient exponent j)
+_div    MOV 0x1e(R13),0x20(R13)
+        MOV 0x1c(R13),0x1e(R13)
+        MOV 0x1a(R13),0x1c(R13)
+        MOV 0x18(R13),0x1a(R13)
+        MOV 0x16(R13),0x18(R13)
+        MOV 0x14(R13),0x16(R13)
+        MOV 0x12(R13),0x14(R13)
+        MOV 0x10(R13),0x12(R13)
+        MOV 0xe(R13),0x10(R13)
+        MOV 0xc(R13),0xe(R13)
+        MOV 0xa(R13),0xc(R13)
+        MOV 0x8(R13),0xa(R13)
+        MOV 0x6(R13),0x8(R13)
+        MOV 0x4(R13),0x6(R13)
+        MOV 0x2(R13),0x4(R13)
+        MOV 0x0(R13),0x2(R13)
+        MOV #0x0000,0x0(R13)
+
+; Subtract A - Beta^j*B, until we get negative
+_sub    SUB  0x20(R13),0x20(R12)
+        SUBC 0x1e(R13),0x1e(R12)
+        SUBC 0x1c(R13),0x1c(R12)
+        SUBC 0x1a(R13),0x1a(R12)
+        SUBC 0x18(R13),0x18(R12)
+        SUBC 0x16(R13),0x16(R12)
+        SUBC 0x14(R13),0x14(R12)
+        SUBC 0x12(R13),0x12(R12)
+        SUBC 0x10(R13),0x10(R12)
+        SUBC 0xe(R13),0xe(R12)
+        SUBC 0xc(R13),0xc(R12)
+        SUBC 0xa(R13),0xa(R12)
+        SUBC 0x8(R13),0x8(R12)
+        SUBC 0x6(R13),0x6(R12)
+        SUBC 0x4(R13),0x4(R12)
+        SUBC 0x2(R13),0x2(R12)
+        SUBC 0x0(R13),0x0(R12)
+        JN _add     ; If we got negative, jump out
+        JMP _sub    ; Otherwise continue subtracting
+        
+; Do a single addition to get positive
+_add    ADD  0x20(R13),0x20(R12)
+        ADDC 0x1e(R13),0x1e(R12)
         ADDC 0x1c(R13),0x1c(R12)
         ADDC 0x1a(R13),0x1a(R12)
         ADDC 0x18(R13),0x18(R12)

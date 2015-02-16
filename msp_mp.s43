@@ -92,7 +92,7 @@ mp_shiftr
     MOV 0xe(R12),0x10(R12)
     MOV 0xc(R12),0xe(R12)
     MOV 0xa(R12),0xc(R12)
-    MOV 0x8(R12),0xa(R12)
+    MOV 0x8(R12),0xa(R12) 
     MOV 0x6(R12),0x8(R12)
     MOV 0x4(R12),0x6(R12)
     MOV 0x2(R12),0x4(R12)
@@ -101,6 +101,52 @@ mp_shiftr
     
 RETA
     
+
+; Multiplies B = 19*A. B has to be at least 272 bit long (= 17 words)
+; A is pointed by R12, B is pointed by R13
+PUBLIC mp_mul19
+RSEG CODE
+
+mp_mul19
+
+    ; First multiply A by 16 and store it to B
+    MOV 0x1(R12),0x0(R13)
+    MOV 0x2(R12),0x2(R13)
+    MOV 0x4(R12),0x4(R13)
+    MOV 0x6(R12),0x6(R13)
+    MOV 0x8(R12),0x8(R13)
+    MOV 0xa(R12),0xa(R13)
+    MOV 0xc(R12),0xc(R13)
+    MOV 0xe(R12),0xe(R13)
+    MOV 0x10(R12),0x10(R13)
+    MOV 0x12(R12),0x12(R13)
+    MOV 0x14(R12),0x14(R13)
+    MOV 0x16(R12),0x16(R13)
+    MOV 0x18(R12),0x18(R13)
+    MOV 0x1a(R12),0x1a(R13)
+    MOV 0x1c(R12),0x1c(R13)
+    MOV 0x1e(R12),0x1e(R13)
+    MOV #0x0000,0x20(R13)
+    
+    ; Add A to B two times
+    ADD  0x1e(R12),0x1e(R13)
+    ADDC 0x1c(R12),0x1c(R13)
+    ADDC 0x1a(R12),0x1a(R13)
+    ADDC 0x18(R12),0x18(R13)
+    ADDC 0x16(R12),0x16(R13)
+    ADDC 0x14(R12),0x14(R13)
+    ADDC 0x12(R12),0x12(R13)
+    ADDC 0x10(R12),0x10(R13)
+    ADDC 0xe(R12),0xe(R13)
+    ADDC 0xc(R12),0xc(R13)
+    ADDC 0xa(R12),0xa(R13)
+    ADDC 0x8(R12),0x8(R13)
+    ADDC 0x6(R12),0x6(R13)
+    ADDC 0x4(R12),0x4(R13)
+    ADDC 0x2(R12),0x2(R13)
+    ADDC 0x0(R12),0x0(R13)
+
+RETA
 
 ; Computes the remainder after the division of A by B and stores the remainder in A.
 ; Assume that A >= B.
@@ -248,14 +294,14 @@ RETA
 PUBLIC mp_modex
 RSEG CODE       
 
-mp_mod
+mp_modex
 
 ; Determine the difference of orders (number m). We find first non-zero digit in B: MSD -> LSD
 ; During this process also shift B to the left, so the order difference is compensated
 
 CLR R4   
-_findj  TST 0x0(R13)
-        JNZ _pre
+_2findj  TST 0x0(R13)
+        JNZ _2pre
         INC R4
         MOV 0x2(R13),0x0(R13)
         MOV 0x4(R13),0x2(R13)
@@ -274,13 +320,13 @@ _findj  TST 0x0(R13)
         MOV 0x1e(R13),0x1c(R13)
         MOV 0x20(R13),0x1e(R13)
         MOV #0x0000,0x20(R13)
-        JMP _findj
+        JMP _2findj
 
 ; Now B is shifted left, so that the MSDs of A and B have the same order.
 
 ; First we try to subtract A-beta^m*B
 
-_pre    SUB  0x20(R13),0x20(R12)
+_2pre    SUB  0x20(R13),0x20(R12)
         SUBC 0x1e(R13),0x1e(R12)
         SUBC 0x1c(R13),0x1c(R12)
         SUBC 0x1a(R13),0x1a(R12)
@@ -298,11 +344,11 @@ _pre    SUB  0x20(R13),0x20(R12)
         SUBC 0x2(R13),0x2(R12)
         SUBC 0x0(R13),0x0(R12)
         
-        JN _addb    ; If we got negative, add back
-        JMP _div    ; Otherwise start division    
+        JN _2addb    ; If we got negative, add back
+        JMP _2div    ; Otherwise start division    
         
 ; This occurs whenever our assumption that A > beta^m*B was wrong
-_addb   ADD  0x20(R13),0x20(R12)
+_2addb   ADD  0x20(R13),0x20(R12)
         ADDC 0x1e(R13),0x1e(R12)
         ADDC 0x1c(R13),0x1c(R12)
         ADDC 0x1a(R13),0x1a(R12)
@@ -321,7 +367,7 @@ _addb   ADD  0x20(R13),0x20(R12)
         ADDC 0x0(R13),0x0(R12)
 
 ; Shift B one digit right (decrease the beta coefficient exponent j)
-_div    MOV 0x1e(R13),0x20(R13)
+_2div    MOV 0x1e(R13),0x20(R13)
         MOV 0x1c(R13),0x1e(R13)
         MOV 0x1a(R13),0x1c(R13)
         MOV 0x18(R13),0x1a(R13)
@@ -340,7 +386,7 @@ _div    MOV 0x1e(R13),0x20(R13)
         MOV #0x0000,0x0(R13)
 
 ; Subtract A - Beta^j*B, until we get negative
-_sub    SUB  0x20(R13),0x20(R12)
+_2sub    SUB  0x20(R13),0x20(R12)
         SUBC 0x1e(R13),0x1e(R12)
         SUBC 0x1c(R13),0x1c(R12)
         SUBC 0x1a(R13),0x1a(R12)
@@ -357,11 +403,11 @@ _sub    SUB  0x20(R13),0x20(R12)
         SUBC 0x4(R13),0x4(R12)
         SUBC 0x2(R13),0x2(R12)
         SUBC 0x0(R13),0x0(R12)
-        JN _add     ; If we got negative, jump out
-        JMP _sub    ; Otherwise continue subtracting
+        JN _2add     ; If we got negative, jump out
+        JMP _2sub    ; Otherwise continue subtracting
         
 ; Do a single addition to get positive
-_add    ADD  0x20(R13),0x20(R12)
+_2add    ADD  0x20(R13),0x20(R12)
         ADDC 0x1e(R13),0x1e(R12)
         ADDC 0x1c(R13),0x1c(R12)
         ADDC 0x1a(R13),0x1a(R12)
@@ -381,7 +427,7 @@ _add    ADD  0x20(R13),0x20(R12)
 
 ; Now decrease R2 (the number of times B was shifted left)
 DEC R4
-JNZ _div
+JNZ _2div
 
 ; Now A contains the proper remainder
 RETA

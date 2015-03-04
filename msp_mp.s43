@@ -1,6 +1,162 @@
 #include "msp430.h"
 NAME msp_mp
 
+; Reduces the number A modulo 2^255-19
+; A is given by R12 and must be 512-bits (64 bytes) long in little-endian
+PUBLIC mp_mod25519
+RSEG CODE
+
+mp_mod25519
+
+  MOV R12,R4
+  MOV R12,R5
+  
+  SUB #2,R4     ; Starting point
+  ADD #32,R5    ; Upper pointer bound (beyond the MS word, additions by 2)
+  
+reduce
+    INCD R4
+    CMP R4,R5
+    JZ round_done       ; If terminal address has been reached, go to round_done
+    
+    MOV 0x0(R4),&MPY    ; LSB of LS half
+    MOV #0x01,&OP2      ; 1
+    
+    MOV 0x20(R4),&MAC   ; LSB of MS half 
+    MOV #0x26,&OP2      ; 38
+    
+    MOV RESLO,0x0(R4)   ; Save S to LSB of LS half
+    ADD RESHI,0x2(R4)   ; Add the carry to the second-LSB of the LS half
+    
+    CLR 0x20(R4)
+    JNC reduce          ; If no carry was created, proceed with the next digit
+    
+    MOV R4,R6           
+    ADD #4,R6           ; Set R6 as the address after the processed words  
+    
+carry_prop ; Now we need to propagate the carry
+      SETC          ; Restore the carry bit
+      ADC 0x0(R6)   ; Add the carry bit to where R6 points
+      JNC reduce    ; If no more carry, step out
+      INCD R6       ; Increment R6 by 2 
+ JMP carry_prop    ; Otherwise, continue propagating
+   
+round_done  
+     MOV 0x20(R12),R6 ; There cannot be more carry, even after the first reduction
+     MOV R12,R4
+     MOV R12,R5       
+     ADD #2,R5      ; We lower the terminal address as we don't need to go further than 1 word  
+     SUB #2,R4        ; Rewind R4
+     CMP #0,R6
+     JNZ reduce       ; If R6 is non zero, another reduction round is needed
+  
+ MOV #2,R4
+ 
+; Now we try to subtract 2^255-19 twice
+
+reduce_sub
+    SUB #0x00ED,0x0(R12)
+    SUBC #0xFFFF,0x2(R12)
+    SUBC #0xFFFF,0x4(R12)
+    SUBC #0xFFFF,0x6(R12)
+    SUBC #0xFFFF,0x8(R12)
+    SUBC #0xFFFF,0xa(R12)
+    SUBC #0xFFFF,0xc(R12)
+    SUBC #0xFFFF,0xe(R12)
+    SUBC #0xFFFF,0xe(R12)
+    SUBC #0xFFFF,0x10(R12)
+    SUBC #0xFFFF,0x12(R12)
+    SUBC #0xFFFF,0x14(R12)
+    SUBC #0xFFFF,0x16(R12)
+    SUBC #0xFFFF,0x18(R12)
+    SUBC #0xFFFF,0x1a(R12)
+    SUBC #0xFFFF,0x1c(R12)
+    SUBC #0x7FFF,0x1e(R12) 
+    JN reduce_add
+    DEC R4
+    JZ reduce_finish
+  JMP reduce_sub
+  
+reduce_add
+    ADD #0x00ED,0x0(R12)
+    ADDC #0xFFFF,0x2(R12)
+    ADDC #0xFFFF,0x4(R12)
+    ADDC #0xFFFF,0x6(R12)
+    ADDC #0xFFFF,0x8(R12)
+    ADDC #0xFFFF,0xa(R12)
+    ADDC #0xFFFF,0xc(R12)
+    ADDC #0xFFFF,0xe(R12)
+    ADDC #0xFFFF,0xe(R12)
+    ADDC #0xFFFF,0x10(R12)
+    ADDC #0xFFFF,0x12(R12)
+    ADDC #0xFFFF,0x14(R12)
+    ADDC #0xFFFF,0x16(R12)
+    ADDC #0xFFFF,0x18(R12)
+    ADDC #0xFFFF,0x1a(R12)
+    ADDC #0xFFFF,0x1c(R12)
+    ADDC #0x7FFF,0x1e(R12) 
+   
+reduce_finish  
+    
+RETA
+
+
+PUBLIC mp_addc16
+RSEG CODE
+
+; Add 16-bit value V to A and propagate the carry
+; A is pointed by R12, V by R13
+
+mp_addc16
+    ADD 0x0(R12),0x0(R13) ; Add R13 to R12
+    JNC _addc_fin         ; If not carry, exit
+
+    MOV R2,R12            ; Copy the address 
+    ADD #30,R2            ; Set the upper bound (???)
+_propagate
+     INCD R12             ; Increment offset by 2
+     CMP R12,R2           ; Compare with the upper bound
+     JEQ _addc_fin        ; If reached, exit
+     CLRC                 ; Clear the carry flag
+     INC 0x0(R12)         ; Increment offset value by 1
+   JC _propagate          ; If there's carry, propagate
+
+_addc_fin ; Finish
+
+RETA
+
+
+; B is pointed by R13, A is pointed by R12
+; Result C is pointed by R14
+PUBLIC mp_mulmod  
+RSEG CODE       
+
+mp_mulmod
+  ; Finely Integrated Operand Scanning
+  ; t[s] = R2, t[s+1] = R3, m = R4
+  ; -------------------------------------- 
+
+  ; For loop i = 0 .. s-1
+  
+  ; (C,S) = a[0]*b[i] + t[0]
+  MOV #0x01,&MAC
+  MOV 0x0(R14),OP2
+  
+  MOV 0x0(R12),&MAC
+  MOV 0x0(R13),OP2
+  
+  ; t[1] += C
+  INC R14
+  CALLA mp_addc16
+  DEC R14
+  
+  ; m = S*n[0]
+  MOV RESLO,&MPY
+  MOV #1234,OP2
+    
+RETA
+
+
 ; Adds two 256-bit numbers A and B and stores the result in A.
 ; B is pointed by R13, A is pointed by R12
 PUBLIC mp_add   

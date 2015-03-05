@@ -2,7 +2,7 @@
 
 <project>
   <fileVersion>2</fileVersion>
-  <fileChecksum>1074428976</fileChecksum>
+  <fileChecksum>2664609030</fileChecksum>
   <configuration>
     <name>Debug</name>
     <outputs>
@@ -38,6 +38,8 @@
       <file>$PROJ_DIR$\Debug\List\main.lst</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_mp.r43</file>
       <file>$TOOLKIT_DIR$\inc\msp430f5529.h</file>
+      <file>$PROJ_DIR$\Debug\List\msp_mp.lst</file>
+      <file>$PROJ_DIR$\Debug\List\MSP_MULT.map</file>
     </outputs>
     <file>
       <name>$PROJ_DIR$\main.c</name>
@@ -67,7 +69,7 @@
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 30</file>
+          <file> 30 32</file>
         </tool>
       </outputs>
       <inputs>
@@ -113,6 +115,12 @@
     </file>
     <file>
       <name>$PROJ_DIR$\Debug\Exe\MSP_MULT.d43</name>
+      <outputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 33</file>
+        </tool>
+      </outputs>
       <inputs>
         <tool>
           <name>XLINK</name>
@@ -125,7 +133,7 @@
       <outputs>
         <tool>
           <name>XLINK</name>
-          <file> 24</file>
+          <file> 24 33</file>
         </tool>
         <tool>
           <name>ULP430</name>

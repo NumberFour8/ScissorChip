@@ -6,9 +6,6 @@
 
 extern void mp_add(uint16_t* a,uint16_t* b);
 extern void mp_sub(uint16_t* a,uint16_t* b);
-extern void mp_mod(uint16_t* a,uint16_t* b);
-extern void mp_shiftl(uint16_t* a);
-
 extern void mp_mod25519(uint16_t* a);
 
 int main( void )

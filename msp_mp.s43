@@ -45,37 +45,157 @@ carry_prop              ; Now we need to propagate the carry
 limbs_done  
     MOV R12,R4
     MOV R12,R5       
-    ADD #2,R5      ; We lower the terminal address as we don't need to go further than 1 word  
-    SUB #2,R4      ; Rewind R4
+    ADD #2,R5           ; We lower the terminal address as we don't need to go further than 1 word  
+    SUB #2,R4           ; Rewind R4
     DEC R7
-    JNZ reduce_limbs  ; If we didn't reduce 3 times, continue  
+    JNZ reduce_limbs    ; If we didn't reduce 3 times, continue  
     
 RETA
 
-PUBLIC mp_addc16
+PUBLIC mp_freeze
 RSEG CODE
 
-; Add 16-bit value V to A and propagate the carry
-; A is pointed by R12, V by R13
+; Conditionally subtract 2^255-19 from the 255-bit number pointed by R12
 
-mp_addc16
-    ADD 0x0(R12),0x0(R13) ; Add R13 to R12
-    JNC _addc_fin         ; If not carry, exit
+mp_freeze
+    
+    MOV #0x7FFF,R4    
+    XOR 0x1e(R12),R4    
+    SUB #1,R4
+    RRAM #4,R4         
+    RRAM #4,R4
+    RRAM #4,R4
+    RRAM #3,R4          ; Set if the first limb is equal to 7FFF
+    
+    MOV R12,R10
+    ADD #28,R10
+compr
+    MOV #0xFFFF,R5      
+    XOR 0x0(R10),R5
+    SUB #1,R5
+    RRAM #4,R4         
+    RRAM #4,R4
+    RRAM #4,R4
+    RRAM #3,R4    
+    AND R5,R4           ; Set if any inner limbs are equal to FFFF
+    DECD R10
+    CMP #2,R10
+    JNZ compr
 
-    MOV R2,R12            ; Copy the address 
-    ADD #30,R2            ; Set the upper bound (???)
-_propagate
-     INCD R12             ; Increment offset by 2
-     CMP R12,R2           ; Compare with the upper bound
-     JEQ _addc_fin        ; If reached, exit
-     CLRC                 ; Clear the carry flag
-     INC 0x0(R12)         ; Increment offset value by 1
-   JC _propagate          ; If there's carry, propagate
+    MOV #0xFFED,R5
+    SUB 0x0(R12),R5
+    RRAM #4,R4         
+    RRAM #4,R4
+    RRAM #4,R4
+    RRAM #3,R4
+    XOR #1,R5
+    AND R5,R4           ; Set if the last limb is greater or equal to FFED
+    
+    ; Now subtract from the end
+    MOV #0xFFED,R5
+    AND R4,R5
+    SUB R5,0x0(R12)
+    SBC 0x2(R12)        ; If nothing was subtracted in the last step, there is no carry
 
-_addc_fin ; Finish
+    MOV R12,R10
+    ADD #28,R10
+insub
+    MOV #0xFFFF,R5
+    AND R4,R5
+    SUB R5,0x0(R10)     ; Subtract from the inner limbs
+    SBC 0x2(R10)        
+    DECD R10
+    CMP #2,R10
+    JNZ insub
+
+    MOV #0x7FFF,R5
+    AND R4,R5
+    SUB R5,0x1e(R12)
 
 RETA
 
+
+PUBLIC mp_cprop
+RSEG CODE
+
+; Propagates carry from address pointed by R10+2 until address given by R11 is reached (inclusive)
+mp_cprop
+
+  PUSH.W R8     ; Save R8
+  PUSH.W R9     ; Save R9
+  
+  CLR R9        ; Clear R9
+  ADC R9        ; Put the carry to R9
+  MOV R8,R10    ; Put R10 to R8
+cpg
+  CMP R8,R11     ; Check if the last word was already processed
+  JZ cpd         ; If yes, quit
+  INCD R8        ; Move onto the next word
+  
+  ADD R9,0x0(R8) ; Add the carry to what R10 points to
+  CLR R9         ; Clear R9
+  ADC R9         ; Put the carry to R9
+  JMP cpg
+  
+cpd
+  TST R9        ; Check if there's still some carry in R9
+  CLRC          ; Clear the carry flag after TST
+  JZ cfin       ; If not just goto finish
+  SETC          ; If yes, set the carry bit to allow further manual propagation
+  
+cfin
+  POP.W R9      ; Restore R9
+  POP.W R8      ; Restore R8
+  
+RETA
+
+; Propagates the carry bit
+
+PUBLIC mp_monrep25519
+RSEG CODE
+
+; Converts the given value to the Montgomery representation modulo 2^255-19
+mp_monrep25519
+
+  CLR R7
+  MOV R12,R10
+  MOV R12,R11
+  ADD #31,R11   ; Set R11 to the last word
+  
+repmul
+  CMP R10,R11   ; Check if we already processed the last word
+  JZ repfin     ; If we did, finish multiplying
+
+  MOV 0x0(R10),&MPY  ; Initialize the accumulator to what's at R10
+  MOV #1,&OP2
+
+  MOV 0x0(R10),&MAC  ; Multiply R10 by 19 and accumulate
+  MOV #19,&OP2
+  
+  MOV RESLO,0x0(R10) ; Set the LS word to the lower word of the result 
+  INCD R10           ; Move R10 to the next word
+  ADD RESHI,0x0(R10) ; The carry in the higher word has to be added 
+  CALLA #mp_cprop    ; Propagate the carry (starts from 4th word)
+  ADC R7             ; Propagate possible overflow carry to R7
+  JMP repmul
+  
+repfin    
+  MOV 0x0(R12),&MPY    ; Put the LS word in the accumulator
+  MOV #1,&OP2       
+  
+  MOV R7,&MAC          ; The overflow carry is in R7 
+  MOV #0x26,&OP2       ; 38
+    
+  MOV RESLO,0x0(R12)   ; Save S to LSB of LS half
+  
+  MOV R12,R10
+  INCD R10             ; Now we start propagating from R12+4 (mp_cprop adds 2) 
+  
+  ADD RESHI,0x0(R12)   ; Add the carry to second word and propagate
+  CALLA #mp_cprop
+  CALLA #mp_freeze
+  
+RETA
 
 ; B is pointed by R13, A is pointed by R12
 ; Result C is pointed by R14
@@ -98,7 +218,7 @@ mp_mulmod
   
   ; t[1] += C
   INC R14
-  CALLA mp_addc16
+  ;CALLA mp_addc16
   DEC R14
   
   ; m = S*n[0]
@@ -114,22 +234,19 @@ PUBLIC mp_add
 RSEG CODE       
 
 mp_add
-    ADD  0x1e(R13),0x1e(R12)
-    ADDC 0x1c(R13),0x1c(R12)
-    ADDC 0x1a(R13),0x1a(R12)
-    ADDC 0x18(R13),0x18(R12)
-    ADDC 0x16(R13),0x16(R12)
-    ADDC 0x14(R13),0x14(R12)
-    ADDC 0x12(R13),0x12(R12)
-    ADDC 0x10(R13),0x10(R12)
-    ADDC 0xe(R13),0xe(R12)
-    ADDC 0xc(R13),0xc(R12)
-    ADDC 0xa(R13),0xa(R12)
-    ADDC 0x8(R13),0x8(R12)
-    ADDC 0x6(R13),0x6(R12)
-    ADDC 0x4(R13),0x4(R12)
-    ADDC 0x2(R13),0x2(R12)
-    ADDC 0x0(R13),0x0(R12)
+
+    MOV R12,R4
+    MOV R13,R5
+    ADD #28,R4
+    ADD #28,R5
+
+    ADD  0x1e(R13),0x1e(R12) ; No need to CLRC in every step
+cadd
+    ADDC 0x0(R5),0x0(R4)
+    DECD R5
+    DECD R4
+    CMP R4,R12
+    JNZ cadd
     
 RETA
       
@@ -139,22 +256,19 @@ PUBLIC mp_sub
 RSEG CODE       
 
 mp_sub
-    SUB  0x1e(R13),0x1e(R12)
-    SUBC 0x1c(R13),0x1c(R12)
-    SUBC 0x1a(R13),0x1a(R12)
-    SUBC 0x18(R13),0x18(R12)
-    SUBC 0x16(R13),0x16(R12)
-    SUBC 0x14(R13),0x14(R12)
-    SUBC 0x12(R13),0x12(R12)
-    SUBC 0x10(R13),0x10(R12)
-    SUBC 0xe(R13),0xe(R12)
-    SUBC 0xc(R13),0xc(R12)
-    SUBC 0xa(R13),0xa(R12)
-    SUBC 0x8(R13),0x8(R12)
-    SUBC 0x6(R13),0x6(R12)
-    SUBC 0x4(R13),0x4(R12)
-    SUBC 0x2(R13),0x2(R12)
-    SUBC 0x0(R13),0x0(R12)
+  
+    MOV R12,R4
+    MOV R13,R5
+    ADD #28,R4
+    ADD #28,R5
+
+    SUB  0x1e(R13),0x1e(R12) ; No need to CLRC in every step
+csub
+    SUBC 0x0(R5),0x0(R4)
+    DECD R5
+    DECD R4
+    CMP R4,R12
+    JNZ csub
     
 RETA
   

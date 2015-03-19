@@ -62,7 +62,7 @@ mp_condsub
 
     PUSH.W R5 
     PUSH.W R6
-    PUSH.W R10  ; Save other used registers
+    PUSH.W R7  ; Save other used registers
     
     ; Need to precompute FFFF or 0 to R4
     MOV R4,R5
@@ -71,48 +71,46 @@ mp_condsub
 
     ; Now subtract the least significant limb
     MOV #0xFFED,R5
+    MOV #0xFFFF,R6
+    MOV #0x7FFF,R7
     AND R4,R5
+    AND R4,R6
+    AND R4,R7
     CLRC
+    
     SUB R5,0x0(R12)
-    SBC 0x2(R12) ; If nothing was subtracted, there is no carry        
-
-    MOV R12,R10
-    MOV R12,R6
-    ADD #2,R10
-    ADD #30,R6
-insub
-    MOV #0xFFFF,R5
-    AND R4,R5
-    CLRC
-    SUB R5,0x0(R10)     ; Subtract from the inner limbs
-    SBC 0x2(R10)        
-    INCD R10
-    CMP R6,R10
-    JNZ insub
-
-    ; Finally subtract the most significant limb
-    MOV #0x7FFF,R5      
-    AND R4,R5
-    CLRC
-    SUB R5,0x1e(R12)
-
+    SUBC R6,0x2(R12)
+    SUBC R6,0x4(R12)
+    SUBC R6,0x6(R12)
+    SUBC R6,0x8(R12)
+    SUBC R6,0xa(R12)
+    SUBC R6,0xc(R12)
+    SUBC R6,0xe(R12)
+    SUBC R6,0x10(R12)
+    SUBC R6,0x12(R12)
+    SUBC R6,0x14(R12)
+    SUBC R6,0x16(R12)
+    SUBC R6,0x18(R12)
+    SUBC R6,0x1a(R12)
+    SUBC R6,0x1c(R12)
+    SUBC R7,0x1e(R12)
+    
     POP.W R5    ; Restore the registers
     POP.W R6
-    POP.W R10
-    
+    POP.W R7
 RETA
 
 PUBLIC mp_condadd
 RSEG CODE
 
-; Adds 2^255-19 from the number pointed by R12 if the R4 == 1
-; otherwise adds nothing.
+; Subtracts 2^255-19 from the number pointed by R12 if the R4 == 1
+; otherwise subtracts nothing.
 
 mp_condadd
 
     PUSH.W R5 
     PUSH.W R6
-    PUSH.W R10  ; Save other used registers
+    PUSH.W R7  ; Save other used registers
     
     ; Need to precompute FFFF or 0 to R4
     MOV R4,R5
@@ -121,33 +119,33 @@ mp_condadd
 
     ; Now subtract the least significant limb
     MOV #0xFFED,R5
+    MOV #0xFFFF,R6
+    MOV #0x7FFF,R7
     AND R4,R5
+    AND R4,R6
+    AND R4,R7
     CLRC
+    
     ADD R5,0x0(R12)
-    ADC 0x2(R12) ; If nothing was added, there is no carry        
-
-    MOV R12,R10
-    MOV R12,R6
-    ADD #2,R10
-    ADD #30,R6
-inadd
-    MOV #0xFFFF,R5
-    AND R4,R5
-    ADD R5,0x0(R10)     ; Add to the inner limbs
-    ADC 0x2(R10)        
-    INCD R10
-    CMP R6,R10
-    JNZ insub
-
-    ; Finally add the most significant limb
-    MOV #0x7FFF,R5      
-    AND R4,R5
-    ADD R5,0x1e(R12)
-
+    ADDC R6,0x2(R12)
+    ADDC R6,0x4(R12)
+    ADDC R6,0x6(R12)
+    ADDC R6,0x8(R12)
+    ADDC R6,0xa(R12)
+    ADDC R6,0xc(R12)
+    ADDC R6,0xe(R12)
+    ADDC R6,0x10(R12)
+    ADDC R6,0x12(R12)
+    ADDC R6,0x14(R12)
+    ADDC R6,0x16(R12)
+    ADDC R6,0x18(R12)
+    ADDC R6,0x1a(R12)
+    ADDC R6,0x1c(R12)
+    ADDC R7,0x1e(R12)
+    
     POP.W R5    ; Restore the registers
     POP.W R6
-    POP.W R10
-    
+    POP.W R7
 RETA
 
 PUBLIC mp_freeze
@@ -157,32 +155,46 @@ RSEG CODE
 
 mp_freeze
 
+    CLR R4
+
 ; -- The following code does: R4 = (R12 > 2^255-19)
-    MOV #0x7FFF,R4    
-    XOR 0x1e(R12),R4    
-    SUB #1,R4
-    AND #1,R4       ; Set if the first limb is equal to 7FFF
+    MOV #0x7FFF,R5
+    CMP 0x1e(R12),R5    
+    MOV SR,R5
+    RRA R5      ; Move to Z flag
+    BIS R5,R4   ; Set if is equal to 7FFF
+    AND #1,R4
+    RRA R5      ; Move to N flag
+    BIS R5,R4   ; Set if is greater than 7FFF
+    AND #1,R4
     
+    MOV #0xFFFF,R7
     MOV R12,R10
     MOV R12,R6
     ADD #28,R10
     ADD #2,R6       ; R6 contains the stop address, the 2nd LS word
 compr
-    MOV #0xFFFF,R5      
-    XOR 0x0(R10),R5
-    SUB #1,R5
-    AND #1,R5    
-    AND R5,R4       ; Set if any inner limbs are equal to FFFF
+    CMP @R10,R7      
+    MOV SR,R5       
+    RRA R5          ; Go to Z flag
+    BIS R5,R4       ; Set if any inner limbs are equal to FFFF
+    AND #1,R4
+    
     DECD R10
     CMP R6,R10
     JNZ compr
 
     MOV #0xFFED,R5
-    SUB 0x0(R12),R5
-    AND #1,R5
-    XOR #1,R5
-    AND R5,R4       ; Set if the last limb is greater or equal to FFED
- 
+    CMP @R12,R5
+    MOV SR,R5
+    RRA R5
+    BIS R5,R4       ; Set if the last limb is equal to FFED
+    AND #1,R4
+    RRA R5
+    BIS R5,R4       ; Set if the last limb is greater than FFED
+    AND #1,R4
+    
+    BIS R15,R4  ; Add the force bit
 ; -- 
     CALLA #mp_condsub
 
@@ -453,13 +465,13 @@ mp_add
     ADDC @R13+,0x1c(R12)
     ADDC @R13+,0x1e(R12)
     
-    PUSH.W R4
-    CLR R4
-    MOV SR,R4           ; Save the carry flag
-   
-    
+    PUSH.W R15
+    CLR R15
+    MOV SR,R15          ; Save the carry flag as a force bit for mp_freeze
+    AND #1,R15
+    CALLA #mp_freeze
  
-    POP.W R4
+    POP.W R15
 RETA
       
 ; Subtracts B from A where A and B are 256-bit numbers and stores the result in A.
@@ -469,32 +481,33 @@ RSEG CODE
 
 mp_sub
     
+    SUB  @R13+,0x0(R12) 
+    SUBC @R13+,0x2(R12)
+    SUBC @R13+,0x4(R12)
+    SUBC @R13+,0x6(R12)
+    SUBC @R13+,0x8(R12)
+    SUBC @R13+,0xa(R12)
+    SUBC @R13+,0xc(R12)
+    SUBC @R13+,0xe(R12)
+    SUBC @R13+,0x10(R12)
+    SUBC @R13+,0x12(R12)
+    SUBC @R13+,0x14(R12)
+    SUBC @R13+,0x16(R12)
+    SUBC @R13+,0x18(R12)
+    SUBC @R13+,0x1a(R12)
+    SUBC @R13+,0x1c(R12)
+    SUBC @R13+,0x1e(R12)
+    
     PUSH.W R4
-    PUSH.W R5
-    PUSH.W R6
-  
-    MOV R12,R6
-    MOV R13,R5
-    ADD #28,R6
-    ADD #28,R5
-
-    SUB  0x1e(R13),0x1e(R12) ; No need to CLRC in every step
-csub
-    SUBC 0x0(R5),0x0(R6)
+    CLR R4
     MOV SR,R4
-    DECD R5
-    DECD R6
-    CMP R6,R12
-    JNZ csub
-   
-     ; Now check if there was some more carry
-    AND #4,R4   
-    RLAM.W #2,R4 ; 1 if carry, 0 if no carry
+    AND #4,R4
+    RLAM.W #2,R4
+    
     CALLA #mp_condadd
     
     POP.W R4
-    POP.W R5
-    POP.W R6
+    
 RETA
   
 END

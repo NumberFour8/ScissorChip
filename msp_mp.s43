@@ -20,7 +20,7 @@ reduce_limbs
     CMP R4,R5
     JZ limbs_done       ; If terminal address has been reached, go to round_done
     
-    MOV 0x0(R4),&MPY    ; LSB of LS half
+    MOV @R4,&MPY    ; LSB of LS half
     MOV #0x01,&OP2      ; 1
     
     MOV 0x20(R4),&MAC   ; LSB of MS half 
@@ -160,13 +160,7 @@ mp_freeze
 ; -- The following code does: R4 = (R12 > 2^255-19)
     MOV #0x7FFF,R5
     CMP 0x1e(R12),R5    
-    MOV SR,R5
-    RRA R5      ; Move to Z flag
-    BIS R5,R4   ; Set if is equal to 7FFF
-    AND #1,R4
-    RRA R5      ; Move to N flag
-    BIS R5,R4   ; Set if is greater than 7FFF
-    AND #1,R4
+    BIS SR,R4
     
     MOV #0xFFFF,R7
     MOV R12,R10
@@ -175,26 +169,25 @@ mp_freeze
     ADD #2,R6       ; R6 contains the stop address, the 2nd LS word
 compr
     CMP @R10,R7      
-    MOV SR,R5       
-    RRA R5          ; Go to Z flag
-    BIS R5,R4       ; Set if any inner limbs are equal to FFFF
-    AND #1,R4
+    BIS SR,R4       
     
     DECD R10
     CMP R6,R10
     JNZ compr
 
-    MOV #0xFFED,R5
+    MOV #0xFFED,R5      ; Compare the last limb
     CMP @R12,R5
-    MOV SR,R5
-    RRA R5
-    BIS R5,R4       ; Set if the last limb is equal to FFED
-    AND #1,R4
-    RRA R5
-    BIS R5,R4       ; Set if the last limb is greater than FFED
+    BIS SR,R5
+       
+    AND #6,R4
+    TST R4
+    MOV SR,R4
+    RRA R4
+    XOR #1,R4
     AND #1,R4
     
     BIS R15,R4  ; Add the force bit
+    
 ; -- 
     CALLA #mp_condsub
 
@@ -448,30 +441,23 @@ RSEG CODE
 
 mp_add
 
-    ADD  @R13+,0x0(R12) 
-    ADDC @R13+,0x2(R12)
-    ADDC @R13+,0x4(R12)
-    ADDC @R13+,0x6(R12)
-    ADDC @R13+,0x8(R12)
-    ADDC @R13+,0xa(R12)
-    ADDC @R13+,0xc(R12)
-    ADDC @R13+,0xe(R12)
-    ADDC @R13+,0x10(R12)
-    ADDC @R13+,0x12(R12)
-    ADDC @R13+,0x14(R12)
-    ADDC @R13+,0x16(R12)
-    ADDC @R13+,0x18(R12)
-    ADDC @R13+,0x1a(R12)
-    ADDC @R13+,0x1c(R12)
-    ADDC @R13+,0x1e(R12)
-    
-    PUSH.W R15
+    MOV R13,R10
+    ADD #32,R10
+    CLRC   ; Need to reset carry bit for the first SUBC to be equivalent to SUB
+inadd
+    ADDC @R13+,0(R12) 
+    MOV SR,R5
+    INCD R12
+    CMP R13,R10
+    JZ finadd
+    MOV R5,SR
+    JMP inadd
+finadd   
     CLR R15
-    MOV SR,R15          ; Save the carry flag as a force bit for mp_freeze
+    MOV R5,R15     ; Save the carry flag as a force bit for mp_freeze
     AND #1,R15
+    SUB #32,R12    ; Rewind R12
     CALLA #mp_freeze
- 
-    POP.W R15
 RETA
       
 ; Subtracts B from A where A and B are 256-bit numbers and stores the result in A.
@@ -480,34 +466,24 @@ PUBLIC mp_sub
 RSEG CODE       
 
 mp_sub
-    
-    SUB  @R13+,0x0(R12) 
-    SUBC @R13+,0x2(R12)
-    SUBC @R13+,0x4(R12)
-    SUBC @R13+,0x6(R12)
-    SUBC @R13+,0x8(R12)
-    SUBC @R13+,0xa(R12)
-    SUBC @R13+,0xc(R12)
-    SUBC @R13+,0xe(R12)
-    SUBC @R13+,0x10(R12)
-    SUBC @R13+,0x12(R12)
-    SUBC @R13+,0x14(R12)
-    SUBC @R13+,0x16(R12)
-    SUBC @R13+,0x18(R12)
-    SUBC @R13+,0x1a(R12)
-    SUBC @R13+,0x1c(R12)
-    SUBC @R13+,0x1e(R12)
-    
-    PUSH.W R4
     CLR R4
-    MOV SR,R4
-    AND #4,R4
-    RLAM.W #2,R4
-    
-    CALLA #mp_condadd
-    
-    POP.W R4
-    
+    MOV R13,R10
+    ADD #32,R10
+    SETC   ; Need to set carry bit for the first SUBC to be equivalent to SUB
+insub
+    SUBC @R13+,0(R12) 
+    BIS SR,R4
+    MOV SR,R5
+    INCD R12
+    CMP R13,R10
+    JZ finsub
+    MOV R5,SR
+    JMP insub
+finsub
+    AND #4,R4      ; Extract only N flag
+    RRAM.W #2,R4   ; Shift it to the first position
+    SUB #32,R12    ; Rewind R12
+    CALLA #mp_condadd 
 RETA
   
 END

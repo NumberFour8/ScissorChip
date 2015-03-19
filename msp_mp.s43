@@ -52,13 +52,112 @@ limbs_done
     
 RETA
 
+PUBLIC mp_condsub
+RSEG CODE
+
+; Subtracts 2^255-19 from the number pointed by R12 if the R4 == 1
+; otherwise subtracts nothing.
+
+mp_condsub
+
+    PUSH.W R5 
+    PUSH.W R6
+    PUSH.W R10  ; Save other used registers
+    
+    ; Need to precompute FFFF or 0 to R4
+    MOV R4,R5
+    CLR R4
+    SUB R5,R4   ; R4 == 0 ? R4 = 0 : R4 = FFFF 
+
+    ; Now subtract the least significant limb
+    MOV #0xFFED,R5
+    AND R4,R5
+    CLRC
+    SUB R5,0x0(R12)
+    SBC 0x2(R12) ; If nothing was subtracted, there is no carry        
+
+    MOV R12,R10
+    MOV R12,R6
+    ADD #2,R10
+    ADD #30,R6
+insub
+    MOV #0xFFFF,R5
+    AND R4,R5
+    CLRC
+    SUB R5,0x0(R10)     ; Subtract from the inner limbs
+    SBC 0x2(R10)        
+    INCD R10
+    CMP R6,R10
+    JNZ insub
+
+    ; Finally subtract the most significant limb
+    MOV #0x7FFF,R5      
+    AND R4,R5
+    CLRC
+    SUB R5,0x1e(R12)
+
+    POP.W R5    ; Restore the registers
+    POP.W R6
+    POP.W R10
+    
+RETA
+
+PUBLIC mp_condadd
+RSEG CODE
+
+; Adds 2^255-19 from the number pointed by R12 if the R4 == 1
+; otherwise adds nothing.
+
+mp_condadd
+
+    PUSH.W R5 
+    PUSH.W R6
+    PUSH.W R10  ; Save other used registers
+    
+    ; Need to precompute FFFF or 0 to R4
+    MOV R4,R5
+    CLR R4
+    SUB R5,R4   ; R4 == 0 ? R4 = 0 : R4 = FFFF 
+
+    ; Now subtract the least significant limb
+    MOV #0xFFED,R5
+    AND R4,R5
+    CLRC
+    ADD R5,0x0(R12)
+    ADC 0x2(R12) ; If nothing was added, there is no carry        
+
+    MOV R12,R10
+    MOV R12,R6
+    ADD #2,R10
+    ADD #30,R6
+inadd
+    MOV #0xFFFF,R5
+    AND R4,R5
+    ADD R5,0x0(R10)     ; Add to the inner limbs
+    ADC 0x2(R10)        
+    INCD R10
+    CMP R6,R10
+    JNZ insub
+
+    ; Finally add the most significant limb
+    MOV #0x7FFF,R5      
+    AND R4,R5
+    ADD R5,0x1e(R12)
+
+    POP.W R5    ; Restore the registers
+    POP.W R6
+    POP.W R10
+    
+RETA
+
 PUBLIC mp_freeze
 RSEG CODE
 
 ; Conditionally subtract 2^255-19 from the 255-bit number pointed by R12
 
 mp_freeze
-    
+
+; -- The following code does: R4 = (R12 > 2^255-19)
     MOV #0x7FFF,R4    
     XOR 0x1e(R12),R4    
     SUB #1,R4
@@ -83,34 +182,9 @@ compr
     AND #1,R5
     XOR #1,R5
     AND R5,R4       ; Set if the last limb is greater or equal to FFED
-    
-    MOV R4,&MPY
-    MOV #0xFFFF,&OP2
-    MOV RESLO,R4
-    
-    ; Now subtract from the end
-    MOV #0xFFED,R5
-    AND R4,R5
-    CLRC
-    SUB R5,0x0(R12)
-    SBC 0x2(R12)        ; If nothing was subtracted in the last step, there is no carry
-
-    MOV R12,R10
-    MOV R12,R6
-    ADD #2,R10
-    ADD #30,R6
-insub
-    MOV #0xFFFF,R5
-    AND R4,R5
-    SUB R5,0x0(R10)     ; Subtract from the inner limbs
-    SBC 0x2(R10)        
-    INCD R10
-    CMP R6,R10
-    JNZ insub
-
-    MOV #0x7FFF,R5      ; Now subtract the last limb
-    AND R4,R5
-    SUB R5,0x1e(R12)
+ 
+; -- 
+    CALLA #mp_condsub
 
 RETA
 
@@ -217,9 +291,8 @@ mp_mulmod
 outer_for
 
   ; (C,S) = t[0] + a[0]*b[i]
-  ;MOV 0x0(R14),&MPY  ; t[0]
-  ;MOV #1,&OP2        ; 1
-  MOV 0x0(R14),RESLO
+  MOV 0x0(R14),&MPY  ; t[0]
+  MOV #1,&OP2        ; 1
   
   MOV 0x0(R12),&MAC  ; a[0]
   MOV 0x0(R13),&OP2  ; b[i]
@@ -347,10 +420,10 @@ inner_for
   CLR R11         ; t[s+1] = 0
     
   INCD R13
-  CMP R7,R13         ; Check if B traversal is still less than s
+  CMP R7,R13       ; Check if B traversal is still less than s
   JNZ outer_for
   
-  MOV R14,R12   ; Move on the result to R14
+  MOV R14,R12      ; Move R12 to the result in R14
   CALLA #mp_freeze ; Conditionally subtract 2^255-19 in constant time
   
 RETA
@@ -363,19 +436,30 @@ RSEG CODE
 
 mp_add
 
-    MOV R12,R4
-    MOV R13,R5
-    ADD #28,R4
-    ADD #28,R5
-
-    ADD  0x1e(R13),0x1e(R12) ; No need to CLRC in every step
-cadd
-    ADDC 0x0(R5),0x0(R4)
-    DECD R5
-    DECD R4
-    CMP R4,R12
-    JNZ cadd
+    ADD  @R13+,0x0(R12) 
+    ADDC @R13+,0x2(R12)
+    ADDC @R13+,0x4(R12)
+    ADDC @R13+,0x6(R12)
+    ADDC @R13+,0x8(R12)
+    ADDC @R13+,0xa(R12)
+    ADDC @R13+,0xc(R12)
+    ADDC @R13+,0xe(R12)
+    ADDC @R13+,0x10(R12)
+    ADDC @R13+,0x12(R12)
+    ADDC @R13+,0x14(R12)
+    ADDC @R13+,0x16(R12)
+    ADDC @R13+,0x18(R12)
+    ADDC @R13+,0x1a(R12)
+    ADDC @R13+,0x1c(R12)
+    ADDC @R13+,0x1e(R12)
     
+    PUSH.W R4
+    CLR R4
+    MOV SR,R4           ; Save the carry flag
+   
+    
+ 
+    POP.W R4
 RETA
       
 ; Subtracts B from A where A and B are 256-bit numbers and stores the result in A.
@@ -384,20 +468,33 @@ PUBLIC mp_sub
 RSEG CODE       
 
 mp_sub
+    
+    PUSH.W R4
+    PUSH.W R5
+    PUSH.W R6
   
-    MOV R12,R4
+    MOV R12,R6
     MOV R13,R5
-    ADD #28,R4
+    ADD #28,R6
     ADD #28,R5
 
     SUB  0x1e(R13),0x1e(R12) ; No need to CLRC in every step
 csub
-    SUBC 0x0(R5),0x0(R4)
+    SUBC 0x0(R5),0x0(R6)
+    MOV SR,R4
     DECD R5
-    DECD R4
-    CMP R4,R12
+    DECD R6
+    CMP R6,R12
     JNZ csub
+   
+     ; Now check if there was some more carry
+    AND #4,R4   
+    RLAM.W #2,R4 ; 1 if carry, 0 if no carry
+    CALLA #mp_condadd
     
+    POP.W R4
+    POP.W R5
+    POP.W R6
 RETA
   
 END

@@ -1,57 +1,6 @@
 #include "msp430.h"
 NAME msp_mp
 
-; Reduces the number A modulo 2^255-19
-; A is given by R12 and must be 512-bits (64 bytes) long in little-endian
-PUBLIC mp_mod25519
-RSEG CODE
-
-mp_mod25519
-
-  MOV R12,R4
-  MOV R12,R5
-  MOV #3,R7     ; In the worst-case scenario we need to reduce 3 times
-  
-  SUB #2,R4     ; Starting point
-  ADD #32,R5    ; Upper pointer bound (beyond the MS word, additions by 2)
-  
-reduce_limbs
-    INCD R4
-    CMP R4,R5
-    JZ limbs_done       ; If terminal address has been reached, go to round_done
-    
-    MOV @R4,&MPY    ; LSB of LS half
-    MOV #0x01,&OP2      ; 1
-    
-    MOV 0x20(R4),&MAC   ; LSB of MS half 
-    MOV #0x26,&OP2      ; 38
-    
-    MOV RESLO,0x0(R4)   ; Save S to LSB of LS half
-    ADD RESHI,0x2(R4)   ; Add the carry to the second-LSB of the LS half
-    
-    CLR 0x20(R4)        ; We don't need this MS limb anymore
-    JNC reduce_limbs    ; If no carry was created, proceed with the next digit
-    
-    MOV R4,R6           
-    ADD #4,R6           ; Set R6 as the address after the processed words  
-    
-carry_prop              ; Now we need to propagate the carry
-    SETC                ; Restore the carry bit
-    ADC 0x0(R6)         ; Add the carry bit to where R6 points
-    JNC reduce_limbs    ; If no more carry, step out
-    INCD R6             ; Increment R6 by 2 
-    JMP carry_prop      ; Otherwise, continue propagating
-   
-limbs_done  
-    MOV R12,R4
-    MOV R12,R5       
-    ADD #2,R5           ; We lower the terminal address as we don't need to go further than 1 word  
-    SUB #2,R4           ; Rewind R4
-    DEC R7
-    JNZ reduce_limbs    ; If we didn't reduce 3 times, continue  
-    
-RETA
-
 PUBLIC mp_condsub
 RSEG CODE
 
@@ -64,47 +13,48 @@ mp_condsub
     PUSH.W R6
     PUSH.W R7  ; Save other used registers
     
+    MOV R12,R6
+    ADD #30,R6
+    
     ; Need to precompute FFFF or 0 to R4
     MOV R4,R5
     CLR R4
     SUB R5,R4   ; R4 == 0 ? R4 = 0 : R4 = FFFF 
 
-    ; Now subtract the least significant limb
-    MOV #0xFFED,R5
-    MOV #0xFFFF,R6
-    MOV #0x7FFF,R7
+    ; Now subtract from the least significant limb
+    MOV #0xFFED,R5      
     AND R4,R5
-    AND R4,R6
-    AND R4,R7
-    CLRC
     
-    SUB R5,0x0(R12)
-    SUBC R6,0x2(R12)
-    SUBC R6,0x4(R12)
-    SUBC R6,0x6(R12)
-    SUBC R6,0x8(R12)
-    SUBC R6,0xa(R12)
-    SUBC R6,0xc(R12)
-    SUBC R6,0xe(R12)
-    SUBC R6,0x10(R12)
-    SUBC R6,0x12(R12)
-    SUBC R6,0x14(R12)
-    SUBC R6,0x16(R12)
-    SUBC R6,0x18(R12)
-    SUBC R6,0x1a(R12)
-    SUBC R6,0x1c(R12)
-    SUBC R7,0x1e(R12)
+    SUB R5,0(R12)
+    MOV SR,R7
     
-    POP.W R5    ; Restore the registers
+    ; Subtract from the internal limbs
+    MOV #0xFFFF,R5
+    AND R4,R5
+csubin
+    SUBC R5,0(R12)
+    MOV SR,R7
+    INCD R12
+    CMP R12,R6
+    JZ csubfin
+    MOV R7,SR
+    JMP csubin
+csubfin
+    MOV #0x7FFF,R5
+    AND R4,R5
+    MOV R7,SR
+    SUBC R5,0(R12)
+
+    POP.W R7    ; Restore the registers
     POP.W R6
-    POP.W R7
+    POP.W R5
 RETA
 
 PUBLIC mp_condadd
 RSEG CODE
 
-; Subtracts 2^255-19 from the number pointed by R12 if the R4 == 1
-; otherwise subtracts nothing.
+; Adds 2^255-18 from the number pointed by R12 if the R4 == 1
+; otherwise adds nothing.
 
 mp_condadd
 
@@ -112,40 +62,41 @@ mp_condadd
     PUSH.W R6
     PUSH.W R7  ; Save other used registers
     
+    MOV R12,R6
+    ADD #30,R6
+    
     ; Need to precompute FFFF or 0 to R4
     MOV R4,R5
     CLR R4
     SUB R5,R4   ; R4 == 0 ? R4 = 0 : R4 = FFFF 
 
-    ; Now subtract the least significant limb
-    MOV #0xFFED,R5
-    MOV #0xFFFF,R6
-    MOV #0x7FFF,R7
+    ; Now add to the least significant limb
+    MOV #0xFFEE,R5      ; +1 for overflow
     AND R4,R5
-    AND R4,R6
-    AND R4,R7
-    CLRC
     
-    ADD R5,0x0(R12)
-    ADDC R6,0x2(R12)
-    ADDC R6,0x4(R12)
-    ADDC R6,0x6(R12)
-    ADDC R6,0x8(R12)
-    ADDC R6,0xa(R12)
-    ADDC R6,0xc(R12)
-    ADDC R6,0xe(R12)
-    ADDC R6,0x10(R12)
-    ADDC R6,0x12(R12)
-    ADDC R6,0x14(R12)
-    ADDC R6,0x16(R12)
-    ADDC R6,0x18(R12)
-    ADDC R6,0x1a(R12)
-    ADDC R6,0x1c(R12)
-    ADDC R7,0x1e(R12)
+    ADD R5,0(R12)
+    MOV SR,R7
     
-    POP.W R5    ; Restore the registers
+    ; Add to the internal limbs
+    MOV #0xFFFF,R5
+    AND R4,R5
+caddin
+    ADDC R5,0(R12)
+    MOV SR,R7
+    INCD R12
+    CMP R12,R6
+    JZ caddfin
+    MOV R7,SR
+    JMP caddin
+caddfin
+    MOV #0x7FFF,R5
+    AND R4,R5
+    MOV R7,SR
+    ADDC R5,0(R12)
+
+    POP.W R7    ; Restore the registers
     POP.W R6
-    POP.W R7
+    POP.W R5
 RETA
 
 PUBLIC mp_freeze
@@ -193,7 +144,6 @@ compr
 
 RETA
 
-
 PUBLIC mp_cprop
 RSEG CODE
 
@@ -217,12 +167,9 @@ cpg
   JMP cpg
   
 cpd
-  TST R9        ; Check if there's still some carry in R9
-  CLRC          ; Clear the carry flag after TST
-  JZ cfin       ; If not just goto finish
-  SETC          ; If yes, set the carry bit to allow further manual propagation
+  CLRC
+  BIS R9,SR     ; Restore the carry flag, if there was any
   
-cfin
   POP.W R9      ; Restore R9
   POP.W R8      ; Restore R8
   
@@ -235,44 +182,56 @@ RSEG CODE
 ; r = 2^256
 mp_monrep25519
 
-  CLR R7
+  PUSH.W R7
+  PUSH.W R10
+  PUSH.W R11    ; Save registers
+
   MOV R12,R10
   MOV R12,R11
-  ADD #31,R11   ; Set R11 to the last word
+  ADD #32,R11   ; Set R11 to the last word
+  
+  MOV #0,&MPY   ; Initialize accumulator
+  MOV #0,&OP2
   
 repmul
   CMP R10,R11   ; Check if we already processed the last word
   JZ repfin     ; If we did, finish multiplying
 
-  MOV 0x0(R10),&MPY  ; Initialize the accumulator to what's at R10
-  MOV #1,&OP2
-
-  MOV 0x0(R10),&MAC  ; Multiply R10 by 38 and accumulate
+  MOV 0x0(R10),&MAC  ; Multiply digit by 38
   MOV #38,&OP2
-  
-  MOV RESLO,0x0(R10) ; Set the LS word to the lower word of the result 
+ 
+  MOV RESLO,0x0(R10) ; Put lower word in the result 
   INCD R10           ; Move R10 to the next word
-  ADD RESHI,0x0(R10) ; The carry in the higher word has to be added 
-  CALLA #mp_cprop    ; Propagate the carry (starts from 4th word)
-  ADC R7             ; Propagate possible overflow carry to R7
+  
+  MOV RESHI,&MPY     ; Put carry into the accumulator 
+  MOV #1,&OP2
+  
   JMP repmul
   
 repfin    
+  MOV RESLO,R7
+  RLA R7
+  MOV 0x1e(R12),R10
+  AND #0x7FFF,0x1e(R12)
+  RLA R10
+  ADC R7               ; Add it to R7
+  
   MOV 0x0(R12),&MPY    ; Put the LS word in the accumulator
   MOV #1,&OP2       
-  
+ 
   MOV R7,&MAC          ; The overflow carry is in R7 
-  MOV #0x26,&OP2       ; 38
+  MOV #19,&OP2         ; 19
     
   MOV RESLO,0x0(R12)   ; Save S to LSB of LS half
-  
   MOV R12,R10
   INCD R10             ; Now we start propagating from R12+4 (mp_cprop adds 2) 
-  
-  ADD RESHI,0x0(R12)   ; Add the carry to second word and propagate
+  ADD RESHI,0x0(R10)   ; Add the carry to second LS word and propagate
   CALLA #mp_cprop
-  CALLA #mp_freeze
-  
+
+  POP.W R11      ; Restore registers
+  POP.W R10
+  POP.W R7
+
 RETA
 
 PUBLIC mp_mulmod  
@@ -429,8 +388,38 @@ inner_for
   JNZ outer_for
   
   MOV R14,R12      ; Move R12 to the result in R14
-  CALLA #mp_freeze ; Conditionally subtract 2^255-19 in constant time
+ ; CALLA #mp_freeze ; Conditionally subtract 2^255-19 in constant time
   
+RETA
+
+PUBLIC mp_mul2
+RSEG CODE
+
+; Multiplies number pointer by R12 by 2.
+
+mp_mul2
+
+  PUSH.W R4
+  PUSH.W R5
+
+  MOV R12,R5
+  ADD #32,R5
+  CLRC
+rotl
+  RLC 0(R12)
+  MOV SR,R4
+  INCD R12
+  CMP R12,R5
+  JZ finrot
+  MOV R4,SR
+  JMP rotl
+finrot
+  SUB #32,R12   ; Rewind R12
+  AND #1,R4     ; Take just the carry flag
+  CALLA #mp_condsub
+  
+  POP.W R5
+  POP.W R4
 RETA
 
 
@@ -440,6 +429,10 @@ PUBLIC mp_add
 RSEG CODE       
 
 mp_add
+  
+    PUSH.W R4
+    PUSH.W R5
+    PUSH.W R10
 
     MOV R13,R10
     ADD #32,R10
@@ -453,17 +446,23 @@ inadd
     MOV R5,SR
     JMP inadd
 finadd   
-    CLR R15
-    MOV R5,R15     ; Save the carry flag as a force bit for mp_freeze
-    AND #1,R15
+    AND #1,R4      ; Extract only C flag
     SUB #32,R12    ; Rewind R12
-    CALLA #mp_freeze
+    CALLA #mp_condsub
+    
+    POP.W R10
+    POP.W R5
+    POP.W R4
 RETA
       
 ; Subtracts B from A where A and B are 256-bit numbers and stores the result in A.
 ; B is pointed by R13, A is pointed by R12
 PUBLIC mp_sub   
 RSEG CODE       
+    
+    PUSH.W R4
+    PUSH.W R5
+    PUSH.W R10
 
 mp_sub
     CLR R4
@@ -484,6 +483,11 @@ finsub
     RRAM.W #2,R4   ; Shift it to the first position
     SUB #32,R12    ; Rewind R12
     CALLA #mp_condadd 
+
+    POP.W R10
+    POP.W R5
+    POP.W R4
+
 RETA
   
 END

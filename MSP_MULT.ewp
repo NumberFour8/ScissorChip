@@ -550,15 +550,15 @@
         </option>
         <option>
           <name>AWarnEnable</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>AWarnWhat</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>AWarnOne</name>
-          <state></state>
+          <state>411</state>
         </option>
         <option>
           <name>AWarnRange1</name>

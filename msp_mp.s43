@@ -400,7 +400,7 @@ inadd
     MOV R5,SR
     JMP inadd
 finadd   
-    AND #1,R4      ; Extract only C flag, reset second bit for subtraction
+    AND #1,R5      ; Extract only C flag, reset second bit for subtraction
     SUB #32,R12    ; Rewind R12
     CALLA #mp_condsub
     

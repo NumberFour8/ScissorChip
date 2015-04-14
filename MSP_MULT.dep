@@ -2,7 +2,7 @@
 
 <project>
   <fileVersion>2</fileVersion>
-  <fileChecksum>2044366560</fileChecksum>
+  <fileChecksum>568103071</fileChecksum>
   <configuration>
     <name>Debug</name>
     <outputs>
@@ -36,19 +36,31 @@
       <file>$TOOLKIT_DIR$\inc\intrinsics.h</file>
       <file>$PROJ_DIR$\Debug\List\MSP_MULT.map</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_mul32.r43</file>
+      <file>$PROJ_DIR$\msp_mul16.s43</file>
+      <file>$PROJ_DIR$\msp_mp.h</file>
       <file>$PROJ_DIR$\msp_mul32.s43.c</file>
       <file>$PROJ_DIR$\msp_mul32.s43</file>
       <file>$PROJ_DIR$\Debug\List\msp_mul32.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\msp_mul16.r43</file>
+      <file>$PROJ_DIR$\Debug\List\msp_mul16.lst</file>
     </outputs>
     <file>
       <name>$PROJ_DIR$\main.c</name>
       <outputs>
+        <tool>
+          <name>ICC430</name>
+          <file> 17 7 9</file>
+        </tool>
         <tool>
           <name>BICOMP</name>
           <file> 12</file>
         </tool>
       </outputs>
       <inputs>
+        <tool>
+          <name>ICC430</name>
+          <file> 10 25 13 27 22 18 5 21 6 3 26 19 2 8</file>
+        </tool>
         <tool>
           <name>BICOMP</name>
           <file> 10 25 13 27 22 18 5 21 6 3 26 19 2 8</file>
@@ -99,11 +111,11 @@
       </outputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\msp_mul32.s43</name>
+      <name>$PROJ_DIR$\msp_mul16.s43</name>
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 29 32</file>
+          <file> 35 36</file>
         </tool>
       </outputs>
       <inputs>
@@ -113,6 +125,25 @@
         </tool>
       </inputs>
     </file>
+    <file>
+      <name>$PROJ_DIR$\msp_mul32.s43</name>
+      <outputs>
+        <tool>
+          <name>A430</name>
+          <file> 29 34</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>A430</name>
+          <file> 10 25</file>
+        </tool>
+      </inputs>
+    </file>
+    <forcedrebuild>
+      <name>[MULTI_TOOL]</name>
+      <tool>XLINK</tool>
+    </forcedrebuild>
   </configuration>
   <configuration>
     <name>Release</name>

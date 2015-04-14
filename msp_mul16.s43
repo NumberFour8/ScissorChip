@@ -1,0 +1,165 @@
+#include "msp430.h"
+NAME msp_mp_mul16
+
+EXTERN mp_freeze
+EXTERN mp_cprop
+
+PUBLIC mp_mulmod16
+RSEG CODE       
+
+; Performs modular multiplication of A and B which are both in Montgomery representation.
+; The reduction is done modulo 2^255-19
+; A is pointed by R13, B is pointed by R14.
+; The result T has to be pointed by R12
+
+mp_mulmod16
+  
+  PUSHM.W #8,R11
+  
+  ; Finely Integrated Operand Scanning
+  ; t[s] = R10, t[s+1] = R11, m = R4
+  ; -------------------------------------- 
+  CLR R10
+  CLR R11
+
+  ; For loop i = 0 .. s-1
+  MOV R14,R7  ; Traverses B
+  ADD #32,R7  ; Excluding sth word
+outer_for
+
+  ; (C,S) = t[0] + a[0]*b[i]
+  MOV 0x0(R12),&MPY  ; t[0]
+  MOV #1,&OP2        ; 1
+  
+  MOV 0x0(R13),&MAC  ; a[0]
+  MOV 0x0(R14),&OP2  ; b[i]
+  
+  MOV RESLO,R5       ; Store S in R5
+   
+  ; ADD(t[1],C)
+  PUSHM.W #2,R11 ; Save R10 and R11
+  
+  MOV R12,R10        ; Put R12 to R10 which points to T
+  INCD R10           ; Start adding carry after t[1]
+  MOV R12,R11        
+  ADD #30,R11        ; until (s-1)th word inclusive  
+  ADD RESHI,0x0(R10)
+  CALLA #mp_cprop    ; Propagate the carry (start at t[2])
+  
+  POPM.W #2,R11 ; Restore R10 and R11
+  
+  ADC R10     ; Propagate carry further to t[s]
+  ADC R11     ; and to t[s+1]
+  
+  ; m = S*n'[0] mod 2^16
+  MOV R5,&MPY        ; S
+  MOV #0xCA1B,&OP2   ; n'[0]
+  MOV RESLO,R4       ; Store m to R4
+  
+  ; (C,S) = S + m*n[0]
+  MOV R5,&MPY           ; S
+  MOV #1,&OP2           ; 1
+  MOV R4,&MAC           ; m
+  MOV #0xFFED,&OP2      ; n[0]
+  
+  ; For j = 1 .. s-2, last iteration is unrolled
+  MOV R13,R8 
+  INCD R8      ; a[j]
+  MOV R13,R9    
+  ADD #30,R9   ; a[s-1]
+  MOV R12,R5
+  INCD R5      ; t[j]
+  MOV R12,R6   
+  ADD #30,R6   ; t[s-1]
+inner_for       
+    
+    MOV RESHI,R15
+    
+    ; (C,S) = t[j] + a[j]*b[i] + C
+    MOV 0x0(R5),&MPY ; t[j]
+    MOV #1,&OP2      ; 1
+    
+    MOV R15,&MAC   ; C
+    MOV #1,&OP2      ; 1
+    
+    MOV 0x0(R8),&MAC  ; a[j]
+    MOV 0x0(R14),&OP2 ; b[i] 
+    
+    ; ADD(t[j+1],C)
+    PUSHM.W #2,R11 ; Save R10 and R11
+    
+    MOV R5,R10
+    MOV R6,R11
+    INCD R10
+    ADD RESHI,0x0(R10)
+    CALLA #mp_cprop  
+    
+    POPM.W #2,R11 ; Restore R10 and R11
+    
+    ADC R10     ; Propagate carry further to t[s]
+    ADC R11     ; and to t[s+1]
+    
+    ; (C,S) = S + m*n[j]
+    MOV RESLO,&MPY      ; S
+    MOV #1,&OP2         ; 1
+    
+    MOV R4,&MAC         ; m
+    MOV #0xFFFF,&OP2    ; n[j] = 0xFFFF for j = 1 .. s-2
+    
+    ; t[j-1] = S
+    MOV RESLO,-2(R5)
+    
+    INCD R8  ; Advance to a[++j]
+    INCD R5  ; Advance to t[++j]
+    CMP R8,R9 ; j = s-1 halts the loop
+    JNZ inner_for
+    
+  ; The last iteration of the inner for is unrolled
+  MOV RESHI,R15  
+    
+  ; (C,S) = t[s-1] + a[s-1]*b[i] + C
+  MOV 0x0(R5),&MPY ; t[s-1]
+  MOV #1,&OP2      ; 1
+    
+  MOV R15,&MAC   ; C
+  MOV #1,&OP2      ; 1
+    
+  MOV 0x0(R8),&MAC  ; a[s-1]
+  MOV 0x0(R14),&OP2 ; b[i] 
+    
+  ; ADD(t[s],C)
+  ADD RESHI,R10
+  ADC R11    ; Propagate carry to t[s+1]
+    
+  ; (C,S) = S + m*n[s-1]
+  MOV RESLO,&MPY
+  MOV #1,&OP2
+    
+  MOV R4,&MAC
+  MOV #0x7FFF,&OP2
+    
+  ; t[s-2] = S
+  MOV RESLO,-2(R5)
+  
+  ; Now the final post-processing
+    
+  ; (C,S) = t[s] + C
+  MOV R10,R4      ; m is not needed anymore
+  ADD RESHI,R4    ; Store S in R4
+    
+  MOV R4,0x0(R5)  ; t[s-1] = S
+  MOV R11,R10     ; Store t[s+1] to t[s]
+  ADC R10         ; t[s] = t[s+1] + C
+  CLR R11         ; t[s+1] = 0
+    
+  INCD R14
+  CMP R7,R14       ; Check if B traversal is still less than s
+  JNZ outer_for
+  
+  CALLA #mp_freeze ; Conditionally subtract 2^255-19 in constant time
+  
+  POPM.W #8,R11
+  
+RETA
+
+END

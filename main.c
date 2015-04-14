@@ -4,10 +4,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-extern void mp_add(uint16_t* c,uint16_t* a,uint16_t* b);
-extern void mp_sub(uint16_t* c,uint16_t* a,uint16_t* b);
-extern void mp_monrep25519(uint16_t* a);
-//extern void mp_mulmod(uint16_t* c,uint16_t* a,uint16_t* b);
 
 typedef struct {
   uint16_t x[16];

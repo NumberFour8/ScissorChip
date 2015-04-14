@@ -2156,6 +2156,12 @@
   <file>
     <name>$PROJ_DIR$\msp_mp.s43</name>
   </file>
+  <file>
+    <name>$PROJ_DIR$\msp_mul16.s43</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\msp_mul32.s43</name>
+  </file>
 </project>
 
 

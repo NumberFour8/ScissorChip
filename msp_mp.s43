@@ -222,8 +222,7 @@ outer_for
   MOV RESLO,R5       ; Store S in R5
    
   ; ADD(t[1],C)
-  PUSH.W R10 
-  PUSH.W R11  ; Save R10 and R11
+  PUSHM.W #2,R11 ; Save R10 and R11
   
   MOV R12,R10        ; Put R12 to R10 which points to T
   INCD R10           ; Start adding carry after t[1]
@@ -232,8 +231,7 @@ outer_for
   ADD RESHI,0x0(R10)
   CALLA #mp_cprop    ; Propagate the carry (start at t[2])
   
-  POP.W R11
-  POP.W R10   ; Restore R10 and R11
+  POPM.W #2,R11 ; Restore R10 and R11
   
   ADC R10     ; Propagate carry further to t[s]
   ADC R11     ; and to t[s+1]
@@ -379,8 +377,9 @@ finrot
 RETA
 
 
-; Adds two 256-bit numbers A and B and stores the result in A.
-; B is pointed by R13, A is pointed by R12
+; Adds two 256-bit numbers A and B and stores the result in C.
+; B is pointed by R14, A is pointed by R13
+; The result C is pointed by R12
 PUBLIC mp_add   
 RSEG CODE       
 
@@ -388,14 +387,15 @@ mp_add
   
     PUSHM.W #3,R6       ; Save R4-R6
     
-    MOV R13,R6
+    MOV R14,R6
     ADD #32,R6
     CLRC   ; Need to reset carry bit for the first SUBC to be equivalent to SUB
 inadd
-    ADDC @R13+,0(R12) 
+    MOV @R13+,0(R12)
+    ADDC @R14+,0(R12) 
     MOV SR,R5
     INCD R12
-    CMP R13,R6
+    CMP R14,R6
     JZ finadd
     MOV R5,SR
     JMP inadd
@@ -407,25 +407,27 @@ finadd
     POPM.W #3,R6
 RETA
       
-; Subtracts B from A where A and B are 256-bit numbers and stores the result in A.
-; B is pointed by R13, A is pointed by R12
+; Subtracts B from A where A and B are 256-bit numbers and stores the result in C.
+; B is pointed by R14, A is pointed by R13
+; The result C is pointed by R12
 PUBLIC mp_sub   
 RSEG CODE       
         
 mp_sub
     
-    PUSHM.W #3,R6       ; Save R4 - R6
+    PUSHM.W #3,R6   ; Save R4 - R6
     
     CLR R4
-    MOV R13,R6
+    MOV R14,R6
     ADD #32,R6
     SETC           ; Need to set carry bit for the first SUBC to be equivalent to SUB
 insub
-    SUBC @R13+,0(R12) 
+    MOV @R13+,0(R12)
+    SUBC @R14+,0(R12) 
     BIS SR,R4
     MOV SR,R5
     INCD R12
-    CMP R13,R6
+    CMP R14,R6
     JZ finsub
     MOV R5,SR
     JMP insub
@@ -439,4 +441,212 @@ finsub
     POPM.W #3,R6   ; Restore R4 - R6
 RETA
   
+  
+PUBLIC mp_mulmod32  
+RSEG CODE       
+
+; Performs modular multiplication of A and B which are both in Montgomery representation.
+; This function utilizes fully the 32-bit multiplier.
+; The reduction is done modulo 2^255-19
+; A is pointed by R13, B is pointed by R14.
+; The result T has to be pointed by R12
+; BEWARE: the number T have to be 40 bytes long
+
+mp_mulmod32
+  
+  PUSHM.W #8,R11
+  
+  ; Finely Integrated Operand Scanning
+  ; m = R4,R15
+  ; -------------------------------------- 
+  
+  ; For loop i = 0 .. s-1
+  MOV R14,R7  ; Traverses B
+  ADD #32,R7  ; Excluding sth word
+  MOV R7,R10  ; R10 points to t[s] and t[s+1]. 
+outer_for2
+
+  ; (C,S) = t[0] + a[0]*b[i]
+  MOV 0x0(R12),&MPY32L  ; t[0]
+  MOV 0x2(R12),&MPY32H 
+  MOV #1,&OP2L        ; 1
+  MOV #0,&OP2H
+  
+  MOV 0x0(R13),&MAC32L  ; a[0]
+  MOV 0x2(R13),&MAC32H
+  MOV 0x0(R14),&OP2L    ; b[i]
+  MOV 0x2(R14),&OP2H
+  
+  MOV RES0,R5       ; Store S in R5
+  MOV RES1,R6       ; and R6
+ 
+  ; ADD(t[1],C)
+  PUSH.W R10  ; Save R10
+  
+  MOV R12,R10        ; Put R12 to R10 which points to T
+  ADD #4,R10         ; Start adding carry after t[1]
+  MOV R12,R11        
+  ADD #34,R11        ; until (s+1)th word inclusive (thus propagate further to t[s] and t[s+1])
+  
+  ADD  RES2,0x0(R10)
+  ADDC RES3,0x2(R10)
+  CALLA #mp_cprop    ; Propagate the carry (start at t[2])
+  
+  POP.W R10   ; Restore R10
+  
+  ; m = S*n'[0] mod 2^32
+  MOV R5,&MPY32L        ; S
+  MOV R6,&MPY32H
+  MOV #0xCA1B,&OP2L     ; n'[0]
+  MOV #0x286B,&OP2H
+  
+  MOV RES0,R4       ; Store m to R4
+  MOV RES1,R15      ; and R15
+  
+  ; (C,S) = S + m*n[0]
+  MOV R5,&MPY32L        ; S
+  MOV R6,&MPY32H        
+  MOV #1,&OP2L          ; 1
+  MOV #0,&OP2H
+  
+  MOV R4, &MAC32L        ; m
+  MOV R15,&MAC32H       
+  MOV #0xFFED,&OP2L     ; n[0]
+  MOV #0xFFFF,&OP2H      
+  
+  ; For j = 1 .. s-2, last iteration is unrolled
+  MOV R13,R8 
+  INCD R8      ; a[j]
+  MOV R13,R9    
+  ADD #30,R9   ; a[s-1]
+  MOV R12,R5
+  INCD R5      ; t[j]
+  
+inner_for2       
+    
+    MOV RES2,R6
+    MOV RES3,R11
+    
+    ; (C,S) = t[j] + a[j]*b[i] + C
+    MOV 0x0(R5),&MPY32L ; t[j]
+    MOV 0x2(R5),&MPY32H
+    MOV #1,&OP2L      ; 1
+    MOV #0,&OP2H
+    
+    MOV R6,&MAC32L    ; C
+    MOV R11,&MAC32H      
+    MOV #1,&OP2L      ; 1
+    MOV #0,&OP2H
+    
+    MOV 0x0(R8),&MAC32L  ; a[j]
+    MOV 0x2(R8),&MAC32H
+    MOV 0x0(R14),&OP2L   ; b[i] 
+    MOV 0x2(R14),&OP2H
+    
+    ; ADD(t[j+1],C)
+    PUSH.W R10 ; Save R10
+    
+    MOV R5,R10
+    MOV R12,R11
+    ADD #34,R11  ; Propagate further to t[s], t[s+1]
+    ADD #4,R10
+    
+    ADD  RES2,0x0(R10)
+    ADDC RES3,0x2(R10)
+    CALLA #mp_cprop    
+    
+    POP.W R10 ; Restore R10
+    
+    ; (C,S) = S + m*n[j]
+    MOV RES0,&MPY32L     ; S
+    MOV RES1,&MPY32H
+    MOV #1,&OP2L         ; 1
+    MOV #0,&OP2H
+    
+    MOV R4,&MAC32L       ; m
+    MOV R15,&MAC32H   
+    MOV #0xFFFF,&OP2L    ; n[j] = 0xFFFF for j = 1 .. s-2
+    MOV #0xFFFF,&OP2H
+    
+    ; t[j-1] = S
+    MOV RES0,-4(R5)     ; TODO: Maybe swap? Endianness!
+    MOV RES1,-2(R5)
+    
+    ADD #4,R8  ; Advance to a[++j]
+    ADD #4,R5  ; Advance to t[++j]
+    CMP R8,R9 ; j = s-1 halts the loop
+    JNZ inner_for2
+    
+  ; The last iteration of the inner for is unrolled
+  MOV RES2,R6
+  MOV RES3,R11
+    
+  ; (C,S) = t[s-1] + a[s-1]*b[i] + C
+  MOV 0x0(R5),&MPY32L ; t[s-1]
+  MOV 0x2(R5),&MPY32H
+  MOV #1,&OP2L      ; 1
+  MOV #0,&OP2H
+  
+  MOV R6, &MAC32L   ; C
+  MOV R11,&MAC32H
+  MOV #1,&OP2L      ; 1
+  MOV #0,&OP2H
+  
+  MOV 0x0(R8),&MAC32L  ; a[s-1]
+  MOV 0x2(R8),&MAC32H
+  MOV 0x0(R14),&OP2L   ; b[i] 
+  MOV 0x2(R14),&OP2H
+  
+  ; ADD(t[s],C)
+  ADD  RES2,0x0(R10)  ; Propagate to t[s] and t[s+1]
+  ADDC RES3,0x2(R10)
+  ADC 0x4(R10)
+  ADC 0x6(R11)
+  
+  ; (C,S) = S + m*n[s-1]
+  MOV RES0,&MPY32L
+  MOV RES1,&MPY32H
+  MOV #1,&OP2L
+  MOV #0,&OP2H
+    
+  MOV R4,&MAC32L
+  MOV R15,MAC32H
+  MOV #0xFFFF,&OP2L
+  MOV #0x7FFF,&OP2H
+    
+  ; t[s-2] = S
+  MOV RES0,-4(R5)
+  MOV RES1,-2(R5)
+  
+  ; Now the final post-processing
+    
+  ; (C,S) = t[s] + C
+  MOV R10,R4      ; m is not needed anymore
+  MOV 0x2(R10),R15
+  
+  ADD  RES2,R4    ; Store S in R4 and R15
+  ADDC RES3,R15
+  
+  MOV R4 ,0x0(R5)  ; t[s-1] = S
+  MOV R15,0x2(R5)  
+  
+  MOV 0x4(R10),0x0(R10)     ; Store t[s+1] to t[s]
+  MOV 0x6(R10),0x2(R10)
+  
+  ADC 0x0(R10)              ; t[s] = t[s+1] + C
+  ADC 0x2(R10)                  
+  
+  CLR 0x4(R10)              ; t[s+1] = 0
+  CLR 0x6(R10)
+  
+  ADD #4,R14
+  CMP R7,R14       ; Check if B traversal is still less than s
+  JNZ outer_for2
+  
+  CALLA #mp_freeze ; Conditionally subtract 2^255-19 in constant time
+  
+  POPM.W #8,R11
+  
+RETA
+
 END

@@ -8,18 +8,18 @@
     <outputs>
       <file>$PROJ_DIR$\main.c</file>
       <file>$PROJ_DIR$\msp_mp.s43</file>
-      <file>$TOOLKIT_DIR$\inc\dlib\c\DLib_Product.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\main.r43</file>
-      <file>$TOOLKIT_DIR$\inc\dlib\c\ysizet.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\main.pbi</file>
-      <file>$TOOLKIT_DIR$\lib\dlib\dl430xlsfn.r43</file>
-      <file>$PROJ_DIR$\Debug\List\main.lst</file>
-      <file>$TOOLKIT_DIR$\lib\dlib\dl430xlsfn.h</file>
       <file>$TOOLKIT_DIR$\inc\dlib\c\stdlib.h</file>
+      <file>$TOOLKIT_DIR$\inc\dlib\c\DLib_Product.h</file>
       <file>$PROJ_DIR$\Debug\Obj\MSP_MULT.pbd</file>
-      <file>$TOOLKIT_DIR$\inc\in430.h</file>
-      <file>$TOOLKIT_DIR$\inc\msp430.h</file>
       <file>$TOOLKIT_DIR$\inc\dlib\c\yvals.h</file>
+      <file>$TOOLKIT_DIR$\lib\dlib\dl430xlsfn.h</file>
+      <file>$PROJ_DIR$\Debug\List\main.lst</file>
+      <file>$TOOLKIT_DIR$\inc\dlib\c\ysizet.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\main.r43</file>
+      <file>$TOOLKIT_DIR$\inc\msp430.h</file>
+      <file>$TOOLKIT_DIR$\lib\dlib\dl430xlsfn.r43</file>
+      <file>$PROJ_DIR$\Debug\Obj\main.pbi</file>
+      <file>$TOOLKIT_DIR$\inc\in430.h</file>
       <file>$TOOLKIT_DIR$\config\linker\multiplier32_loc2.xcl</file>
       <file>$PROJ_DIR$\Debug\Exe\MSP_MULT.d43</file>
       <file>$PROJ_DIR$\Debug\List\msp_mp.lst</file>
@@ -30,32 +30,28 @@
       <file>$TOOLKIT_DIR$\inc\dlib\c\DLib_Defaults.h</file>
       <file>$TOOLKIT_DIR$\inc\dlib\c\stdint.h</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_mp.r43</file>
+      <file>$PROJ_DIR$\Debug\Exe\MSP_MULT.ulp</file>
       <file>$TOOLKIT_DIR$\inc\msp430f5529.h</file>
       <file>$TOOLKIT_DIR$\inc\dlib\c\xencoding_limits.h</file>
       <file>$TOOLKIT_DIR$\inc\intrinsics.h</file>
       <file>$PROJ_DIR$\Debug\List\MSP_MULT.map</file>
-      <file>$PROJ_DIR$\Debug\Exe\MSP_MULT.ulp</file>
+      <file>$PROJ_DIR$\Debug\Obj\msp_mul32.r43</file>
+      <file>$PROJ_DIR$\msp_mul32.s43.c</file>
+      <file>$PROJ_DIR$\msp_mul32.s43</file>
+      <file>$PROJ_DIR$\Debug\List\msp_mul32.lst</file>
     </outputs>
     <file>
       <name>$PROJ_DIR$\main.c</name>
       <outputs>
         <tool>
-          <name>ICC430</name>
-          <file> 17 7 3</file>
-        </tool>
-        <tool>
           <name>BICOMP</name>
-          <file> 5</file>
+          <file> 12</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
-          <name>ICC430</name>
-          <file> 12 24 11 26 22 18 13 21 8 2 25 19 9 4</file>
-        </tool>
-        <tool>
           <name>BICOMP</name>
-          <file> 12 24 11 26 22 18 13 21 8 2 25 19 9 4</file>
+          <file> 10 25 13 27 22 18 5 21 6 3 26 19 2 8</file>
         </tool>
       </inputs>
     </file>
@@ -70,7 +66,7 @@
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 12 24</file>
+          <file> 10 25</file>
         </tool>
       </inputs>
     </file>
@@ -79,13 +75,13 @@
       <outputs>
         <tool>
           <name>XLINK</name>
-          <file> 27</file>
+          <file> 28</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>XLINK</name>
-          <file> 20 14 3 23 6</file>
+          <file> 20 14 9 23 11</file>
         </tool>
       </inputs>
     </file>
@@ -94,13 +90,28 @@
       <outputs>
         <tool>
           <name>XLINK</name>
-          <file> 15 27</file>
+          <file> 15 28</file>
         </tool>
         <tool>
           <name>ULP430</name>
-          <file> 28</file>
+          <file> 24</file>
         </tool>
       </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\msp_mul32.s43</name>
+      <outputs>
+        <tool>
+          <name>A430</name>
+          <file> 29 32</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>A430</name>
+          <file> 10 25</file>
+        </tool>
+      </inputs>
     </file>
   </configuration>
   <configuration>

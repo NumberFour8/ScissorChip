@@ -4,10 +4,28 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-extern void mp_add(uint16_t* a,uint16_t* b);
-extern void mp_sub(uint16_t* a,uint16_t* b);
+extern void mp_add(uint16_t* c,uint16_t* a,uint16_t* b);
+extern void mp_sub(uint16_t* c,uint16_t* a,uint16_t* b);
 extern void mp_monrep25519(uint16_t* a);
-extern void mp_mulmod(uint16_t* a,uint16_t* b,uint16_t* c);
+//extern void mp_mulmod(uint16_t* c,uint16_t* a,uint16_t* b);
+
+typedef struct {
+  uint16_t x[16];
+  uint16_t y[16];
+  uint16_t z[16];
+  uint16_t t[16];
+} ext_point;
+
+
+/*void edwards_add(ext_point* a,ext_point* b)
+{
+  uint16_t t1[16];
+  uint16_t t2[16];
+  uint16_t t3[16];
+  
+  
+  
+}*/
 
 int main( void )
 {
@@ -70,16 +88,18 @@ int main( void )
     uint16_t b[16] = {2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     mp_monrep25519(b);
     
-    mp_mulmod(c,a,b);
+  //  mp_mulmod(c,a,b);
     
-    mp_sub(c,b);
-    mp_add(c,a);
-    mp_add(c,a);
+    mp_sub(c,c,b);
+    mp_add(c,c,a);
+    mp_add(c,c,a);
     
     for (int i = 0;i < 16;i++) b[i] = a[i] = 0;
     a[0] = 1;
     
-    mp_mulmod(c,a,b);
+    //mp_mulmod(c,a,b);
     
     return 0;
 }
+
+

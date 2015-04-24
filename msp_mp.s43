@@ -218,12 +218,12 @@ finrot
   
 RETA
 
+PUBLIC mp_add   
+RSEG CODE       
 
 ; Adds two 256-bit numbers A and B and stores the result in C.
 ; B is pointed by R14, A is pointed by R13
 ; The result C is pointed by R12
-PUBLIC mp_add   
-RSEG CODE       
 
 mp_add
   
@@ -249,12 +249,13 @@ finadd
     POPM.W #3,R6
 RETA
       
+PUBLIC mp_sub   
+RSEG CODE       
+
 ; Subtracts B from A where A and B are 256-bit numbers and stores the result in C.
 ; B is pointed by R14, A is pointed by R13
 ; The result C is pointed by R12
-PUBLIC mp_sub   
-RSEG CODE       
-        
+
 mp_sub
     
     PUSHM.W #3,R6   ; Save R4 - R6

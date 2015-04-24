@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#include "msp_mp.h"
+#include "sha512.h"
 
 typedef struct {
   uint16_t x[16];
@@ -84,7 +86,7 @@ int main( void )
     uint16_t b[16] = {2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     mp_monrep25519(b);
     
-  //  mp_mulmod(c,a,b);
+    mp_mulmod16(c,a,b);
     
     mp_sub(c,c,b);
     mp_add(c,c,a);
@@ -93,7 +95,7 @@ int main( void )
     for (int i = 0;i < 16;i++) b[i] = a[i] = 0;
     a[0] = 1;
     
-    //mp_mulmod(c,a,b);
+    mp_mulmod16(c,a,b);
     
     return 0;
 }

@@ -96,9 +96,7 @@ compr
     BIT #3,R4
     MOV SR,R4   ; Carry bit is set if R4 is non-zero
     AND #1,R4   ; Extract carry bit
-    
-    BIS R15,R4  ; Add the force bit
-    
+     
 ; -- 
     AND #0xFFFD,R4    ; Reset the second bit of R4 for subtraction
     CALLA #mp_condsub

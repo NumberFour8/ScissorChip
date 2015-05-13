@@ -1,6 +1,6 @@
-#include <string.h>
+//#include <string.h>
 
-#include "sha2.h"
+#include "sha512.h"
 
 #define SHFR(x, n)    (x >> n)
 #define ROTR(x, n)   ((x >> n) | (x << ((sizeof(x) << 3) - n)))
@@ -18,6 +18,18 @@
     *((str) + 2) = (uint8_t) ((x) >>  8);       \
     *((str) + 1) = (uint8_t) ((x) >> 16);       \
     *((str) + 0) = (uint8_t) ((x) >> 24);       \
+}
+
+#define PACK64(str, x)                        \
+{                                             \
+    *(x) =   ((uint64_t) *((str) + 7)      )    \
+           | ((uint64_t) *((str) + 6) <<  8)    \
+           | ((uint64_t) *((str) + 5) << 16)    \
+           | ((uint64_t) *((str) + 4) << 24)    \
+           | ((uint64_t) *((str) + 3) << 32)    \
+           | ((uint64_t) *((str) + 2) << 40)    \
+           | ((uint64_t) *((str) + 1) << 48)    \
+           | ((uint64_t) *((str) + 0) << 56);   \
 }
 
 #define UNPACK64(x, str)                      \
@@ -196,7 +208,7 @@ void sha512_final(sha512_ctx *ctx, unsigned char *digest)
 {
     unsigned int block_nb;
     unsigned int pm_len;
-    unsigned int len_b;
+    uint32_t len_b;
 
     int i;
 

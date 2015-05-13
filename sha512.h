@@ -4,11 +4,14 @@
 #define SHA512_DIGEST_SIZE ( 512 / 8)
 #define SHA512_BLOCK_SIZE  (1024 / 8)
 
+#include <string.h>
+#include <stdint.h>
+
 typedef struct {
     unsigned int tot_len;
     unsigned int len;
     unsigned char block[2 * SHA512_BLOCK_SIZE];
-    uint64 h[8];
+    uint64_t h[8];
 } sha512_ctx;
 
 typedef sha512_ctx sha384_ctx;

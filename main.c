@@ -5,25 +5,74 @@
 #include <stdlib.h>
 
 #include "msp_mp.h"
-#include "sha512.h"
+#include "keccak.h"
 
+#define COORD_COPY(x,y) for (*(x) = 15 ;*(x);(*(x))--) (x)[*(x)] = (y)[*(x)]; \
+                        *(x) = *(y);
+                      
+#define mp_mulmod(c,a,b) mp_mulmod16(c,a,b) 
+
+// Montgomery XZ coordinates.
+// The coordinates itself must be in Montgomery representation
 typedef struct {
-  uint16_t x[16];
-  uint16_t y[16];
+  uint16_t x[16]; 
   uint16_t z[16];
-  uint16_t t[16];
-} ext_point;
+} monpoint;
 
-
-/*void edwards_add(ext_point* a,ext_point* b)
+void mon_dbladd(monpoint* dbl,monpoint* add,const monpoint* dif)
 {
-  uint16_t t1[16];
-  uint16_t t2[16];
-  uint16_t t3[16];
+    uint16_t r6[16],r7[16],r8[16],r9[16],r10[16]; // 86 additional bytes of memory
   
-  
-  
-}*/
+    uint32_t a24 = 4623308; // a24 = (a-2)/4, here in Montgomery representation
+    
+    uint16_t *r0 = (uint16_t*)dif->x,*r1 = (uint16_t*)dif->z,
+             *r2 = (uint16_t*)dbl->x,*r3 = (uint16_t*)dbl->z,
+             *r4 = (uint16_t*)add->x,*r5 = (uint16_t*)add->z;
+    
+    mp_add(r6,r2,r3);
+    mp_mulmod(r7,r6,r6);
+    mp_sub(r8,r2,r3);
+    mp_add(r9,r4,r5);
+    mp_sub(r10,r4,r5);
+    mp_mulmod(r4,r10,r6);
+    mp_mulmod(r5,r9,r8);
+    mp_mulmod(r10,r8,r8);
+    mp_sub(r9,r7,r10);
+    mp_add(r6,r4,r5);
+    mp_mulmod(r8,r6,r6);
+    mp_sub(r6,r4,r5);
+    mp_mulmod(r4,r6,r6);
+    //mon_mulmod(r5,a24,r9);
+    mp_add(r6,r10,r5);
+    mp_mulmod(r5,r0,r4);
+    mp_mulmod(r4,r1,r8);
+    mp_mulmod(r3,r9,r6);
+    mp_mulmod(r2,r7,r10);
+    
+}
+
+void ladder(monpoint* R,const monpoint* P,const uint16_t *n)
+{
+    // TODO: R has to be initialized to the curve's neutral element
+    monpoint *R0 = (monpoint*)R;
+    monpoint *R1 = (monpoint*)P;
+    
+    monpoint cP; 
+    COORD_COPY(cP.x,P->x);
+    COORD_COPY(cP.z,P->z);
+    
+    for (uint16_t i = 255;i >= 0;i--)
+    {
+       if (n[i/16] & (0x8000 >> (i%16)))
+       {
+         mon_dbladd(R1,R0,&cP);
+       }
+       else
+       {
+         mon_dbladd(R0,R1,&cP);
+       }
+    }
+}
 
 int main( void )
 {
@@ -58,7 +107,7 @@ int main( void )
     
     
     //// TEST FOR MONTGOMERY MULTIPLICATION
-    /*
+    
     // 32186194510935479195032402467013996570242823777592960551734090304540054362176
     uint16_t a[16] = {38976, 51875, 42674, 19019, 59674, 478, 61180, 29312, 49733, 46448, 33089, 2508, 16002, 30922, 48530, 18216};
 
@@ -68,8 +117,11 @@ int main( void )
     uint16_t c[16] = {0};
     
     mp_mulmod(c,a,b);
+
     // RESULT SHOULD BE: {20999, 56674, 14492, 58657, 45441, 63329, 26172, 61934, 11079, 52317, 33744, 5466, 59794, 64383, 32209, 11931}
-    */
+    
+    printf("%d",c[0]);
+    
     
     //uint16_t a[16] = {0xffed, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 0x7fff};
     /*
@@ -78,6 +130,12 @@ int main( void )
 
     mp_add(a,b);
     */
+    
+    /*   char abc[4] = {'a','b','c', 1};
+    uint8_t hash[64] = {0};
+    keccak((uint8_t*)abc,4,(uint8_t*)hash,64);
+    
+    
     uint16_t c[16] = {0};
     
     uint16_t a[16] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -96,7 +154,7 @@ int main( void )
     a[0] = 1;
     
     mp_mulmod16(c,a,b);
-    
+   */
     return 0;
 }
 

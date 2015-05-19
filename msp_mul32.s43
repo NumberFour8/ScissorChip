@@ -12,7 +12,7 @@ RSEG CODE
 ; The reduction is done modulo 2^255-19
 ; A is pointed by R13, B is pointed by R14.
 ; The result T has to be pointed by R12
-; BEWARE: the number T have to be 40 bytes long
+; BEWARE: the number T has to be 40 bytes long as the additional 8 bytes of memory is required
 
 mp_mulmod32
   
@@ -25,7 +25,8 @@ mp_mulmod32
   ; For loop i = 0 .. s-1
   MOV R14,R7  ; Traverses B
   ADD #32,R7  ; Excluding sth word
-  MOV R7,R10  ; R10 points to t[s] and t[s+1]. 
+  MOV R12,R10
+  ADD #32,R10 ; R10 points to t[s] and t[s+1].
 outer_for2
 
   ; (C,S) = t[0] + a[0]*b[i]
@@ -46,12 +47,12 @@ outer_for2
   PUSH.W R10  ; Save R10
   
   MOV R12,R10        ; Put R12 to R10 which points to T
-  ADD #4,R10         ; Start adding carry after t[1]
-  MOV R12,R11        
+  MOV R12,R11
+  ADD #6,R10         ; Start adding carry after t[1]
   ADD #34,R11        ; until (s+1)th word inclusive (thus propagate further to t[s] and t[s+1])
   
-  ADD  RES2,0x0(R10)
-  ADDC RES3,0x2(R10)
+  ADD  RES2,-2(R10)
+  ADDC RES3, 0(R10)
   CALLA #mp_cprop    ; Propagate the carry (start at t[2])
   
   POP.W R10   ; Restore R10
@@ -78,11 +79,11 @@ outer_for2
   
   ; For j = 1 .. s-2, last iteration is unrolled
   MOV R13,R8 
-  INCD R8      ; a[j]
+  ADD #4,R8    ; a[j]
   MOV R13,R9    
-  ADD #30,R9   ; a[s-1]
+  ADD #28,R9   ; a[s-1]
   MOV R12,R5
-  INCD R5      ; t[j]
+  ADD #4,R5    ; t[j]
   
 inner_for2       
     
@@ -111,10 +112,10 @@ inner_for2
     MOV R5,R10
     MOV R12,R11
     ADD #34,R11  ; Propagate further to t[s], t[s+1]
-    ADD #4,R10
+    ADD #6,R10
     
-    ADD  RES2,0x0(R10)
-    ADDC RES3,0x2(R10)
+    ADD  RES2,-2(R10)
+    ADDC RES3, 0(R10)
     CALLA #mp_cprop    
     
     POP.W R10 ; Restore R10
@@ -136,7 +137,7 @@ inner_for2
     
     ADD #4,R8  ; Advance to a[++j]
     ADD #4,R5  ; Advance to t[++j]
-    CMP R8,R9 ; j = s-1 halts the loop
+    CMP R8,R9  ; j = s-1 halts the loop
     JNZ inner_for2
     
   ; The last iteration of the inner for is unrolled
@@ -163,7 +164,7 @@ inner_for2
   ADD  RES2,0x0(R10)  ; Propagate to t[s] and t[s+1]
   ADDC RES3,0x2(R10)
   ADC 0x4(R10)
-  ADC 0x6(R11)
+  ADC 0x6(R10)
   
   ; (C,S) = S + m*n[s-1]
   MOV RES0,&MPY32L
@@ -183,7 +184,7 @@ inner_for2
   ; Now the final post-processing
     
   ; (C,S) = t[s] + C
-  MOV R10,R4      ; m is not needed anymore
+  MOV 0x0(R10),R4      ; m is not needed anymore
   MOV 0x2(R10),R15
   
   ADD  RES2,R4    ; Store S in R4 and R15

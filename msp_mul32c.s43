@@ -1,0 +1,151 @@
+#include "msp430.h"
+NAME msp_mp_mul32c
+
+EXTERN mp_freeze
+
+PUBLIC mp_mulmod32c  
+RSEG CODE 
+
+; Performs modular multiplication of A and B which are both in Montgomery representation.
+; This function utilizes fully the 32-bit multiplier.
+; The reduction is done modulo 2^255-19
+; A is pointed by R13, B is pointed by R14.
+; The result T has to be pointed by R12
+; BEWARE: the number T has to be 40 bytes long as the additional 8 bytes of memory is required
+
+mp_mulmod32c
+
+PUSHM.W #8,R11
+  
+  ; Coarsely Integrated Operand Scanning
+  ; m = R4,R15
+  ; -------------------------------------- 
+
+  ; Store pointer to T
+  MOV R12,R11
+
+ ; For loop i = 0 .. s-1
+  MOV R14,R7  ; Traverses B
+  ADD #32,R7  ; Excluding sth word
+outer_for3
+
+  MOV R13,R6  ; Traverses A
+  ADD #32,R6  ; Excluding sth word
+  MOV R12,R5  ; Traverses T
+inner_for3
+  
+   MOV 0x0(R5),&MPY32L ; t[j]
+   MOV 0x2(R5),&MPY32H
+   MOV #1,&OP2L      ; 1
+   MOV #0,&OP2H
+    
+   MOV RES2,&MAC32L    ; C
+   MOV RES3,&MAC32H      
+   MOV #1,&OP2L      ; 1
+   MOV #0,&OP2H
+    
+   MOV 0x0(R13),&MAC32L  ; a[j]
+   MOV 0x2(R13),&MAC32H
+   MOV 0x0(R14),&OP2L   ; b[i] 
+   MOV 0x2(R14),&OP2H
+
+   MOV RES0,0x0(R5)
+   MOV RES1,0x2(R5)
+   
+   ADD #4,R5
+   ADD #4,R13
+   CMP R6,R13 ; &a < &a[s]
+   JNE inner_for3
+   
+  ADD  RES2,16(R12)     ; t[s] = t[s] + C
+  ADDC RES3,17(R12)
+  
+  CLR 18(R12)
+  CLR 19(R12)
+  
+  ADC 18(R12)   ; t[s+1] = C
+  
+  ; m = t[0]*n'[0] mod 2^32
+  MOV 0(R12),&MPY32L    ; t[0]
+  MOV 2(R12),&MPY32H
+  MOV #0xCA1B,&OP2L     ; n'[0]
+  MOV #0x286B,&OP2H
+  
+  ; Store m in R4 and R15
+  MOV RES0,R4
+  MOV RES1,R15
+  
+  ; (C,S) = t[0] + m*n[0]
+  MOV 0(R12),&MPY32L    ; t[0]
+  MOV 2(R12),&MPY32H
+  MOV #1,&OP2L          ; 1
+  MOV #0,&OP2H
+  
+  MOV R4,&MAC32L        ; m
+  MOV R15,&MAC32L
+  MOV #0xFFED,&OP2L     ; n[0]
+  MOV #0xFFFF,&OP2H 
+  
+  ; Store C in R8 and R9
+  MOV RES2,R8
+  MOV RES3,R9
+  
+  MOV R12,R5  ; Traverses T
+  ADD #32,R5  ; Excluding sth word
+  ADD #4,R12  ; j = 1 (e.g. start at t[1])
+inner_for3b
+   
+   ; (C,S) = t[j] + m*n[j] + C
+    MOV 0(R12),&MPY32L ; t[j]
+    MOV 2(R12),&MPY32H
+    MOV #1,&OP2L      ; 1
+    MOV #0,&OP2H
+    
+    MOV R8,&MAC32L    ; C
+    MOV R9,&MAC32H      
+    MOV #1,&OP2L      ; 1
+    MOV #0,&OP2H
+    
+    MOV R4,&MAC32L      ; m
+    MOV R15,&MAC32H
+    MOV #0xFFFF,&OP2L   ; n[j] 
+    MOV #0xFFFF,&OP2H
+   
+    ; t[j-1] = S
+    MOV RES0,-4(R12)
+    MOV RES1,-2(R12)
+    
+     ; Store C in R8 and R9
+    MOV RES2,R8
+    MOV RES3,R9
+  
+    ADD #4,R12
+    CMP R12,R5
+    JNE inner_for3b ; &t < &t[s]
+    
+   ; Reset pointer to T
+   MOV R11,R12
+   
+   ; t[s] + C
+   ADD  16(R12),R8
+   ADDC 17(R12),R9
+    
+   ; t[s-1] = S
+   MOV 14(R12),R8
+   MOV 15(R12),R9
+    
+   ; t[s+1] + C
+   ADC 18(R12)
+   ADC 19(R12)
+   
+   ; t[s] = t[s+1] 
+   MOV 18(R12),16(R12)
+   MOV 19(R12),17(R12)
+   
+   ADD #4,R14
+   CMP R14,R7
+   JNE outer_for3 ; &b < &b[s]
+    
+RETA
+
+END

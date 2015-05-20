@@ -58,22 +58,20 @@ inner_for3a
    MOV #1,&OP2L       ; 1
    MOV #0,&OP2H
   
-   MOV 0x0(R5),&MAC32L  ; t[j]
-   MOV 0x2(R5),&MAC32H
+   MOV @R5+,&MAC32L  ; t[j]
+   MOV @R5+,&MAC32H
    MOV #1,&OP2L         ; 1
    MOV #0,&OP2H
     
-   MOV 0x0(R8),&MAC32L  ; a[j]
-   MOV 0x2(R8),&MAC32H
+   MOV @R8+,&MAC32L  ; a[j]
+   MOV @R8+,&MAC32H
    MOV 0x0(R14),&OP2L    ; b[i] 
    MOV 0x2(R14),&OP2H
 
    ; t[j] = S
-   MOV RES0,0x0(R5)
-   MOV RES1,0x2(R5)
+   MOV RES0,-4(R5)
+   MOV RES1,-2(R5)
    
-   ADD #4,R5            ; t[j++]
-   ADD #4,R8            ; a[j++]
    CMP R6,R8            ; &a < &a[s]
    JNE inner_for3a
    
@@ -116,8 +114,8 @@ inner_for3a
 inner_for3b
    
    ; (C,S) = t[j] + m*n[j] + C
-    MOV 0(R12),&MPY32L ; t[j]
-    MOV 2(R12),&MPY32H
+    MOV @R12+,&MPY32L ; t[j]
+    MOV @R12+,&MPY32H
     MOV #1,&OP2L      ; 1
     MOV #0,&OP2H
     
@@ -132,14 +130,13 @@ inner_for3b
     MOV #0xFFFF,&OP2H
    
     ; t[j-1] = S
-    MOV RES0,-4(R12)
-    MOV RES1,-2(R12)
+    MOV RES0,-8(R12)
+    MOV RES1,-6(R12)
     
      ; Store C in R8 and R9
     MOV RES2,R8
     MOV RES3,R9
   
-    ADD #4,R12
     CMP R12,R5
     JNE inner_for3b ; &t < &t[s]
    

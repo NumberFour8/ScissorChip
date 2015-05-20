@@ -2,31 +2,30 @@
 
 <project>
   <fileVersion>2</fileVersion>
-  <fileChecksum>2252968716</fileChecksum>
+  <fileChecksum>1742269742</fileChecksum>
   <configuration>
     <name>Debug</name>
     <outputs>
-      <file>$PROJ_DIR$\msp_mul32c.s43.c</file>
       <file>$PROJ_DIR$\msp_mul32c.s43</file>
-      <file>$PROJ_DIR$\Debug\Obj\keccak.r43</file>
-      <file>$PROJ_DIR$\Debug\List\keccak.s43</file>
       <file>$PROJ_DIR$\Debug\List\sha512.s43</file>
+      <file>$PROJ_DIR$\Debug\Obj\keccak.r43</file>
       <file>$PROJ_DIR$\Debug\List\keccak.lst</file>
-      <file>$PROJ_DIR$\Debug\List\msp_mul32.lst</file>
       <file>$PROJ_DIR$\Debug\List\msp_mp.lst</file>
+      <file>$PROJ_DIR$\Debug\List\msp_mul32.lst</file>
+      <file>$PROJ_DIR$\Debug\List\keccak.s43</file>
+      <file>$PROJ_DIR$\msp_mul32c.s43.c</file>
       <file>$TOOLKIT_DIR$\inc\dlib\c\DLib_Defaults.h</file>
       <file>$PROJ_DIR$\Debug\List\msp_mul16.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\msp_mul32.r43</file>
       <file>$TOOLKIT_DIR$\inc\in430.h</file>
       <file>$TOOLKIT_DIR$\inc\dlib\c\DLib_Threads.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\msp_mul32.r43</file>
       <file>$TOOLKIT_DIR$\inc\dlib\c\yvals.h</file>
+      <file>$PROJ_DIR$\Debug\Exe\MSP_MULT.ulp</file>
       <file>$TOOLKIT_DIR$\inc\msp430.h</file>
       <file>$TOOLKIT_DIR$\inc\dlib\c\ycheck.h</file>
-      <file>$PROJ_DIR$\Debug\Exe\MSP_MULT.ulp</file>
       <file>$TOOLKIT_DIR$\inc\dlib\c\stdint.h</file>
       <file>$TOOLKIT_DIR$\config\linker\multiplier32_loc2.xcl</file>
       <file>$PROJ_DIR$\Debug\Obj\main.pbi</file>
-      <file>$TOOLKIT_DIR$\config\linker\lnk430f5529.xcl</file>
       <file>$PROJ_DIR$\Debug\List\main.s43</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_mp.r43</file>
       <file>$PROJ_DIR$\msp_mp.h</file>
@@ -41,65 +40,80 @@
       <file>$PROJ_DIR$\Debug\Obj\sha512.r43</file>
       <file>$TOOLKIT_DIR$\inc\dlib\c\stdio.h</file>
       <file>$PROJ_DIR$\Debug\Obj\skein.pbi</file>
-      <file>$PROJ_DIR$\main.c</file>
       <file>$PROJ_DIR$\Debug\List\sha512.lst</file>
-      <file>$PROJ_DIR$\msp_mul32.s43</file>
-      <file>$PROJ_DIR$\msp_mul16.s43</file>
-      <file>$PROJ_DIR$\msp_mp.s43</file>
-      <file>$PROJ_DIR$\keccak.c</file>
-      <file>$PROJ_DIR$\Debug\List\msp_mul32c.lst</file>
       <file>$TOOLKIT_DIR$\inc\dlib\c\DLib_Product.h</file>
-      <file>$TOOLKIT_DIR$\lib\dlib\dl430xlsfn.h</file>
       <file>$TOOLKIT_DIR$\inc\intrinsics.h</file>
-      <file>$TOOLKIT_DIR$\inc\dlib\c\stdlib.h</file>
+      <file>$PROJ_DIR$\Debug\List\msp_mul32c.lst</file>
+      <file>$TOOLKIT_DIR$\lib\dlib\dl430xlsfn.h</file>
       <file>$PROJ_DIR$\Debug\Obj\MSP_MULT.pbd</file>
+      <file>$TOOLKIT_DIR$\inc\dlib\c\stdlib.h</file>
       <file>$PROJ_DIR$\Debug\List\MSP_MULT.map</file>
+      <file>$PROJ_DIR$\Debug\Obj\main.r43</file>
       <file>$TOOLKIT_DIR$\lib\dlib\dl430xlsfn.r43</file>
       <file>$PROJ_DIR$\Debug\List\main.lst</file>
-      <file>$PROJ_DIR$\Debug\Obj\main.r43</file>
       <file>$PROJ_DIR$\Debug\List\skein.s43</file>
       <file>$PROJ_DIR$\sha512.c</file>
       <file>$TOOLKIT_DIR$\inc\dlib\c\ysizet.h</file>
       <file>$TOOLKIT_DIR$\inc\dlib\c\xencoding_limits.h</file>
       <file>$PROJ_DIR$\Debug\List\skein.lst</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_mul16.r43</file>
+      <file>$PROJ_DIR$\keccak.h</file>
       <file>$TOOLKIT_DIR$\inc\msp430f5529.h</file>
       <file>$PROJ_DIR$\skein.c</file>
-      <file>$PROJ_DIR$\keccak.h</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_mul32c.s43.r43</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_mul32c.s43.pbi</file>
+      <file>$PROJ_DIR$\keccak.c</file>
+      <file>$PROJ_DIR$\main.c</file>
+      <file>$PROJ_DIR$\msp_mp.s43</file>
+      <file>$PROJ_DIR$\msp_mul16.s43</file>
+      <file>$PROJ_DIR$\msp_mul32.s43</file>
+      <file>$TOOLKIT_DIR$\inc\msp430fr5969.h</file>
+      <file>$TOOLKIT_DIR$\config\linker\lnk430fr5969.xcl</file>
     </outputs>
     <file>
-      <name>$PROJ_DIR$\msp_mul32c.s43.c</name>
+      <name>[ROOT_NODE]</name>
       <outputs>
         <tool>
-          <name>ICC430</name>
-          <file> 60</file>
+          <name>XLINK</name>
+          <file> 23 41</file>
         </tool>
         <tool>
-          <name>BICOMP</name>
-          <file> 61</file>
+          <name>ULP430</name>
+          <file> 14</file>
         </tool>
       </outputs>
-      <inputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 14 57 10 44</file>
-        </tool>
-      </inputs>
     </file>
     <file>
       <name>$PROJ_DIR$\msp_mul32c.s43</name>
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 25 41</file>
+          <file> 24 37</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 14 57</file>
+          <file> 15 61</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\msp_mul32c.s43.c</name>
+      <outputs>
+        <tool>
+          <name>ICC430</name>
+          <file> 54</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 55</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 15 52 11 36</file>
         </tool>
       </inputs>
     </file>
@@ -108,104 +122,13 @@
       <outputs>
         <tool>
           <name>XLINK</name>
-          <file> 47</file>
+          <file> 41</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>XLINK</name>
-          <file> 20 18 2 50 22 56 12 48</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\main.c</name>
-      <outputs>
-        <tool>
-          <name>ICC430</name>
-          <file> 21 49 50</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 19</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICC430</name>
-          <file> 14 57 10 44 17 15 13 8 43 42 54 11 45 53 23 59 31</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 14 57 10 44 17 15 13 8 43 42 54 11 45 53 23 59 31</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\msp_mul32.s43</name>
-      <outputs>
-        <tool>
-          <name>A430</name>
-          <file> 12 6</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>A430</name>
-          <file> 14 57</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\msp_mul16.s43</name>
-      <outputs>
-        <tool>
-          <name>A430</name>
-          <file> 56 9</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>A430</name>
-          <file> 14 57</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\msp_mp.s43</name>
-      <outputs>
-        <tool>
-          <name>A430</name>
-          <file> 22 7</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>A430</name>
-          <file> 14 57</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\keccak.c</name>
-      <outputs>
-        <tool>
-          <name>ICC430</name>
-          <file> 3 5 2</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 27</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICC430</name>
-          <file> 59 17 15 13 8 43 42 54 11 31 53</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 59 17 15 13 8 43 42 54 11 31 53</file>
+          <file> 62 18 2 42 21 50 10 24 43</file>
         </tool>
       </inputs>
     </file>
@@ -214,7 +137,53 @@
       <outputs>
         <tool>
           <name>ICC430</name>
-          <file> 4 36 32</file>
+          <file> 1 34 31</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 25</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICC430</name>
+          <file> 29 30 16 13 8 38 35 48 12 47 17</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 29 30 16 13 8 38 35 48 12 47 17</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\skein.c</name>
+      <outputs>
+        <tool>
+          <name>ICC430</name>
+          <file> 45 49 27</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 33</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICC430</name>
+          <file> 17 16 13 8 38 35 48 12 30 47 32 28</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 17 16 13 8 38 35 48 12 30 47 32 28</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\keccak.c</name>
+      <outputs>
+        <tool>
+          <name>ICC430</name>
+          <file> 6 3 2</file>
         </tool>
         <tool>
           <name>BICOMP</name>
@@ -224,54 +193,78 @@
       <inputs>
         <tool>
           <name>ICC430</name>
-          <file> 30 31 15 13 8 43 42 54 11 53 17</file>
+          <file> 51 17 16 13 8 38 35 48 12 30 47</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 30 31 15 13 8 43 42 54 11 53 17</file>
+          <file> 51 17 16 13 8 38 35 48 12 30 47</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\skein.c</name>
+      <name>$PROJ_DIR$\main.c</name>
       <outputs>
         <tool>
           <name>ICC430</name>
-          <file> 51 55 28</file>
+          <file> 20 44 42</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 34</file>
+          <file> 19</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICC430</name>
-          <file> 17 15 13 8 43 42 54 11 31 53 33 29</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 17 15 13 8 43 42 54 11 31 53 33 29</file>
+          <file> 15 61 11 36 17 16 13 8 38 35 48 12 40 47 22 51 30</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>[ROOT_NODE]</name>
+      <name>$PROJ_DIR$\msp_mp.s43</name>
       <outputs>
         <tool>
-          <name>XLINK</name>
-          <file> 24 47</file>
-        </tool>
-        <tool>
-          <name>ULP430</name>
-          <file> 16</file>
+          <name>A430</name>
+          <file> 21 4</file>
         </tool>
       </outputs>
+      <inputs>
+        <tool>
+          <name>A430</name>
+          <file> 15 61</file>
+        </tool>
+      </inputs>
     </file>
-    <forcedrebuild>
-      <name>[MULTI_TOOL]</name>
-      <tool>XLINK</tool>
-    </forcedrebuild>
+    <file>
+      <name>$PROJ_DIR$\msp_mul16.s43</name>
+      <outputs>
+        <tool>
+          <name>A430</name>
+          <file> 50 9</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>A430</name>
+          <file> 15 61</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\msp_mul32.s43</name>
+      <outputs>
+        <tool>
+          <name>A430</name>
+          <file> 10 5</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>A430</name>
+          <file> 15 61</file>
+        </tool>
+      </inputs>
+    </file>
   </configuration>
   <configuration>
     <name>Release</name>

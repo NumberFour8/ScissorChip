@@ -29,41 +29,61 @@ PUSHM.W #8,R11
   ADD #32,R7  ; Excluding sth word
 outer_for3
 
+  ; (C,S) = t[0] + a[0]*b[i]
+  MOV 0x0(R12),&MPY32L  ; t[0]
+  MOV 0x2(R12),&MPY32H
+  MOV #1,&OP2L          ; 1
+  MOV #0,&OP2H
+    
+  MOV 0x0(R13),&MAC32L  ; a[0]
+  MOV 0x2(R13),&MAC32H
+  MOV 0x0(R14),&OP2L    ; b[i] 
+  MOV 0x2(R14),&OP2H
+
+  ; t[0] = S
+  MOV RES0,0x0(R12)
+  MOV RES1,0x2(R12)
+   
   MOV R13,R6  ; Traverses A
+  MOV R13,R8
   ADD #32,R6  ; Excluding sth word
   MOV R12,R5  ; Traverses T
-inner_for3
+  ADD #4,R5   ; Start at t[1] already
+  ADD #4,R8   ; and at a[1]
+inner_for3a
   
-   MOV 0x0(R5),&MPY32L ; t[j]
-   MOV 0x2(R5),&MPY32H
-   MOV #1,&OP2L      ; 1
+   ; (C,S) = t[j] + a[j]*b[i] + C
+   MOV RES2,&MPY32L   ; C
+   MOV RES3,&MPY32H      
+   MOV #1,&OP2L       ; 1
+   MOV #0,&OP2H
+  
+   MOV 0x0(R5),&MAC32L  ; t[j]
+   MOV 0x2(R5),&MAC32H
+   MOV #1,&OP2L         ; 1
    MOV #0,&OP2H
     
-   MOV RES2,&MAC32L    ; C
-   MOV RES3,&MAC32H      
-   MOV #1,&OP2L      ; 1
-   MOV #0,&OP2H
-    
-   MOV 0x0(R13),&MAC32L  ; a[j]
-   MOV 0x2(R13),&MAC32H
-   MOV 0x0(R14),&OP2L   ; b[i] 
+   MOV 0x0(R8),&MAC32L  ; a[j]
+   MOV 0x2(R8),&MAC32H
+   MOV 0x0(R14),&OP2L    ; b[i] 
    MOV 0x2(R14),&OP2H
 
+   ; t[j] = S
    MOV RES0,0x0(R5)
    MOV RES1,0x2(R5)
    
-   ADD #4,R5
-   ADD #4,R13
-   CMP R6,R13 ; &a < &a[s]
-   JNE inner_for3
+   ADD #4,R5            ; t[j++]
+   ADD #4,R8            ; a[j++]
+   CMP R6,R8            ; &a < &a[s]
+   JNE inner_for3a
    
-  ADD  RES2,16(R12)     ; t[s] = t[s] + C
-  ADDC RES3,17(R12)
+  ADD  RES2,32(R12)     ; t[s] = t[s] + C
+  ADDC RES3,34(R12)
   
-  CLR 18(R12)
-  CLR 19(R12)
-  
-  ADC 18(R12)   ; t[s+1] = C
+  ; t[s+1] = C
+  CLR 36(R12)
+  CLR 38(R12)
+  ADC 36(R12)   
   
   ; m = t[0]*n'[0] mod 2^32
   MOV 0(R12),&MPY32L    ; t[0]
@@ -82,7 +102,7 @@ inner_for3
   MOV #0,&OP2H
   
   MOV R4,&MAC32L        ; m
-  MOV R15,&MAC32L
+  MOV R15,&MAC32H
   MOV #0xFFED,&OP2L     ; n[0]
   MOV #0xFFFF,&OP2H 
   
@@ -91,7 +111,7 @@ inner_for3
   MOV RES3,R9
   
   MOV R12,R5  ; Traverses T
-  ADD #32,R5  ; Excluding sth word
+  ADD #28,R5  ; Excluding (s-1)th word
   ADD #4,R12  ; j = 1 (e.g. start at t[1])
 inner_for3b
    
@@ -122,29 +142,57 @@ inner_for3b
     ADD #4,R12
     CMP R12,R5
     JNE inner_for3b ; &t < &t[s]
+   
+   ; (C,S) = t[s-1] + m*n[s-1] + C
+   MOV 0(R12),&MPY32L ; t[s-1]
+   MOV 2(R12),&MPY32H
+   MOV #1,&OP2L      ; 1
+   MOV #0,&OP2H
     
+   MOV R8,&MAC32L    ; C
+   MOV R9,&MAC32H      
+   MOV #1,&OP2L      ; 1
+   MOV #0,&OP2H
+    
+   MOV R4,&MAC32L      ; m
+   MOV R15,&MAC32H
+   MOV #0xFFFF,&OP2L   ; n[s-1] 
+   MOV #0x7FFF,&OP2H
+   
+   ; t[s-2] = S
+   MOV RES0,-4(R12)
+   MOV RES1,-2(R12)
+    
+   ; Store C in R8 and R9
+   MOV RES2,R8
+   MOV RES3,R9
+  
    ; Reset pointer to T
    MOV R11,R12
    
    ; t[s] + C
-   ADD  16(R12),R8
-   ADDC 17(R12),R9
+   ADD  32(R12),R8
+   ADDC 34(R12),R9
     
    ; t[s-1] = S
-   MOV 14(R12),R8
-   MOV 15(R12),R9
+   MOV R8,28(R12)
+   MOV R9,30(R12)
     
-   ; t[s+1] + C
-   ADC 18(R12)
-   ADC 19(R12)
-   
    ; t[s] = t[s+1] 
-   MOV 18(R12),16(R12)
-   MOV 19(R12),17(R12)
+   MOV 36(R12),32(R12)
+   MOV 38(R12),34(R12)
+    
+   ; t[s] + C
+   ADC 32(R12)
+   ADC 34(R12)
    
    ADD #4,R14
    CMP R14,R7
    JNE outer_for3 ; &b < &b[s]
+  
+  POPM.W #8,R11
+  
+  CALLA #mp_freeze ; Conditionally subtract 2^255-19 in constant time
     
 RETA
 

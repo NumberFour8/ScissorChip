@@ -10,7 +10,7 @@
 #define COORD_COPY(x,y) for (*(x) = 15 ;*(x);(*(x))--) (x)[*(x)] = (y)[*(x)]; \
                         *(x) = *(y);
                       
-#define mp_mulmod(c,a,b) mp_mulmod16(c,a,b) 
+#define mp_mulmod(c,a,b) mp_mulmod32c(c,a,b) 
 
 // Montgomery XZ coordinates.
 // The coordinates itself must be in Montgomery representation
@@ -61,7 +61,7 @@ void ladder(monpoint* R,const monpoint* P,const uint16_t *n)
     COORD_COPY(cP.x,P->x);
     COORD_COPY(cP.z,P->z);
     
-    for (uint16_t i = 255;i >= 0;i--)
+    for (int i = 255;i >= 0;i--)
     {
        if (n[i/16] & (0x8000 >> (i%16)))
        {
@@ -120,10 +120,12 @@ int main( void )
     
     mp_mulmod(c,a,b);
 
-    // RESULT SHOULD BE: {20999, 56674, 14492, 58657, 45441, 63329, 26172, 61934, 11079, 52317, 33744, 5466, 59794, 64383, 32209, 11931}
-    
     printf("%d",c[0]);
-    
+    // RESULT SHOULD BE: {20999, 56674, 14492, 58657, 45441, 63329, 26172, 61934, 11079, 52317, 33744, 5466, 59794, 64383, 32209, 11931}
+     
+    for (int i = 0;i < 16;i++)
+      printf("%d",c[i]);
+      
     
     //uint16_t a[16] = {0xffed, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 0x7fff};
     /*

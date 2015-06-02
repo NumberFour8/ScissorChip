@@ -10,7 +10,8 @@
 #define COORD_COPY(x,y) for (*(x) = 15 ;*(x);(*(x))--) (x)[*(x)] = (y)[*(x)]; \
                         *(x) = *(y);
                       
-#define mp_mulmod(c,a,b) mp_mulmod32c(c,a,b) 
+#define mp_mulmod(c,a,b) mp_mulmod32c(c,a,b,32) 
+#define mp_mulmod1(c,a,b) mp_mulmod32c(c,a,b,1)
 
 // Montgomery XZ coordinates.
 // The coordinates itself must be in Montgomery representation
@@ -42,7 +43,7 @@ void mon_dbladd(monpoint* dbl,monpoint* add,const monpoint* dif)
     mp_mulmod(r8,r6,r6);
     mp_sub(r6,r4,r5);
     mp_mulmod(r4,r6,r6);
-    //mon_mulmod(r5,a24,r9);
+    mon_mulmod1(r5,r9,&a24);
     mp_add(r6,r10,r5);
     mp_mulmod(r5,r0,r4);
     mp_mulmod(r4,r1,r8);

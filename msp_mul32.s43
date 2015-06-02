@@ -19,12 +19,11 @@ mp_mulmod32
   PUSHM.W #8,R11
   
   ; Finely Integrated Operand Scanning
-  ; m = R4,R15
+  ; m = R4,R7
   ; -------------------------------------- 
   
   ; For loop i = 0 .. s-1
-  MOV R14,R7  ; Traverses B
-  ADD #32,R7  ; Excluding sth word
+  ADD R14,R15  ; Traverses B
   MOV R12,R10
   ADD #32,R10 ; R10 points to t[s] and t[s+1].
 outer_for2
@@ -64,7 +63,7 @@ outer_for2
   MOV #0x286B,&OP2H
   
   MOV RES0,R4       ; Store m to R4
-  MOV RES1,R15      ; and R15
+  MOV RES1,R7      ; and R7
   
   ; (C,S) = S + m*n[0]
   MOV R5,&MPY32L        ; S
@@ -73,7 +72,7 @@ outer_for2
   MOV #0,&OP2H
   
   MOV R4, &MAC32L        ; m
-  MOV R15,&MAC32H       
+  MOV R7, &MAC32H       
   MOV #0xFFED,&OP2L     ; n[0]
   MOV #0xFFFF,&OP2H      
   
@@ -127,7 +126,7 @@ inner_for2
     MOV #0,&OP2H
     
     MOV R4,&MAC32L       ; m
-    MOV R15,&MAC32H   
+    MOV R7,&MAC32H   
     MOV #0xFFFF,&OP2L    ; n[j] = 0xFFFF for j = 1 .. s-2
     MOV #0xFFFF,&OP2H
     
@@ -173,7 +172,7 @@ inner_for2
   MOV #0,&OP2H
     
   MOV R4,&MAC32L
-  MOV R15,MAC32H
+  MOV R7,&MAC32H
   MOV #0xFFFF,&OP2L
   MOV #0x7FFF,&OP2H
     
@@ -185,13 +184,13 @@ inner_for2
     
   ; (C,S) = t[s] + C
   MOV 0x0(R10),R4      ; m is not needed anymore
-  MOV 0x2(R10),R15
+  MOV 0x2(R10),R7
   
-  ADD  RES2,R4    ; Store S in R4 and R15
-  ADDC RES3,R15
+  ADD  RES2,R4    ; Store S in R4 and R7
+  ADDC RES3,R7
   
   MOV R4 ,0x0(R5)  ; t[s-1] = S
-  MOV R15,0x2(R5)  
+  MOV R7, 0x2(R5)  
   
   MOV 0x4(R10),0x0(R10)     ; Store t[s+1] to t[s]
   MOV 0x6(R10),0x2(R10)
@@ -203,7 +202,7 @@ inner_for2
   CLR 0x6(R10)
   
   ADD #4,R14
-  CMP R7,R14       ; Check if B traversal is still less than s
+  CMP R15,R14       ; Check if B traversal is still less than s
   JNZ outer_for2
   
   CALLA #mp_freeze ; Conditionally subtract 2^255-19 in constant time

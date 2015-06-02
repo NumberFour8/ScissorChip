@@ -1,7 +1,108 @@
 #include "msp430.h"
 NAME msp_mp_mul32c
 
-EXTERN mp_freeze
+PUBLIC mp_condsub
+RSEG CODE
+
+; Subtracts 2^255-19 from the number pointed by R12 if the LS bit of R4 is set
+; otherwise subtracts nothing.
+; If the second LS bit of R4 is set, addition is preformed instead of subtraction. 
+mp_condsub
+    
+    PUSHM.W #5,R9 ; Save R5-R9 
+    
+    MOV R12,R6
+    ADD #30,R6
+    
+    ; Depending on second bit of R4 we decide whether we subtract or add. This is constant time.
+    BIT #2,R4
+    JNZ setAdd
+    MOV #0xFFED,R5
+    MOV #0xFFFF,R8
+    MOV #0x7FFF,R9
+    JMP andLimbs
+setAdd
+    MOV #0x0011,R5
+    MOV #0x0000,R8
+    MOV #0x8000,R9
+    JMP andLimbs
+andLimbs
+   
+    ; Need to precompute FFFF or 0 to R4
+    AND #1,R4
+    MOV R4,R7
+    CLR R4
+    SUB R7,R4        ; R4 == 0 ? R4 = 0 : R4 = FFFF 
+
+    ; Set or reset the limbs of 2^255-19
+    AND R4,R5
+    AND R4,R8
+    AND R4,R9
+    
+    SUB R5,0(R12)    ; Subtract LS limb
+    MOV SR,R7        ; Save SR
+    INCD R12         ; Increase R12
+    
+    ; Subtract from the internal limbs
+    MOV R7,SR
+csubin
+    SUBC R8,0(R12)
+    MOV SR,R7
+    INCD R12
+    CMP R12,R6
+    JZ csubfin
+    MOV R7,SR
+    JMP csubin
+csubfin
+    MOV R7,SR
+    SUBC R9,0(R12)
+
+    POPM.W #5,R9        ; Restore R5 - R10
+RETA
+
+PUBLIC mp_freeze
+RSEG CODE
+
+; Conditionally subtract 2^255-19 from the 255-bit number pointed by R12
+
+mp_freeze
+ 
+    CLR R4
+
+; -- The following code does: R4 = (R12 > 2^255-19)
+    MOV #0x7FFF,R5
+    CMP 0x1e(R12),R5    
+    BIS SR,R4
+    
+    MOV #0xFFFF,R5
+    MOV R12,R10
+    MOV R12,R6
+    ADD #28,R10
+    ADD #2,R6       ; R6 contains the stop address, the 2nd LS word
+compr
+    CMP @R10,R5      
+    CLRC            ; Here we care only about equality
+    BIS SR,R4       
+    
+    DECD R10
+    CMP R6,R10
+    JNZ compr
+
+    MOV #0xFFED,R5      ; Compare the last limb
+    CMP @R12,R5
+    BIS SR,R4
+    
+    XOR #1,R4   ; Invert the carry bit
+    BIT #3,R4
+    MOV SR,R4   ; Carry bit is set if R4 is non-zero
+    AND #1,R4   ; Extract carry bit
+     
+; -- 
+    AND #0xFFFD,R4    ; Reset the second bit of R4 for subtraction
+    CALLA #mp_condsub
+
+RETA
+
 
 PUBLIC mp_mulmod32c  
 RSEG CODE 
@@ -10,7 +111,7 @@ RSEG CODE
 ; This function utilizes fully the 32-bit multiplier.
 ; The reduction is done modulo 2^255-19
 ; A is pointed by R13, B is pointed by R14.
-; The result T has to be pointed by R12
+; The result T has to be pointed by R12. R15 contains the size of B (in bytes).
 ; BEWARE: the number T has to be 40 bytes long as the additional 8 bytes of memory is required
 
 mp_mulmod32c
@@ -18,15 +119,15 @@ mp_mulmod32c
 PUSHM.W #8,R11
   
   ; Coarsely Integrated Operand Scanning
-  ; m = R4,R15
+  ; m = R4,R7
   ; -------------------------------------- 
 
   ; Store pointer to T
   MOV R12,R11
 
  ; For loop i = 0 .. s-1
-  MOV R14,R7  ; Traverses B
-  ADD #32,R7  ; Excluding sth word
+ ; R15 contains size of B
+  ADD R14,R15    ; Traverses B
 outer_for3
 
   ; (C,S) = t[0] + a[0]*b[i]
@@ -89,9 +190,9 @@ inner_for3a
   MOV #0xCA1B,&OP2L     ; n'[0]
   MOV #0x286B,&OP2H
   
-  ; Store m in R4 and R15
+  ; Store m in R4 and R7
   MOV RES0,R4
-  MOV RES1,R15
+  MOV RES1,R7
   
   ; (C,S) = t[0] + m*n[0]
   MOV 0(R12),&MPY32L    ; t[0]
@@ -100,7 +201,7 @@ inner_for3a
   MOV #0,&OP2H
   
   MOV R4,&MAC32L        ; m
-  MOV R15,&MAC32H
+  MOV R7,&MAC32H
   MOV #0xFFED,&OP2L     ; n[0]
   MOV #0xFFFF,&OP2H 
   
@@ -125,7 +226,7 @@ inner_for3b
     MOV #0,&OP2H
     
     MOV R4,&MAC32L      ; m
-    MOV R15,&MAC32H
+    MOV R7,&MAC32H
     MOV #0xFFFF,&OP2L   ; n[j] 
     MOV #0xFFFF,&OP2H
    
@@ -152,7 +253,7 @@ inner_for3b
    MOV #0,&OP2H
     
    MOV R4,&MAC32L      ; m
-   MOV R15,&MAC32H
+   MOV R7,&MAC32H
    MOV #0xFFFF,&OP2L   ; n[s-1] 
    MOV #0x7FFF,&OP2H
    
@@ -184,7 +285,7 @@ inner_for3b
    ADC 34(R12)
    
    ADD #4,R14
-   CMP R14,R7
+   CMP R14,R15 
    JNE outer_for3 ; &b < &b[s]
   
   POPM.W #8,R11

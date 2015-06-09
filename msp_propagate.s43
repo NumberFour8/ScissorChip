@@ -1,0 +1,37 @@
+#include "msp430.h"
+NAME msp_propagate
+
+PUBLIC mp_cprop
+RSEG CODE
+
+; Propagates carry from address pointed by R10+2 until address given by R11 is reached (inclusive).
+
+mp_cprop
+
+  PUSHM.W #2,R9     ; Save R8 and R9
+  
+  CLR R9        ; Clear R9
+  ADC R9        ; Put the carry to R9
+  MOV R10,R8    ; Put R10 to R8
+  
+  CMP R11,R10 
+  JGE cpd       ; Do nothing if R10 >= R11
+cpg
+  CMP R8,R11     ; Check if the last word was already processed
+  JZ cpd         ; If yes, quit
+  INCD R8        ; Move onto the next word
+  
+  ADD R9,0x0(R8) ; Add the carry to what R10 points to
+  CLR R9         ; Clear R9
+  ADC R9         ; Put the carry to R9
+  JMP cpg
+  
+cpd
+  CLRC
+  BIS R9,SR     ; Restore the carry flag, if there was any
+  
+  POPM.W #2,R9      ; Restore R8 and R9
+  
+RETA
+
+END

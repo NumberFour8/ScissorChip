@@ -2184,6 +2184,9 @@
     <name>$PROJ_DIR$\msp_mul32_sos.s43</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\msp_propagate.s43</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\sha512.c</name>
   </file>
 </project>

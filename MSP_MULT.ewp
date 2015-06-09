@@ -794,7 +794,7 @@
         </option>
         <option>
           <name>XclFile</name>
-          <state>$TOOLKIT_DIR$\config\linker\lnk430F5529.xcl</state>
+          <state>$TOOLKIT_DIR$\config\linker\lnk430FR5969.xcl</state>
         </option>
         <option>
           <name>XclFileSlave</name>
@@ -2160,13 +2160,22 @@
     <name>$PROJ_DIR$\msp_mp.s43</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\msp_mul16.s43</name>
+    <name>$PROJ_DIR$\msp_mpcond.s43</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\msp_mul32.s43</name>
+    <name>$PROJ_DIR$\msp_mul16_fios.s43</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\msp_mul32c.s43</name>
+    <name>$PROJ_DIR$\msp_mul32_cios.s43</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\msp_mul32_fios.s43</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\msp_mul32_sos.s43</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\sha512.c</name>
   </file>
 </project>
 

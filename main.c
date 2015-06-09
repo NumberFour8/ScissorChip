@@ -6,12 +6,13 @@
 
 #include "msp_mp.h"
 #include "keccak.h"
+#include "sha512.h"
 
 #define COORD_COPY(x,y) for (*(x) = 15 ;*(x);(*(x))--) (x)[*(x)] = (y)[*(x)]; \
                         *(x) = *(y);
                       
-#define mp_mulmod(c,a,b) mp_mulmod32c(c,a,b,32) 
-#define mp_mulmod1(c,a,b) mp_mulmod32c(c,a,b,1)
+#define mp_mulmod(c,a,b)  mp_mulmod16_fios(c,a,b,32) 
+#define mp_mulmod1(c,a,b) mp_mulmod32_cios(c,a,b,4)
 
 // Montgomery XZ coordinates.
 // The coordinates itself must be in Montgomery representation
@@ -40,13 +41,13 @@ void mon_dbladd(monpoint* dbl,monpoint* add,const monpoint* dif)
     mp_mulmod(r10,r8,r8);
     mp_sub(r9,r7,r10);
     mp_add(r6,r4,r5);
-    mp_mulmod(r8,r6,r6);
+    mp_mulmod(r2,r6,r6);
     mp_sub(r6,r4,r5);
     mp_mulmod(r4,r6,r6);
-    mon_mulmod1(r5,r9,&a24);
+    mp_mulmod1(r5,r9,(uint16_t*)&a24);
     mp_add(r6,r10,r5);
     mp_mulmod(r5,r0,r4);
-    mp_mulmod(r4,r1,r8);
+    mp_mulmod(r4,r1,r2);
     mp_mulmod(r3,r9,r6);
     mp_mulmod(r2,r7,r10);
     
@@ -73,6 +74,18 @@ void ladder(monpoint* R,const monpoint* P,const uint16_t *n)
          mon_dbladd(R0,R1,&cP);
        }
     }
+}
+
+uint16_t* multest()
+{
+    uint16_t a[16] = {38976, 51875, 42674, 19019, 59674, 478, 61180, 29312, 49733, 46448, 33089, 2508, 16002, 30922, 48530, 18216};
+    uint16_t b[16] = {41872, 32468, 32353, 62814, 14707, 51220, 19282, 4324, 59937, 13797, 7624, 20845, 52402, 7277, 10908, 3516};
+    
+    uint16_t c[32] = {0};
+    
+    mp_mulmod32_sos(c,a,b,32);
+  
+    return (uint16_t*)c; 
 }
 
 int main( void )
@@ -106,7 +119,7 @@ int main( void )
     // RESULT SHOULD BE: 66B8F17713BA07DA2DE113978F5AB1764514FE2347600C5A9867A1B7143BA339
       */
     
-    
+    /* 
     //// TEST FOR MONTGOMERY MULTIPLICATION
     
     // 32186194510935479195032402467013996570242823777592960551734090304540054362176
@@ -117,17 +130,24 @@ int main( void )
     // A390 7ED4 7E61 F55E 3973 C814 4B52 10E4 EA21 35E5 1DC8 516D CCB2 1C6D 2A9C 0DBC
     uint16_t b[16] = {41872, 32468, 32353, 62814, 14707, 51220, 19282, 4324, 59937, 13797, 7624, 20845, 52402, 7277, 10908, 3516};
     
+    // 4623308
+    // uint16_t b[2] = {35788, 70}
+    
     uint16_t c[20] = {0};
     
     mp_mulmod(c,a,b);
-
-    printf("%d",c[0]);
+    */
+    
+    multest();
+    
     // RESULT SHOULD BE: {20999, 56674, 14492, 58657, 45441, 63329, 26172, 61934, 11079, 52317, 33744, 5466, 59794, 64383, 32209, 11931}
-     
+    
+    //mp_mulmod1(c,a,b);
+    // RESULT SHOULD BE: {40047, 51647, 47125, 34254, 57505, 5627, 13425, 49323, 61788, 65416, 16024, 64142, 26036, 26143, 42466, 28735}
+    
     for (int i = 0;i < 16;i++)
       printf("%d",c[i]);
-      
-    
+         
     //uint16_t a[16] = {0xffed, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 0x7fff};
     /*
     uint16_t a[16] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -160,6 +180,13 @@ int main( void )
     
     mp_mulmod16(c,a,b);
    */
+    
+    //uint8_t  digest[64] = {0};
+    //uint16_t message[16] = {41872, 32468, 32353, 62814, 14707, 51220, 19282, 4324, 59937, 13797, 7624, 20845, 52402, 7277, 10908, 3516};
+    
+    //sha512(message,32,digest);
+    //keccak(message,16,digest,64);
+    
     return 0;
 }
 

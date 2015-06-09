@@ -1,10 +1,10 @@
 #include "msp430.h"
-NAME msp_mp_mul32
+NAME msp_mul32_fios
 
 EXTERN mp_freeze
 EXTERN mp_cprop
 
-PUBLIC mp_mulmod32  
+PUBLIC mp_mulmod32_fios
 RSEG CODE       
 
 ; Performs modular multiplication of A and B which are both in Montgomery representation.
@@ -14,7 +14,7 @@ RSEG CODE
 ; The result T has to be pointed by R12
 ; BEWARE: the number T has to be 40 bytes long as the additional 8 bytes of memory is required
 
-mp_mulmod32
+mp_mulmod32_fios
   
   PUSHM.W #8,R11
   
@@ -205,9 +205,9 @@ inner_for2
   CMP R15,R14       ; Check if B traversal is still less than s
   JNZ outer_for2
   
-  CALLA #mp_freeze ; Conditionally subtract 2^255-19 in constant time
-  
   POPM.W #8,R11
+  
+  ;CALLA #mp_freeze ; Conditionally subtract 2^255-19 in constant time
   
 RETA
 

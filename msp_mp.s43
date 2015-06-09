@@ -7,7 +7,8 @@ EXTERN mp_condsub
 PUBLIC mp_cprop
 RSEG CODE
 
-; Propagates carry from address pointed by R10+2 until address given by R11 is reached (inclusive)
+; Propagates carry from address pointed by R10+2 until address given by R11 is reached (inclusive).
+
 mp_cprop
 
   PUSHM.W #2,R9     ; Save R8 and R9

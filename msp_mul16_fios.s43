@@ -1,18 +1,18 @@
 #include "msp430.h"
-NAME msp_mp_mul16
+NAME msp_mul16_fios
 
 EXTERN mp_freeze
 EXTERN mp_cprop
 
-PUBLIC mp_mulmod16
+PUBLIC mp_mulmod16_fios
 RSEG CODE       
 
 ; Performs modular multiplication of A and B which are both in Montgomery representation.
 ; The reduction is done modulo 2^255-19
 ; A is pointed by R13, B is pointed by R14.
-; The result T has to be pointed by R12
+; The result T has to be pointed by R12. R15 contains the size of B (in bytes).
 
-mp_mulmod16
+mp_mulmod16_fios
   
   PUSHM.W #8,R11
   
@@ -23,8 +23,7 @@ mp_mulmod16
   CLR R11
 
   ; For loop i = 0 .. s-1
-  MOV R14,R7  ; Traverses B
-  ADD #32,R7  ; Excluding sth word
+  ADD R14,R15  ; Traverses B
 outer_for
 
   ; (C,S) = t[0] + a[0]*b[i]
@@ -73,13 +72,13 @@ outer_for
   ADD #30,R6   ; t[s-1]
 inner_for       
     
-    MOV RESHI,R15
+    MOV RESHI,R7
     
     ; (C,S) = t[j] + a[j]*b[i] + C
     MOV 0x0(R5),&MPY ; t[j]
     MOV #1,&OP2      ; 1
     
-    MOV R15,&MAC   ; C
+    MOV R7,&MAC   ; C
     MOV #1,&OP2      ; 1
     
     MOV 0x0(R8),&MAC  ; a[j]
@@ -115,13 +114,13 @@ inner_for
     JNZ inner_for
     
   ; The last iteration of the inner for is unrolled
-  MOV RESHI,R15  
+  MOV RESHI,R7  
     
   ; (C,S) = t[s-1] + a[s-1]*b[i] + C
   MOV 0x0(R5),&MPY ; t[s-1]
   MOV #1,&OP2      ; 1
     
-  MOV R15,&MAC   ; C
+  MOV R7,&MAC   ; C
   MOV #1,&OP2      ; 1
     
   MOV 0x0(R8),&MAC  ; a[s-1]
@@ -153,13 +152,13 @@ inner_for
   CLR R11         ; t[s+1] = 0
     
   INCD R14
-  CMP R7,R14       ; Check if B traversal is still less than s
+  CMP R15,R14       ; Check if B traversal is still less than s
   JNZ outer_for
-  
-  CALLA #mp_freeze ; Conditionally subtract 2^255-19 in constant time
   
   POPM.W #8,R11
   
+  ;CALLA #mp_freeze ; Conditionally subtract 2^255-19 in constant time
+   
 RETA
 
 END

@@ -1,110 +1,10 @@
 #include "msp430.h"
-NAME msp_mp_mul32c
+NAME msp_mul32_cios
 
-PUBLIC mp_condsub
-RSEG CODE
+EXTERN mp_freeze
+EXTERN mp_condsub
 
-; Subtracts 2^255-19 from the number pointed by R12 if the LS bit of R4 is set
-; otherwise subtracts nothing.
-; If the second LS bit of R4 is set, addition is preformed instead of subtraction. 
-mp_condsub
-    
-    PUSHM.W #5,R9 ; Save R5-R9 
-    
-    MOV R12,R6
-    ADD #30,R6
-    
-    ; Depending on second bit of R4 we decide whether we subtract or add. This is constant time.
-    BIT #2,R4
-    JNZ setAdd
-    MOV #0xFFED,R5
-    MOV #0xFFFF,R8
-    MOV #0x7FFF,R9
-    JMP andLimbs
-setAdd
-    MOV #0x0011,R5
-    MOV #0x0000,R8
-    MOV #0x8000,R9
-    JMP andLimbs
-andLimbs
-   
-    ; Need to precompute FFFF or 0 to R4
-    AND #1,R4
-    MOV R4,R7
-    CLR R4
-    SUB R7,R4        ; R4 == 0 ? R4 = 0 : R4 = FFFF 
-
-    ; Set or reset the limbs of 2^255-19
-    AND R4,R5
-    AND R4,R8
-    AND R4,R9
-    
-    SUB R5,0(R12)    ; Subtract LS limb
-    MOV SR,R7        ; Save SR
-    INCD R12         ; Increase R12
-    
-    ; Subtract from the internal limbs
-    MOV R7,SR
-csubin
-    SUBC R8,0(R12)
-    MOV SR,R7
-    INCD R12
-    CMP R12,R6
-    JZ csubfin
-    MOV R7,SR
-    JMP csubin
-csubfin
-    MOV R7,SR
-    SUBC R9,0(R12)
-
-    POPM.W #5,R9        ; Restore R5 - R10
-RETA
-
-PUBLIC mp_freeze
-RSEG CODE
-
-; Conditionally subtract 2^255-19 from the 255-bit number pointed by R12
-
-mp_freeze
- 
-    CLR R4
-
-; -- The following code does: R4 = (R12 > 2^255-19)
-    MOV #0x7FFF,R5
-    CMP 0x1e(R12),R5    
-    BIS SR,R4
-    
-    MOV #0xFFFF,R5
-    MOV R12,R10
-    MOV R12,R6
-    ADD #28,R10
-    ADD #2,R6       ; R6 contains the stop address, the 2nd LS word
-compr
-    CMP @R10,R5      
-    CLRC            ; Here we care only about equality
-    BIS SR,R4       
-    
-    DECD R10
-    CMP R6,R10
-    JNZ compr
-
-    MOV #0xFFED,R5      ; Compare the last limb
-    CMP @R12,R5
-    BIS SR,R4
-    
-    XOR #1,R4   ; Invert the carry bit
-    BIT #3,R4
-    MOV SR,R4   ; Carry bit is set if R4 is non-zero
-    AND #1,R4   ; Extract carry bit
-     
-; -- 
-    AND #0xFFFD,R4    ; Reset the second bit of R4 for subtraction
-    CALLA #mp_condsub
-
-RETA
-
-
-PUBLIC mp_mulmod32c  
+PUBLIC mp_mulmod32_cios  
 RSEG CODE 
 
 ; Performs modular multiplication of A and B which are both in Montgomery representation.
@@ -114,9 +14,9 @@ RSEG CODE
 ; The result T has to be pointed by R12. R15 contains the size of B (in bytes).
 ; BEWARE: the number T has to be 40 bytes long as the additional 8 bytes of memory is required
 
-mp_mulmod32c
+mp_mulmod32_cios
 
-PUSHM.W #8,R11
+  PUSHM.W #8,R11
   
   ; Coarsely Integrated Operand Scanning
   ; m = R4,R7
@@ -290,7 +190,7 @@ inner_for3b
   
   POPM.W #8,R11
   
-  CALLA #mp_freeze ; Conditionally subtract 2^255-19 in constant time
+  ;CALLA #mp_freeze ; Conditionally subtract 2^255-19 in constant time
     
 RETA
 

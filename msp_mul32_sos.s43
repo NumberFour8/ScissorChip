@@ -13,7 +13,8 @@ RSEG CODE
 
 mp_mulmod32_sos
 
-  PUSHM.W #3,R7
+  PUSH R12
+  PUSHM.W #4,R7
   
   ; Separated Operand Scanning
   ; -------------------------------------- 
@@ -26,8 +27,8 @@ mp_mulmod32_sos
 outer_for4
 
   ; (C,S) = t[i] + a[0]*b[i]
-  MOV @R12+,&MPY32L  ; t[i]
-  MOV @R12+,&MPY32H
+  MOV 0x0(R12),&MPY32L  ; t[i]
+  MOV 0x2(R12),&MPY32H
   MOV #1,&OP2L       ; 1
   MOV #0,&OP2H
     
@@ -37,12 +38,13 @@ outer_for4
   MOV 0x2(R14),&OP2H
 
   ; t[i] = S
-  MOV RES0,-4(R12)
-  MOV RES1,-2(R12)
+  MOV RES0,0x0(R12)
+  MOV RES1,0x2(R12)
 
   MOV R13,R5  ; Traverses A
   ADD #4,R5
   MOV R12,R7  ; Traverses T starting at i+1
+  ADD #4,R7
 inner_for4
    
     ; (C,S) = t[i+j] + a[j]*b[i] + C
@@ -72,14 +74,16 @@ inner_for4
   MOV RES2,0x0(R7)
   MOV RES3,0x2(R7)
 
+  ADD #4,R12
   ADD #4,R14  ; b[++i]
   CMP R14,R15
   JNZ outer_for4
 
-  POPM.W #3,R7
+  POPM.W #4,R7
+  POP R12
+  
+  CALLA #mp_mod25519
    
-  ;CALLA #mp_mod25519
-
 RETA
 
 PUBLIC mp_mod25519
@@ -89,6 +93,8 @@ RSEG CODE
 ; A is given by R12 and must be 512-bits (64 bytes) long in little-endian.
 
 mp_mod25519
+
+  PUSHM.W #4,R7
 
   MOV R12,R4
   MOV R12,R5
@@ -102,7 +108,7 @@ reduce_limbs
     CMP R4,R5
     JZ limbs_done       ; If terminal address has been reached, go to round_done
     
-    MOV @R4,&MPY    ; LSB of LS half
+    MOV @R4,&MPY        ; LSB of LS half
     MOV #0x01,&OP2      ; 1
     
     MOV 0x20(R4),&MAC   ; LSB of MS half 
@@ -131,6 +137,8 @@ limbs_done
     SUB #2,R4           ; Rewind R4
     DEC R7
     JNZ reduce_limbs    ; If we didn't reduce 3 times, continue  
+    
+    POPM.W #4,R7
     
     CALLA #mp_freeze
 RETA

@@ -92,7 +92,7 @@ RETA
 PUBLIC mp_mul2
 RSEG CODE
 
-; Multiplies number pointer by R12 by 2.
+; Multiplies number pointed by R12 by 2.
 
 mp_mul2
 

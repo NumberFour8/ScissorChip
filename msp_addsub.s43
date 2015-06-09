@@ -1,0 +1,101 @@
+#include "msp430.h"
+NAME msp_addsub
+
+EXTERN mp_condsub
+
+PUBLIC mp_mul2
+RSEG CODE
+
+; Multiplies number pointed by R12 by 2.
+
+mp_mul2
+
+  PUSHM.W #2,R5 ; Save R4 and R5
+
+  MOV R12,R5
+  ADD #32,R5
+  CLRC
+rotl
+  RLC 0(R12)
+  MOV SR,R4
+  INCD R12
+  CMP R12,R5
+  JZ finrot
+  MOV R4,SR
+  JMP rotl
+finrot
+  SUB #32,R12    ; Rewind R12
+  AND #1,R4      ; Take just the carry flag, reset the second bit
+  CALLA #mp_condsub
+  
+  POPM.W #2,R5  ; Restore R4 and R5
+  
+RETA
+
+PUBLIC mp_add   
+RSEG CODE       
+
+; Adds two 256-bit numbers A and B and stores the result in C.
+; B is pointed by R14, A is pointed by R13
+; The result C is pointed by R12
+
+mp_add
+  
+    PUSHM.W #3,R6       ; Save R4-R6
+    
+    MOV R14,R6
+    ADD #32,R6
+    CLRC   ; Need to reset carry bit for the first SUBC to be equivalent to SUB
+inadd
+    MOV @R13+,0(R12)
+    ADDC @R14+,0(R12) 
+    MOV SR,R5
+    INCD R12
+    CMP R14,R6
+    JZ finadd
+    MOV R5,SR
+    JMP inadd
+finadd   
+    AND #1,R5      ; Extract only C flag, reset second bit for subtraction
+    SUB #32,R12    ; Rewind R12
+    CALLA #mp_condsub
+    
+    POPM.W #3,R6
+RETA
+      
+PUBLIC mp_sub   
+RSEG CODE       
+
+; Subtracts B from A where A and B are 256-bit numbers and stores the result in C.
+; B is pointed by R14, A is pointed by R13
+; The result C is pointed by R12
+
+mp_sub
+    
+    PUSHM.W #3,R6   ; Save R4 - R6
+    
+    CLR R4
+    MOV R14,R6
+    ADD #32,R6
+    SETC           ; Need to set carry bit for the first SUBC to be equivalent to SUB
+insub
+    MOV @R13+,0(R12)
+    SUBC @R14+,0(R12) 
+    BIS SR,R4
+    MOV SR,R5
+    INCD R12
+    CMP R14,R6
+    JZ finsub
+    MOV R5,SR
+    JMP insub
+finsub
+    AND #4,R4      ; Extract only N flag
+    RRAM.W #2,R4   ; Shift it to the first position
+    SUB #32,R12    ; Rewind R12
+    BIS #2,R4      ; Set the second bit of R4 for addition
+    CALLA #mp_condsub
+
+    POPM.W #3,R6   ; Restore R4 - R6
+RETA
+  
+END

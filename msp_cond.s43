@@ -1,5 +1,5 @@
 #include "msp430.h"
-NAME msp_mpcond
+NAME msp_cond
 
 PUBLIC mp_condsub
 RSEG CODE

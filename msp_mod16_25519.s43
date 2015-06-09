@@ -1,0 +1,59 @@
+#include "msp430.h"
+NAME msp_mod16_25519
+
+EXTERN mp_freeze
+
+PUBLIC mp_mod16
+RSEG CODE
+
+; Reduces the number A modulo 2^255-19
+; A is given by R12 and must be 512-bits (64 bytes) long in little-endian.
+
+mp_mod16
+
+  MOV R12,R4
+  MOV R12,R5
+  MOV #3,R7     ; In the worst-case scenario we need to reduce 3 times
+  
+  SUB #2,R4     ; Starting point
+  ADD #32,R5    ; Upper pointer bound (beyond the MS word, additions by 2)
+  
+reduce_limbs
+    INCD R4
+    CMP R4,R5
+    JZ limbs_done       ; If terminal address has been reached, go to round_done
+    
+    MOV @R4,&MPY    ; LSB of LS half
+    MOV #0x01,&OP2      ; 1
+    
+    MOV 0x20(R4),&MAC   ; LSB of MS half 
+    MOV #0x26,&OP2      ; 38
+    
+    MOV RESLO,0x0(R4)   ; Save S to LSB of LS half
+    ADD RESHI,0x2(R4)   ; Add the carry to the second-LSB of the LS half
+    
+    CLR 0x20(R4)        ; We don't need this MS limb anymore
+    JNC reduce_limbs    ; If no carry was created, proceed with the next digit
+    
+    MOV R4,R6           
+    ADD #4,R6           ; Set R6 as the address after the processed words  
+    
+carry_prop              ; Now we need to propagate the carry
+    SETC                ; Restore the carry bit
+    ADC 0x0(R6)         ; Add the carry bit to where R6 points
+    JNC reduce_limbs    ; If no more carry, step out
+    INCD R6             ; Increment R6 by 2 
+    JMP carry_prop      ; Otherwise, continue propagating
+   
+limbs_done  
+    MOV R12,R4
+    MOV R12,R5       
+    ADD #2,R5           ; We lower the terminal address as we don't need to go further than 1 word  
+    SUB #2,R4           ; Rewind R4
+    DEC R7
+    JNZ reduce_limbs    ; If we didn't reduce 3 times, continue  
+    
+    CALLA #mp_freeze
+RETA
+
+END

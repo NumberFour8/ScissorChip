@@ -11,8 +11,10 @@
 #define COORD_COPY(x,y) for (*(x) = 15 ;*(x);(*(x))--) (x)[*(x)] = (y)[*(x)]; \
                         *(x) = *(y);
                       
-#define mp_mulmod(c,a,b)  mp_mulmod16_fios(c,a,b,32) 
+#define mp_mulmod(c,a,b)  mp_mulmod32_cios(c,a,b,32) 
 #define mp_mulmod1(c,a,b) mp_mulmod32_cios(c,a,b,4)
+
+#define mp_mod25519(a) mp_mod32(a)
 
 // Montgomery XZ coordinates.
 // The coordinates itself must be in Montgomery representation

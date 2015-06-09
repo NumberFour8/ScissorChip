@@ -6,7 +6,8 @@
 extern void mp_add(uint16_t* c,uint16_t* a,uint16_t* b);
 extern void mp_sub(uint16_t* c,uint16_t* a,uint16_t* b);
 extern void mp_monrep25519(uint16_t* a);
-extern void mp_mod25519(uint16_t* a);
+extern void mp_mod16(uint16_t* a);
+extern void mp_mod32(uint16_t* a);
 
 extern void mp_mulmod16_fios(uint16_t* c,uint16_t* a,uint16_t* b,uint16_t mode);
 extern void mp_mulmod32_fios(uint16_t* c,uint16_t* a,uint16_t* b,uint16_t mode);

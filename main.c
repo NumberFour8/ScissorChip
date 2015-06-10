@@ -14,7 +14,7 @@
 #define mp_mulmod(c,a,b)  mp_mulmod32_cios(c,a,b,32) 
 #define mp_mulmod1(c,a,b) mp_mulmod32_cios(c,a,b,4)
 
-#define mp_mod25519(a) mp_mod16(a)
+#define mp_mod25519(a) mp_mod32(a)
 
 // Montgomery XZ coordinates.
 // The coordinates itself must be in Montgomery representation
@@ -109,6 +109,7 @@ int main( void )
      //mp_monrep25519(a);
    */
     
+    /*
     ///// TEST FOR REDUCTION MODULO 2^255-19
     uint16_t a[32] = {7504, 16612, 57485, 62170, 22001, 11411, 52529, 60020, 54329, 2119,
                       24177, 16810, 20608, 22320, 62555, 2441, 23453, 59008, 60102, 41223,
@@ -118,6 +119,7 @@ int main( void )
     
     // RESULT SHOULD BE: 66B8F17713BA07DA2DE113978F5AB1764514FE2347600C5A9867A1B7143BA339
     mp_monrep25519(a);
+    */
     
     /* 
     //// TEST FOR MONTGOMERY MULTIPLICATION
@@ -138,7 +140,7 @@ int main( void )
     mp_mulmod(c,a,b);
     */
     
-    //multest();
+    multest();
     
     // RESULT SHOULD BE: {20999, 56674, 14492, 58657, 45441, 63329, 26172, 61934, 11079, 52317, 33744, 5466, 59794, 64383, 32209, 11931}
     

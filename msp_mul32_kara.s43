@@ -1,0 +1,139 @@
+#include "msp430.h"
+NAME msp_mul32_kara
+
+PUBLIC mp_mul32_128
+RSEG CODE
+
+; Performs schoolbook multiplication of two 128 bit numbers A and B.
+; A is pointed by R10, B is pointed by R11
+; Result is pointed by R9 and must be at least 32 bytes long.
+
+mp_mul32_128
+ 
+  PUSHM.W #4,R8
+  
+  ; For loop i = 0 .. 15
+  ; R15 contains size of B
+  MOV R11,R7   ; Traverses B
+  MOV R10,R8   ; Prepare the limit for A
+  ADD #17,R7
+  ADD #17,R8
+outer_for5
+
+  ; (C,S) = t[i] + a[0]*b[i]
+  MOV 0x0(R9),&MPY32L  ; t[i]
+  MOV 0x2(R9),&MPY32H
+  MOV #1,&OP2L       ; 1
+  MOV #0,&OP2H
+    
+  MOV 0x0(R10),&MAC32L  ; a[0]
+  MOV 0x2(R10),&MAC32H
+  MOV 0x0(R11),&OP2L    ; b[i] 
+  MOV 0x2(R11),&OP2H
+
+  ; t[i] = S
+  MOV RES0,0x0(R9)
+  MOV RES1,0x2(R9)
+
+  MOV R10,R6  ; Traverses A
+  ADD #4,R6
+  MOV R9,R5  ; Traverses T starting at i+1
+  ADD #4,R5
+  
+inner_for5
+   
+    ; (C,S) = t[i+j] + a[j]*b[i] + C
+   MOV RES2,&MPY32L   ; C
+   MOV RES3,&MPY32H      
+   MOV #1,&OP2L       ; 1
+   MOV #0,&OP2H
+  
+   MOV @R5+,&MAC32L   ; t[i+j]
+   MOV @R5+,&MAC32H
+   MOV #1,&OP2L       ; 1
+   MOV #0,&OP2H
+    
+   MOV @R6+,&MAC32L   ; a[j]
+   MOV @R6+,&MAC32H
+   MOV 0x0(R11),&OP2L ; b[i] 
+   MOV 0x2(R11),&OP2H
+
+   ; t[i+j] = S
+   MOV RES0,-4(R5)
+   MOV RES1,-2(R5)
+   
+   CMP R6,R8
+   JNZ inner_for5
+
+  ; t[i+s] = C
+  MOV RES2,0x0(R5)
+  MOV RES3,0x2(R5)
+
+  ADD #4,R9   ; t[++i]
+  ADD #4,R11  ; b[++i]
+  CMP R11,R7
+  JNZ outer_for5
+
+  POPM.W #4,R8
+  
+RETA
+
+PUBLIC mp_add_128   
+RSEG CODE       
+
+; Adds two 128-bit numbers A and B and stores the result in C.
+; B is pointed by R11, A is pointed by R10
+; The result C is pointed by R9
+
+mp_add_128
+  
+    PUSHM.W #3,R6       ; Save R4-R6
+    
+    MOV R11,R6
+    ADD #16,R6
+    CLRC   ; Need to reset carry bit for the first ADDC to be equivalent to ADD
+inadd128
+    MOV @R10+,0(R9)
+    ADDC @R11+,0(R9) 
+    MOV SR,R5
+    INCD R9
+    CMP R11,R6
+    JZ fin128
+    MOV R5,SR
+    JMP inadd128
+
+fin128   
+    POPM.W #3,R6
+RETA
+
+PUBLIC mp_mulmod32_kara
+RSEG CODE
+
+; Performs 1-level Karatsuba multiplication of A and B.
+; This function utilizes fully the 32-bit multiplier.
+; A is pointed by R13, B is pointed by R14.
+; The result T has to be pointed by R12 and at least 96 bytes long. R15 contains the size of B (in bytes).
+
+mp_mulmod32_kara
+
+      ; a + b
+      MOV R12,R9
+      MOV R13,R10
+      MOV R13,R11
+      ADD #16,R11
+      CALLA #mp_add128
+  
+      ; c + d
+      MOV R12,R9
+      ADD #17,R9
+      MOV R14,R10
+      MOV R14,R11
+      ADD #16,R11
+      CALLA #mp_add128
+      
+      ; (a+b)*(c+d)
+      
+
+RETA
+
+END

@@ -45,7 +45,7 @@ mp_add
     
     MOV R14,R6
     ADD #32,R6
-    CLRC   ; Need to reset carry bit for the first SUBC to be equivalent to SUB
+    CLRC   ; Need to reset carry bit for the first ADDC to be equivalent to ADD
 inadd
     MOV @R13+,0(R12)
     ADDC @R14+,0(R12) 

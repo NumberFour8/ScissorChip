@@ -101,11 +101,11 @@
         </option>
         <option>
           <name>GStackHeapOverride</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>GStackSize2</name>
-          <state>160</state>
+          <state>2048</state>
         </option>
         <option>
           <name>GHeapSize2</name>

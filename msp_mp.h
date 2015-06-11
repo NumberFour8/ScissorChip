@@ -13,5 +13,6 @@ extern void mp_mulmod16_fios(uint16_t* c,uint16_t* a,uint16_t* b,uint16_t mode);
 extern void mp_mulmod32_fios(uint16_t* c,uint16_t* a,uint16_t* b,uint16_t mode);
 extern void mp_mulmod32_sos (uint16_t* c,uint16_t* a,uint16_t* b,uint16_t mode);
 extern void mp_mulmod32_cios(uint16_t* c,uint16_t* a,uint16_t* b,uint16_t mode);
+extern void mp_mulmod32_kara(uint16_t* c,uint16_t* a,uint16_t* b);
 
 #endif

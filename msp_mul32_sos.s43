@@ -56,16 +56,13 @@ inner_for4
    MOV @R5+,&OP2L ; a[j] 
    MOV @R5+,&OP2H
   
-   ; Add t[i+j]
-   ADD  @R7+,&RES0
-   ADDC @R7+,&RES1
+   ; Add t[i+j], t[i+j] = S
+   ADD  &RES0,0(R7)
+   ADDC &RES1,2(R7)
    ADC &RES2
    ADC &RES3
   
-   ; t[i+j] = S
-   MOV RES0,-4(R7)
-   MOV RES1,-2(R7)
-   
+   ADD #4,R7
    CMP R5,R6
    JNZ inner_for4
 

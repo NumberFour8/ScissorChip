@@ -2,7 +2,7 @@
 
 <project>
   <fileVersion>2</fileVersion>
-  <fileChecksum>4036640608</fileChecksum>
+  <fileChecksum>1451384087</fileChecksum>
   <configuration>
     <name>Debug</name>
     <outputs>
@@ -94,10 +94,12 @@
       <file>$PROJ_DIR$\Debug\Obj\msp_mul32_sos.r43</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_mpcond.r43</file>
       <file>$TOOLKIT_DIR$\inc\msp430fr5969.h</file>
+      <file>$PROJ_DIR$\kara.s43</file>
       <file>$PROJ_DIR$\msp_mod16_25519.c</file>
       <file>$PROJ_DIR$\msp_mod16_25519.s43</file>
       <file>$PROJ_DIR$\msp_cond.s43</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_montgomery.r43</file>
+      <file>$PROJ_DIR$\Debug\Obj\kara.r43</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_mul32_kara.r43</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_mod32_25519.r43</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_propagate.r43</file>
@@ -106,13 +108,14 @@
       <file>$PROJ_DIR$\msp_addsub.s43</file>
       <file>$PROJ_DIR$\msp_montgomery.s43</file>
       <file>$PROJ_DIR$\msp_mul32_kara.s43</file>
+      <file>$PROJ_DIR$\Debug\List\kara.lst</file>
     </outputs>
     <file>
       <name>$PROJ_DIR$\msp_propagate.s43</name>
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 94 1</file>
+          <file> 96 1</file>
         </tool>
       </outputs>
       <inputs>
@@ -362,7 +365,7 @@
       <inputs>
         <tool>
           <name>XLINK</name>
-          <file> 32 45 33 69 7 3 95 93 91 84 81 83 92 85 94 62 22</file>
+          <file> 32 45 93 33 69 7 3 97 95 92 84 81 83 94 85 96 62 22</file>
         </tool>
       </inputs>
     </file>
@@ -397,11 +400,26 @@
       </inputs>
     </file>
     <file>
+      <name>$PROJ_DIR$\kara.s43</name>
+      <outputs>
+        <tool>
+          <name>A430</name>
+          <file> 93 102</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>A430</name>
+          <file> 51 87</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
       <name>$PROJ_DIR$\msp_mod16_25519.s43</name>
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 95 5</file>
+          <file> 97 5</file>
         </tool>
       </outputs>
       <inputs>
@@ -431,7 +449,7 @@
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 93 9</file>
+          <file> 95 9</file>
         </tool>
       </outputs>
       <inputs>
@@ -461,7 +479,7 @@
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 91 2</file>
+          <file> 92 2</file>
         </tool>
       </outputs>
       <inputs>
@@ -476,7 +494,7 @@
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 92 6</file>
+          <file> 94 6</file>
         </tool>
       </outputs>
       <inputs>

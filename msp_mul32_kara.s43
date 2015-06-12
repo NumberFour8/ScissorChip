@@ -48,10 +48,10 @@ outer_for5
 inner_for5
    
     ; (C,S) = t[i+j] + a[j]*b[i] + C
-   MOV RES2,&RES0   ; C
-   MOV RES3,&RES1      
-   MOV #0,&RES2       ; 1
-   MOV #0,&RES3
+   MOV RES2,&MPY32L   ; C
+   MOV RES3,&MPY32H      
+   MOV #1,&OP2L       ; 1
+   MOV #0,&OP2H
   
    MOV @R5+,&MAC32L   ; t[i+j]
    MOV @R5+,&MAC32H

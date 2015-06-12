@@ -29,13 +29,13 @@ outer_for4
   ; (C,S) = t[i] + a[0]*b[i]
   MOV 0x0(R12),&MPY32L  ; t[i]
   MOV 0x2(R12),&MPY32H
-  MOV #1,&OP2L       ; 1
+  MOV #1,&OP2L          ; 1
   MOV #0,&OP2H
     
-  MOV 0x0(R13),&MAC32L  ; a[0]
-  MOV 0x2(R13),&MAC32H
-  MOV 0x0(R14),&OP2L    ; b[i] 
-  MOV 0x2(R14),&OP2H
+  MOV 0x0(R14),&MAC32L  ; b[i]
+  MOV 0x2(R14),&MAC32H
+  MOV 0x0(R13),&OP2L    ; a[0] 
+  MOV 0x2(R13),&OP2H
 
   ; t[i] = S
   MOV RES0,0x0(R12)
@@ -48,21 +48,20 @@ outer_for4
 inner_for4
    
     ; (C,S) = t[i+j] + a[j]*b[i] + C
-   MOV RES2,&MPY32L   ; C
-   MOV RES3,&MPY32H      
-   MOV #1,&OP2L       ; 1
-   MOV #0,&OP2H
+   MOV RES2,&RES0   ; C
+   MOV RES3,&RES1
+   CLR &RES2
+   CLR &RES3
+   
+   MOV @R5+,&OP2L ; a[j] 
+   MOV @R5+,&OP2H
   
-   MOV @R7+,&MAC32L   ; t[i+j]
-   MOV @R7+,&MAC32H
-   MOV #1,&OP2L       ; 1
-   MOV #0,&OP2H
-    
-   MOV @R5+,&MAC32L   ; a[j]
-   MOV @R5+,&MAC32H
-   MOV 0x0(R14),&OP2L ; b[i] 
-   MOV 0x2(R14),&OP2H
-
+   ; Add t[i+j]
+   ADD  @R7+,&RES0
+   ADDC @R7+,&RES1
+   ADC &RES2
+   ADC &RES3
+  
    ; t[i+j] = S
    MOV RES0,-4(R7)
    MOV RES1,-2(R7)

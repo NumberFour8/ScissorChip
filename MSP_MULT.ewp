@@ -2151,6 +2151,9 @@
     </settings>
   </configuration>
   <file>
+    <name>$PROJ_DIR$\kara.s43</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\keccak.c</name>
   </file>
   <file>

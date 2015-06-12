@@ -85,7 +85,7 @@ void multest()
     
     uint16_t c[48] = {0};
     
-    mp_mulmod32_kara(c,a,b); 
+    fe_mul(c,a,b); 
 }
 
 int main( void )

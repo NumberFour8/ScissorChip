@@ -85,7 +85,7 @@ void multest()
     
     uint16_t c[48] = {0};
     
-    mp_mulmod32_sos(c,a,b,32); 
+    mp_mulmod32_cios(c,a,b,32); 
 }
 
 int main( void )

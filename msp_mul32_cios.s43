@@ -31,20 +31,17 @@ mp_mulmod32_cios
 outer_for3
 
   ; (C,S) = t[0] + a[0]*b[i]
-  MOV 0x0(R12),&MPY32L  ; t[0]
-  MOV 0x2(R12),&MPY32H
-  MOV #1,&OP2L          ; 1
-  MOV #0,&OP2H
-    
-  MOV 0x0(R13),&MAC32L  ; a[0]
-  MOV 0x2(R13),&MAC32H
-  MOV 0x0(R14),&OP2L    ; b[i] 
-  MOV 0x2(R14),&OP2H
+  MOV 0x0(R14),&MPY32L  ; b[i]
+  MOV 0x2(R14),&MPY32H
+  MOV 0x0(R13),&OP2L    ; a[0] 
+  MOV 0x2(R13),&OP2H
 
-  ; t[0] = S
-  MOV RES0,0x0(R12)
-  MOV RES1,0x2(R12)
-   
+  ; Add t[0], t[0] = S
+  ADD RES0,0x0(R12)
+  ADDC RES1,0x2(R12)
+  ADC &RES2
+  ADC &RES3
+  
   MOV R13,R6  ; Traverses A
   MOV R13,R8
   ADD #32,R6  ; Excluding sth word
@@ -54,25 +51,22 @@ outer_for3
 inner_for3a
   
    ; (C,S) = t[j] + a[j]*b[i] + C
-   MOV RES2,&MPY32L   ; C
-   MOV RES3,&MPY32H      
-   MOV #1,&OP2L       ; 1
-   MOV #0,&OP2H
-  
-   MOV @R5+,&MAC32L  ; t[j]
-   MOV @R5+,&MAC32H
-   MOV #1,&OP2L         ; 1
-   MOV #0,&OP2H
-    
-   MOV @R8+,&MAC32L  ; a[j]
-   MOV @R8+,&MAC32H
-   MOV 0x0(R14),&OP2L    ; b[i] 
-   MOV 0x2(R14),&OP2H
-
-   ; t[j] = S
-   MOV RES0,-4(R5)
-   MOV RES1,-2(R5)
+   MOV RES2,&RES0   ; C
+   MOV RES3,&RES1      
+   CLR &RES2
+   CLR &RES3
    
+   BIS #32,&MPY32CTL0 ; Switch to MAC, keep b[i] in OP1
+   MOV @R8+,&OP2L  ; a[j]
+   MOV @R8+,&OP2H
+   
+   ; t[j] = S
+   ADD RES0,0(R5)
+   ADDC RES1,2(R5)
+   ADC &RES2
+   ADC &RES3
+   
+   ADD #4,R5
    CMP R6,R8            ; &a < &a[s]
    JNE inner_for3a
    
@@ -105,52 +99,46 @@ inner_for3a
   MOV #0xFFED,&OP2L     ; n[0]
   MOV #0xFFFF,&OP2H 
   
-  ; Store C in R8 and R9
-  MOV RES2,R8
-  MOV RES3,R9
-  
   MOV R12,R5  ; Traverses T
   ADD #28,R5  ; Excluding (s-1)th word
   ADD #4,R12  ; j = 1 (e.g. start at t[1])
+
+  MOV #0xFFFF,&MAC32L   ; n[j]
+  MOV #0xFFFF,&MAC32H
+    
 inner_for3b
    
-   ; (C,S) = t[j] + m*n[j] + C
-    MOV @R12+,&MPY32L ; t[j]
-    MOV @R12+,&MPY32H
-    MOV #1,&OP2L      ; 1
-    MOV #0,&OP2H
+    ; (C,S) = t[j] + C + m*n[j]
+    MOV RES2,&RES0    ; C
+    MOV RES3,&RES1      
+    CLR &RES2
+    CLR &RES3
     
-    MOV R8,&MAC32L    ; C
-    MOV R9,&MAC32H      
-    MOV #1,&OP2L      ; 1
-    MOV #0,&OP2H
+    ADD  @R12+,&RES0 ; t[j]
+    ADDC @R12+,&RES1
+    ADC &RES2
+    ADC &RES3
     
-    MOV R4,&MAC32L      ; m
-    MOV R7,&MAC32H
-    MOV #0xFFFF,&OP2L   ; n[j] 
-    MOV #0xFFFF,&OP2H
+    MOV R4,&OP2L   ; m 
+    MOV R7,&OP2H
    
     ; t[j-1] = S
     MOV RES0,-8(R12)
     MOV RES1,-6(R12)
     
-     ; Store C in R8 and R9
-    MOV RES2,R8
-    MOV RES3,R9
-  
     CMP R12,R5
     JNE inner_for3b ; &t < &t[s]
    
    ; (C,S) = t[s-1] + m*n[s-1] + C
-   MOV 0(R12),&MPY32L ; t[s-1]
-   MOV 2(R12),&MPY32H
-   MOV #1,&OP2L      ; 1
-   MOV #0,&OP2H
-    
-   MOV R8,&MAC32L    ; C
-   MOV R9,&MAC32H      
-   MOV #1,&OP2L      ; 1
-   MOV #0,&OP2H
+   MOV RES2,&RES0    ; C
+   MOV RES3,&RES1      
+   CLR &RES2
+   CLR &RES3
+   
+   ADD  0(R12),&RES0 ; t[s-1]
+   ADDC 2(R12),&RES1
+   ADC &RES2      
+   ADC &RES3
     
    MOV R4,&MAC32L      ; m
    MOV R7,&MAC32H
@@ -169,12 +157,12 @@ inner_for3b
    MOV R11,R12
    
    ; t[s] + C
-   ADD  32(R12),R8
-   ADDC 34(R12),R9
+   ADD  32(R12),&RES2
+   ADDC 34(R12),&RES3
     
    ; t[s-1] = S
-   MOV R8,28(R12)
-   MOV R9,30(R12)
+   MOV RES2,28(R12)
+   MOV RES3,30(R12)
     
    ; t[s] = t[s+1] 
    MOV 36(R12),32(R12)

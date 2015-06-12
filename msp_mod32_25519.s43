@@ -48,7 +48,7 @@ reduce_limbs
     
     CLR 0x20(R9)        ; We don't need this MS limb anymore
     CLR 0x22(R9)
-    JZ reduce_limbs    ; If no carry was created, proceed with the next digit
+    JMP reduce_limbs    ; Proceed with the next digit
        
 limbs_done  
     MOV R12,R9

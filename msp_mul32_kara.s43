@@ -1,6 +1,10 @@
 #include "msp430.h"
 NAME msp_mul32_kara
 
+EXTERN mp_cprop
+EXTERN mp_bprop
+EXTERN mp_mod32
+
 PUBLIC mp_mul32_128
 RSEG CODE
 
@@ -44,10 +48,10 @@ outer_for5
 inner_for5
    
     ; (C,S) = t[i+j] + a[j]*b[i] + C
-   MOV RES2,&MPY32L   ; C
-   MOV RES3,&MPY32H      
-   MOV #1,&OP2L       ; 1
-   MOV #0,&OP2H
+   MOV RES2,&RES0   ; C
+   MOV RES3,&RES1      
+   MOV #0,&RES2       ; 1
+   MOV #0,&RES3
   
    MOV @R5+,&MAC32L   ; t[i+j]
    MOV @R5+,&MAC32H
@@ -112,7 +116,7 @@ RSEG CODE
 
 ; Adds two N-byte numbers A and B in place, result is stored in A.
 ; B is pointed by R10, A is pointed by R9
-; N is pointed by R15
+; N is pointed by R15. On return, R9 is pointing at last processed word.
 
 mp_add_np
   
@@ -131,13 +135,14 @@ inadd128p
     JMP inadd128p
 
 fin128p
+    DECD R9
     MOV R5,SR ; Restore the carry flag for further propagation
     POPM.W #2,R6
 RETA
 
 ; Subtracts two N-byte numbers B from A in place, result is stored in A.
 ; B is pointed by R10, A is pointed by R9
-; N is pointed by R15
+; N is pointed by R15. On return, R9 is pointing at last processed word.
 
 mp_sub_np
   
@@ -154,8 +159,8 @@ insub128p
     JZ fins128p
     MOV R5,SR
     JMP insub128p
-
 fins128p
+    DECD R9
     MOV R5,SR ; Restore the carry flag for further propagation
     POPM.W #2,R6
 RETA
@@ -191,6 +196,9 @@ RSEG CODE
 ; The result T has to be pointed by R12 and at least 96 bytes long. R15 contains the size of B (in bytes).
 
 mp_mulmod32_kara
+
+      MOV R12,R8
+      ADD #54,R8 ; Upper bound for carry/borrow propagation
 
       ; a + b
       MOV R12,R9
@@ -228,11 +236,10 @@ mp_mulmod32_kara
       MOV #20,R15
       CALLA #mp_mul32_128
       
-      ; b*c
+      ; b*d
       MOV R13,R10  ; b
       
-      MOV R14,R11  ; c
-      ADD #16,R11
+      MOV R14,R11  ; d
       
       MOV R12,R9
       ADD #52,R9
@@ -244,26 +251,34 @@ mp_mulmod32_kara
       MOV #16,R15
       CALLA #mp_mul32_128
 
-      ; Add b*c to lower half
+      ; Add b*d to lower half
       MOV R12,R10
-      ADD #52,R10 ; b*c
+      ADD #52,R10 ; b*d
       
       MOV R12,R9 ; start
-      
+        
       MOV #32,R15
       CALLA #mp_add_np
-      ; Propagate carry
       
-      ; Subtract b*c from the upper half
+      ; Propagate carry
+      MOV R9,R10
+      MOV R8,R11
+      CALLA #mp_cprop
+      
+      ; Subtract b*d from the upper half
       MOV R12,R10
-      ADD #52,R10 ; b*c
+      ADD #52,R10 ; b*d
       
       MOV R12,R9  ; upper half
       ADD #16,R9
       
       MOV #32,R15
       CALLA #mp_sub_np
-      ; Propagate carry
+      
+      ; Propagate borrow
+      MOV R9,R10
+      MOV R8,R11
+      CALLA #mp_bprop
       
       ; a*c
       MOV R13,R10
@@ -281,6 +296,54 @@ mp_mulmod32_kara
       
       MOV #16,R15
       CALLA #mp_mul32_128
+      
+      ; Subtract a*c from the upper half
+      MOV R12,R10
+      ADD #52,R10 ; a*c
+      
+      MOV R12,R9  ; upper half
+      ADD #16,R9
+      
+      MOV #32,R15
+      CALLA #mp_sub_np
+      
+      ; Propagate borrow
+      MOV R9,R10
+      MOV R8,R11
+      CALLA #mp_bprop
+      
+      ; Add lower half of a*c to upper half
+      MOV R12,R10
+      ADD #52,R10 ; a*c
+      
+      MOV R12,R9 
+      ADD #32,R9  ; Upper half
+      
+      MOV #16,R15
+      CALLA #mp_add_np
+      
+      ; Propagate carry
+      MOV R9,R10
+      MOV R8,R11
+      CALLA #mp_cprop
+      
+      ; Clear lower half of a*c
+      MOV R12,R9
+      ADD #52,R9 ; a*c
+      MOV #16,R15
+      CALLA #clear_mem
+      
+      ; Add upper half of a*c to the carry
+      MOV R12,R10
+      ADD #68,R10 ; upper half of a*c
+      
+      MOV R12,R9 
+      ADD #48,R9
+       
+      MOV #16,R15
+      CALLA #mp_add_np
+      
+      CALLA #mp_mod32
       
 RETA
 

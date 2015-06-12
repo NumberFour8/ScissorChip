@@ -41,7 +41,7 @@ reduce_limbs
     CALLA #mp_cprop     ; Propagate the carry further
     
     CLR 0x20(R9)        ; We don't need this MS limb anymore
-    JZ reduce_limbs    ; If no carry was created, proceed with the next digit
+    JMP reduce_limbs    ; If no carry was created, proceed with the next digit
        
 limbs_done  
     MOV R12,R9

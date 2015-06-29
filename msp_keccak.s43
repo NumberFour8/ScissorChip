@@ -1,0 +1,47 @@
+#include "msp430.h"
+NAME msp_keccak
+
+EXTERN keccakf
+
+PUBLIC keccak_fupdate
+RSEG CODE
+
+; State is pointed by R12, input/output by R13. Size is contained in R14.
+; If R15 = 0 absorbtion, otherwise squeezing is performed.
+
+keccak_fupdate
+  
+  MOV R13,R5
+  ADD R14,R5 ; Upper bound of input/output
+  
+  MOV R12,R6
+  ADD #18,R6 ; Upper bound of public state, R = 18 bytes
+  
+ku_outter
+  
+  MOV R12,R10 ; Reset state counter
+
+ku_inner      ; Iterates over state words in R12
+
+  TST R15     ; If R15 is set, go to squeeze
+  JNZ squeeze ; otherwise absorb
+  
+  XOR @R13+,0(R10) ; XOR into the state word
+  INCD R10
+  JMP fin
+squeeze
+  MOV @R10+,0(R13)
+  INCD R13
+  
+fin
+  CMP R6,R10
+  JNZ ku_inner
+  
+  CALLA #keccakf ; Need to setup the registers
+  
+  CMP R13,R5
+  JNZ ku_outter
+  
+RETA
+
+END

@@ -1,35 +1,44 @@
 #include "msp430.h"
 NAME msp_addsub
 
-EXTERN mp_condsub
-
-PUBLIC mp_mul2
+PUBLIC mp_reduce
 RSEG CODE
 
-; Multiplies number pointed by R12 by 2.
+; Adds or subtracts 38 to the number given by R12 if
+; the first bit in R13 is set. The second bit of R13 indicates whether
+; to add (second bit not set) or subtract (second bit set).
 
-mp_mul2
-
-  PUSHM.W #2,R5 ; Save R4 and R5
-
-  MOV R12,R5
-  ADD #32,R5
-  CLRC
-rotl
-  RLC 0(R12)
-  MOV SR,R4
-  INCD R12
-  CMP R12,R5
-  JZ finrot
-  MOV R4,SR
-  JMP rotl
-finrot
-  SUB #32,R12    ; Rewind R12
-  AND #1,R4      ; Take just the carry flag, reset the second bit
-  CALLA #mp_condsub
+mp_reduce
+    
+    PUSHM.W #3,R6
+    
+    MOV R13,R6  
+    AND #2,R6   ; Extract second bit
+    RRA R6      ; Move it right
+    SUB #1,R6   ; If 2nd bit was set, we get 0, if not we get FFFF
+    MOV #38,R5  
+    XOR R6,R5   ; XOR the mask of zeros to keep or ones for negation
+     
+    MOV R13,R6 
+    AND #1,R6  ; Isolate the carry bit
+    XOR #1,R6  ; Flip it
+    SUB #1,R6  ; Set zero if there was no carry, FFFF if there was
+    AND R6,R5   
   
-  POPM.W #2,R5  ; Restore R4 and R5
-  
+    MOV R12,R4
+    ADD #32,R4
+
+    SUB R5,0(R13)  ; Subtract from last limb 
+    MOV SR,R6
+ppg
+    MOV R6,SR      ; Propagate carry
+    SBC 0(R12)         
+    MOV SR,R6      ; Do we need carry flag flipping?
+    INCD R12
+    CMP R12,R4
+    JNZ ppg
+
+    POPM.W #3,R6
 RETA
 
 PUBLIC mp_add   
@@ -41,7 +50,7 @@ RSEG CODE
 
 mp_add
   
-    PUSHM.W #3,R6       ; Save R4-R6
+    PUSHM.W #2,R6       ; Save R5-R6
     
     MOV R14,R6
     ADD #32,R6
@@ -56,11 +65,13 @@ inadd
     MOV R5,SR
     JMP inadd
 finadd   
-    AND #1,R5      ; Extract only C flag, reset second bit for subtraction
+    MOV R5,R13
+    AND #1,R13     ; Extract only C flag, reset second bit for subtraction
     SUB #32,R12    ; Rewind R12
-    CALLA #mp_condsub
     
-    POPM.W #3,R6
+    POPM.W #2,R6
+    
+    CALLA #mp_reduce
 RETA
       
 PUBLIC mp_sub   
@@ -89,13 +100,16 @@ insub
     MOV R5,SR
     JMP insub
 finsub
-    AND #4,R4      ; Extract only N flag
-    RRAM.W #2,R4   ; Shift it to the first position
-    SUB #32,R12    ; Rewind R12
-    BIS #2,R4      ; Set the second bit of R4 for addition
-    CALLA #mp_condsub
-
-    POPM.W #3,R6   ; Restore R4 - R6
+    MOV R4,R13
+    AND #4,R13      ; Extract only N flag
+    RRAM.W #2,R13   ; Shift it to the first position
+    BIS #2,R13      ; Set the second bit of R13 for subtraction
+    SUB #32,R12     ; Rewind R12
+    
+    POPM.W #3,R6    ; Restore R4 - R6
+    
+    CALLA #mp_reduce
+    
 RETA
   
 END

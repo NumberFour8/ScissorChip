@@ -1,0 +1,142 @@
+#include "msp430.h"
+NAME msp_utils
+
+PUBLIC clear_mem
+RSEG CODE
+
+; Clears N bytes of memory pointed by R12.
+; N is given by R13 and has to be multiple of 2.
+
+clear_mem
+    
+    PUSH.W R8
+    
+    MOV R12,R8
+    ADD R13,R8
+    
+clrmem
+    DECD R8
+    CLR 0(R8)
+    CLR 2(R8)
+    CMP R8,R12
+    JNZ clrmem
+    
+    POP.W R8
+RETA
+
+PUBLIC mp_mul32
+RSEG CODE
+
+; Performs schoolbook multiplication of two n-byte numbers A and B.
+; A is pointed by R13, B is pointed by R14
+; Result is pointed by R12 and must be at least 2n bytes long.
+; n is given by R15
+
+mp_mul32
+ 
+  PUSHM.W #4,R8
+  
+  ; For loop i = 0 .. 15
+  ; R15 contains size of B
+  MOV R14,R7   ; Traverses B
+  MOV R13,R8   ; Prepare the limit for A
+  ADD R15,R7
+  ADD R15,R8
+outer_for5
+
+  ; (C,S) = t[i] + a[0]*b[i]
+  
+  MOV 0x0(R14),&MPY32L  ; b[i]
+  MOV 0x2(R14),&MPY32H
+  MOV 0x0(R13),&OP2L    ; a[0] 
+  MOV 0x2(R13),&OP2H
+
+  ; t[i] = S
+  ADD  RES0,0x0(R12)
+  ADDC RES1,0x2(R12)
+  ADC &RES2
+  ADC &RES3
+
+  MOV R13,R6  ; Traverses A
+  ADD #4,R6
+  MOV R12,R5  ; Traverses T starting at i+1
+  ADD #4,R5
+  
+  BIS #32,&MPY32CTL0 ; Switch to MAC, keep b[i] in OP1
+  
+inner_for5
+   
+    ; (C,S) = t[i+j] + a[j]*b[i] + C
+   MOV RES2,&RES0   ; C
+   MOV RES3,&RES1     
+   CLR &RES2
+   CLR &RES3
+   
+   MOV @R6+,&OP2L ; a[j] 
+   MOV @R6+,&OP2H
+
+   ; t[i+j] += S
+   ADD  RES0,0x0(R5)
+   ADDC RES1,0x2(R5)
+   ADC &RES2       
+   ADC &RES3
+   
+   ADD #4,R5
+   CMP R6,R8
+   JNZ inner_for5
+
+  ; t[i+s] = C
+  MOV RES2,0x0(R5)
+  MOV RES3,0x2(R5)
+
+  ADD #4,R12   ; t[++i]
+  ADD #4,R14   ; b[++i]
+  CMP R14,R7
+  JNZ outer_for5
+
+  POPM.W #4,R8
+  
+RETA
+
+PUBLIC mp_addnr
+RSEG CODE
+
+; Adds 256-bit number B to the 512-bit destination A.
+; No modular reduction is performed. A is given by R12, B is given by R13.
+
+mp_addnr
+
+    PUSHM.W #3,R6
+
+    MOV R13,R4
+    MOV R12,R5
+    ADD #32,R4
+    ADD #64,R5
+    
+    CLR R6
+    DECD R12
+addnr
+    INCD R12
+    CMP R12,R5
+    JZ addnrfin
+    CMP R13,R4
+    JZ addnrcp
+    
+    MOV R6,SR
+    ADDC @R13+,0(R12)
+    MOV SR,R6
+    JMP addnr
+addnrcp
+    
+    MOV R6,SR
+    ADC 0(R12)
+    MOV SR,R6
+    JMP addnr
+    
+addnrfin
+
+    POPM.W #3,R6
+
+RETA
+
+END

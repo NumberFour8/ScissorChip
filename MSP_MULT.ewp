@@ -2163,7 +2163,19 @@
     <name>$PROJ_DIR$\msp_addsub.s43</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\msp_barret.c</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\msp_cond.s43</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\msp_invert.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\msp_keccak.s43</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\msp_ladder.c</name>
   </file>
   <file>
     <name>$PROJ_DIR$\msp_mod16_25519.s43</name>
@@ -2175,6 +2187,9 @@
     <name>$PROJ_DIR$\msp_montgomery.s43</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\msp_mp.c</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\msp_mul16_fios.s43</name>
   </file>
   <file>
@@ -2184,13 +2199,13 @@
     <name>$PROJ_DIR$\msp_mul32_fios.s43</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\msp_mul32_kara.s43</name>
-  </file>
-  <file>
     <name>$PROJ_DIR$\msp_mul32_sos.s43</name>
   </file>
   <file>
     <name>$PROJ_DIR$\msp_propagate.s43</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\msp_utils.s43</name>
   </file>
   <file>
     <name>$PROJ_DIR$\sha512.c</name>

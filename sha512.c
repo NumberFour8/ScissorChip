@@ -45,9 +45,6 @@
 }
 
 
-/* Macros used for loops unrolling */
-
-
 #define SHA512_SCR(i)                         \
 {                                             \
     w[i] =  SHA512_F4(w[i -  2]) + w[i -  7]  \

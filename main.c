@@ -8,75 +8,6 @@
 #include "keccak.h"
 #include "sha512.h"
 
-#define COORD_COPY(x,y) for (*(x) = 15 ;*(x);(*(x))--) (x)[*(x)] = (y)[*(x)]; \
-                        *(x) = *(y);
-                      
-#define mp_mulmod(c,a,b)  mp_mulmod32_cios(c,a,b,32) 
-#define mp_mulmod1(c,a,b) mp_mulmod32_cios(c,a,b,4)
-
-#define mp_mod25519(a) mp_mod32(a)
-
-// Montgomery XZ coordinates.
-// The coordinates itself must be in Montgomery representation
-typedef struct {
-  uint16_t x[16]; 
-  uint16_t z[16];
-} monpoint;
-
-void mon_dbladd(monpoint* dbl,monpoint* add,const monpoint* dif)
-{
-    uint16_t r6[16],r7[16],r8[16],r9[16],r10[16]; // 86 additional bytes of memory
-  
-    uint32_t a24 = 4623308; // a24 = (a-2)/4, here in Montgomery representation
-    
-    uint16_t *r0 = (uint16_t*)dif->x,*r1 = (uint16_t*)dif->z,
-             *r2 = (uint16_t*)dbl->x,*r3 = (uint16_t*)dbl->z,
-             *r4 = (uint16_t*)add->x,*r5 = (uint16_t*)add->z;
-    
-    mp_add(r6,r2,r3);
-    mp_mulmod(r7,r6,r6);
-    mp_sub(r8,r2,r3);
-    mp_add(r9,r4,r5);
-    mp_sub(r10,r4,r5);
-    mp_mulmod(r4,r10,r6);
-    mp_mulmod(r5,r9,r8);
-    mp_mulmod(r10,r8,r8);
-    mp_sub(r9,r7,r10);
-    mp_add(r6,r4,r5);
-    mp_mulmod(r2,r6,r6);
-    mp_sub(r6,r4,r5);
-    mp_mulmod(r4,r6,r6);
-    mp_mulmod1(r5,r9,(uint16_t*)&a24);
-    mp_add(r6,r10,r5);
-    mp_mulmod(r5,r0,r4);
-    mp_mulmod(r4,r1,r2);
-    mp_mulmod(r3,r9,r6);
-    mp_mulmod(r2,r7,r10);
-    
-}
-
-void ladder(monpoint* R,const monpoint* P,const uint16_t *n)
-{
-    // TODO: R has to be initialized to the curve's neutral element
-    monpoint *R0 = (monpoint*)R;
-    monpoint *R1 = (monpoint*)P;
-    
-    monpoint cP; 
-    COORD_COPY(cP.x,P->x);
-    COORD_COPY(cP.z,P->z);
-    
-    for (int i = 255;i >= 0;i--)
-    {
-       if (n[i/16] & (0x8000 >> (i%16)))
-       {
-         mon_dbladd(R1,R0,&cP);
-       }
-       else
-       {
-         mon_dbladd(R0,R1,&cP);
-       }
-    }
-}
 
 void multest()
 {
@@ -100,6 +31,22 @@ int main( void )
     register uint16_t g = 0xffed;
     if (g >= 2)
       g = g*100;
+    
+    
+    uint16_t dbac = 0xdbac,test;
+    
+    test = (dbac & (0x8000 >> 0)) >> 15;
+    printf("%x\n",test);
+    test = (dbac & (0x8000 >> 1)) >> 14;
+    printf("%x\n",test);
+    test = (dbac & (0x8000 >> 2)) >> 13;
+    printf("%x\n",test);
+    test = (dbac & (0x8000 >> 3)) >> 12;
+    printf("%x\n",test);
+    test = (dbac & (0x8000 >> 4)) >> 11;
+    printf("%x\n",test);
+    test = (dbac & (0x8000 >> 5)) >> 10;
+    printf("%x\n",test);
     
     /*
      uint16_t a[32] = {65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535,

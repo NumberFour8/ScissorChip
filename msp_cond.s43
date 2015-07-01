@@ -69,13 +69,16 @@ mp_freeze
  
     PUSHM.W #6,R10
  
-    CLR R4
+    CLR R4  ; For negative bits
+    CLR R7  ; For zero bits
 
 ; -- The following code does: R4 = (R12 > 2^255-19)
     MOV #0x7FFF,R5
-    CMP 0x1e(R12),R5    
-    BIS SR,R4
+    CMP 0x1e(R12),R5 
     
+    MOV SR,R4
+    MOV SR,R7
+      
     MOV #0xFFFF,R5
     MOV R12,R10
     MOV R12,R6
@@ -83,8 +86,18 @@ mp_freeze
     ADD #2,R6       ; R6 contains the stop address, the 2nd LS word
 compr
     CMP @R10,R5      
-    CLRC            ; Here we care only about equality
-    BIS SR,R4       
+    MOV SR,R8
+    
+    ; ----- WORKAROUND for CMP bug: comparison any number with 0 sets N bit
+    TST 0(R10)
+    MOV SR,R9
+    AND #2,R9 ; Retrive the Z bit
+    RLA R9    ; Shift it left
+    XOR R9,R8 ; Reset the N bit if R10 was zero
+    ; -----
+    
+    BIS R8,R4       ; OR the negative bit    
+    AND R8,R7       ; AND the zero bit
     
     DECD R10
     CMP R6,R10
@@ -92,16 +105,30 @@ compr
 
     MOV #0xFFED,R5      ; Compare the last limb
     CMP @R12,R5
-    CLRC
-    BIS SR,R4
+    MOV SR,R8
     
-    AND #6,R4
-    TST R4
-    MOV SR,R4
-    AND #4,R4
-    RRA R4
-    XOR #1,R4
+    ; ----- WORKAROUND for CMP bug: comparison any number with 0 sets N bit
+    TST 0(R12)
+    MOV SR,R9
+    AND #2,R9 ; Retrive the Z bit
+    RLA R9    ; Shift it left
+    XOR R9,R8 ; Reset the N bit if R12 was zero
+    ; -----
     
+    BIS R8,R4       ; OR the negative bit    
+    AND R8,R7       ; AND the zero bit
+  
+    ; ---
+    AND #2,R7   ; Extract zero bit
+    AND #4,R4   ; Extract negative bit
+
+    ; If at least one negative bit was set, all all zero bits were set
+    ; then subtract
+
+    RRA R4      ; Shift N to the same position as Z
+    BIS R7,R4   ; OR them
+    RRA R4      ; Move one position right
+   
     POPM.W #6,R10
     
     CALLA #mp_condsub

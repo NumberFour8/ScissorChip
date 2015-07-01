@@ -178,7 +178,7 @@ inner_for3b
   
   POPM.W #8,R11
   
-  ;CALLA #mp_freeze ; Conditionally subtract 2^255-19 in constant time
+  CALLA #mp_freeze ; Conditionally subtract 2^255-19 in constant time
     
 RETA
 

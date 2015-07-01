@@ -8,15 +8,30 @@
 #include "keccak.h"
 #include "sha512.h"
 
+void test_freeze()
+{
+    uint16_t a[16] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0,0, 0, 0, 0, 0, 0};
+    mp_freeze(a);
+}
 
-void multest()
+void test_addsub()
+{
+
+}
+
+void test_barret()
+{
+  
+}
+
+void test_mul()
 {
     uint16_t a[16] = {38976, 51875, 42674, 19019, 59674, 478, 61180, 29312, 49733, 46448, 33089, 2508, 16002, 30922, 48530, 18216};
     uint16_t b[16] = {41872, 32468, 32353, 62814, 14707, 51220, 19282, 4324, 59937, 13797, 7624, 20845, 52402, 7277, 10908, 3516};
     
     uint16_t c[48] = {0};
     
-    mp_mulmod32_cios(c,a,b,32); 
+    mp_mulmod(c,a,b); 
 }
 
 int main( void )
@@ -31,30 +46,6 @@ int main( void )
     register uint16_t g = 0xffed;
     if (g >= 2)
       g = g*100;
-    
-    
-    uint16_t dbac = 0xdbac,test;
-    
-    test = (dbac & (0x8000 >> 0)) >> 15;
-    printf("%x\n",test);
-    test = (dbac & (0x8000 >> 1)) >> 14;
-    printf("%x\n",test);
-    test = (dbac & (0x8000 >> 2)) >> 13;
-    printf("%x\n",test);
-    test = (dbac & (0x8000 >> 3)) >> 12;
-    printf("%x\n",test);
-    test = (dbac & (0x8000 >> 4)) >> 11;
-    printf("%x\n",test);
-    test = (dbac & (0x8000 >> 5)) >> 10;
-    printf("%x\n",test);
-    
-    /*
-     uint16_t a[32] = {65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535,
-                       65535, 65535, 65535, 65535, 65535, 65535, 65535, 0x7fff};
-    
-     mp_freeze(a);
-     //mp_monrep25519(a);
-   */
     
     /*
     ///// TEST FOR REDUCTION MODULO 2^255-19
@@ -86,9 +77,7 @@ int main( void )
     
     mp_mulmod(c,a,b);
     */
-    
-    multest();
-    
+        
     // RESULT SHOULD BE: {20999, 56674, 14492, 58657, 45441, 63329, 26172, 61934, 11079, 52317, 33744, 5466, 59794, 64383, 32209, 11931}
     
     //mp_mulmod1(c,a,b);
@@ -135,6 +124,8 @@ int main( void )
     
     //sha512(message,32,digest);
     //keccak(message,16,digest,64);
+    
+    test_freeze();
     
     return 0;
 }

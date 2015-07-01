@@ -1,15 +1,21 @@
 #include "msp_mp.h"
+#include "keccak.h"
+
+#define digest_ctx              keccak_ctx
+#define digest_init(c)          keccak_init(c)
+#define digest_update(a,b,c)    keccak_update(a,b,c)
+#define digest_finish(a,b)      keccak_finish(a,b)
 
 void sign(const uint8_t* m,uint16_t size,const keypair* keyp,uint8_t* signature)
 {
     // Compute r = H(h_b,...,h_(2b-1),M)
     digest_ctx ctx;
     digest_init(&ctx);
-    digest_update(&ctx,keyp.nonceKey,16)
+    digest_update(&ctx,keyp->nonceKey,16);
     digest_update(&ctx,m,size);
     digest_finish(&ctx,signature);
 
-    uint16_t r[16];
+    uint16_t r[32];
     
     // Reduce r mod l
     mp_barret252(r,(uint16_t*)signature);
@@ -25,24 +31,23 @@ void sign(const uint8_t* m,uint16_t size,const keypair* keyp,uint8_t* signature)
     // Compute H(R,A,M)
     digest_init(&ctx);
     digest_update(&ctx,(uint8_t*)R.yed,32);
-    digest_update(&ctx,keyp.publicKey,32);
+    digest_update(&ctx,keyp->publicKey,32);
     digest_update(&ctx,m,size);
-    digest_final(&ctx,signature);
+    digest_finish(&ctx,signature);
     
-    uint16_t* t1 = B.x;
-    uint16_y* t2 = B.z;
+    uint16_t* t1 = B.x; // By natural structure aligment, t1 has at least 32 accessible bytes!
     
     // Reduce H(R,A,M) mod l
     mp_barret252(t1,(uint16_t*)signature);
     
     // Compute H(R,A,M)*a
-    mp_mul32(signature,t1,keyp.secretKey,32); // Guaranteed to be < 2^512
+    mp_mul32((uint16_t*)signature,t1,(uint16_t*)keyp->secretKey,32); // Guaranteed to be < 2^512
     
     // Compute S = r mod l + H(R,A,M)*a
-    mp_addnr(signature,r);
+    mp_addnr((uint16_t*)signature,r);
     
     // Reduce S mod l
-    mp_barret252(t1,signature);
+    mp_barret252(t1,(uint16_t*)signature);
     
     COORD_COPY(signature,r);
     COORD_COPY(signature+32,t1);

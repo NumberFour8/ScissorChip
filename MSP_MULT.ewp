@@ -794,7 +794,7 @@
         </option>
         <option>
           <name>XclFile</name>
-          <state>$TOOLKIT_DIR$\config\linker\lnk430FR5969.xcl</state>
+          <state>$TOOLKIT_DIR$\config\linker\lnk430F5529.xcl</state>
         </option>
         <option>
           <name>XclFileSlave</name>
@@ -2203,6 +2203,9 @@
   </file>
   <file>
     <name>$PROJ_DIR$\msp_propagate.s43</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\msp_sign.c</name>
   </file>
   <file>
     <name>$PROJ_DIR$\msp_utils.s43</name>

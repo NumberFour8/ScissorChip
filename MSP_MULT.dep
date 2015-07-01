@@ -2,10 +2,11 @@
 
 <project>
   <fileVersion>2</fileVersion>
-  <fileChecksum>3409020431</fileChecksum>
+  <fileChecksum>3265848263</fileChecksum>
   <configuration>
     <name>Debug</name>
     <outputs>
+      <file>$PROJ_DIR$\msp_sign.c</file>
       <file>$PROJ_DIR$\Debug\List\msp_mp.s43</file>
       <file>$PROJ_DIR$\msp_mul32_kara.s43</file>
       <file>$PROJ_DIR$\Debug\List\main.lst</file>
@@ -27,6 +28,8 @@
       <file>$PROJ_DIR$\keccak.h</file>
       <file>$PROJ_DIR$\Debug\List\msp_mul32_sos.lst</file>
       <file>$TOOLKIT_DIR$\lib\dlib\dl430xlsfn.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\msp_sign.r43</file>
+      <file>$PROJ_DIR$\Debug\Obj\msp_sign.pbi</file>
       <file>$PROJ_DIR$\msp_montgomery.s43</file>
       <file>$PROJ_DIR$\msp_keccak.s43</file>
       <file>$PROJ_DIR$\msp_mod32_25519.s43</file>
@@ -80,6 +83,7 @@
       <file>$PROJ_DIR$\Debug\List\msp_propagate.lst</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_cond.r43</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_mp.pbi</file>
+      <file>$PROJ_DIR$\msp_barett.s43</file>
       <file>$PROJ_DIR$\main.c</file>
       <file>$PROJ_DIR$\Debug\Obj\mp_ladder.pbi</file>
       <file>$PROJ_DIR$\kara.s43</file>
@@ -144,17 +148,42 @@
       <file>$PROJ_DIR$\Debug\Obj\MSP_MULT.pbd</file>
       <file>$PROJ_DIR$\Debug\Obj\mp_barret.pbi</file>
       <file>$PROJ_DIR$\Debug\List\msp_mul32_fios.lst</file>
+      <file>$PROJ_DIR$\Debug\List\msp_sign.s43</file>
+      <file>$PROJ_DIR$\Debug\List\msp_sign.lst</file>
     </outputs>
+    <file>
+      <name>$PROJ_DIR$\msp_sign.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 23</file>
+        </tool>
+        <tool>
+          <name>ICC430</name>
+          <file> 142 143 22</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 109 116 106 118 124 21 94 132 110 107 135 111 86 19 99 133</file>
+        </tool>
+        <tool>
+          <name>ICC430</name>
+          <file> 109 116 106 118 124 21 94 132 110 107 135 111 86 19 99 133</file>
+        </tool>
+      </inputs>
+    </file>
     <file>
       <name>[ROOT_NODE]</name>
       <outputs>
         <tool>
           <name>XLINK</name>
-          <file> 104 88</file>
+          <file> 108 92</file>
         </tool>
         <tool>
           <name>ULP430</name>
-          <file> 113</file>
+          <file> 117</file>
         </tool>
       </outputs>
     </file>
@@ -163,13 +192,13 @@
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 35 68</file>
+          <file> 38 71</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 103 34</file>
+          <file> 107 37</file>
         </tool>
       </inputs>
     </file>
@@ -178,41 +207,7 @@
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 55</file>
-        </tool>
-        <tool>
-          <name>ICC430</name>
-          <file> 56</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 105 112 102 114 120 20 90 128 106 103 34 107 82</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\msp_mod16_25519.s43</name>
-      <outputs>
-        <tool>
-          <name>A430</name>
-          <file> 58 70</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>A430</name>
-          <file> 103 131</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\mp_invert.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 60</file>
+          <file> 58</file>
         </tool>
         <tool>
           <name>ICC430</name>
@@ -222,7 +217,41 @@
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 105 112 102 114 120 20 90 128 106 103 34 107 82</file>
+          <file> 109 116 106 118 124 21 94 132 110 107 37 111 86</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\msp_mod16_25519.s43</name>
+      <outputs>
+        <tool>
+          <name>A430</name>
+          <file> 61 73</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>A430</name>
+          <file> 107 135</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\mp_invert.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 63</file>
+        </tool>
+        <tool>
+          <name>ICC430</name>
+          <file> 62</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 109 116 106 118 124 21 94 132 110 107 37 111 86</file>
         </tool>
       </inputs>
     </file>
@@ -231,17 +260,17 @@
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 75</file>
+          <file> 79</file>
         </tool>
         <tool>
           <name>ICC430</name>
-          <file> 10</file>
+          <file> 11</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 105 112 102 114 120 20 90 128 106 103 34 107 82</file>
+          <file> 109 116 106 118 124 21 94 132 110 107 37 111 86</file>
         </tool>
       </inputs>
     </file>
@@ -250,21 +279,21 @@
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 99</file>
+          <file> 103</file>
         </tool>
         <tool>
           <name>ICC430</name>
-          <file> 122 121 123</file>
+          <file> 126 125 127</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 18 112 102 114 120 20 90 128 106 95 129 105 103 131 107 82</file>
+          <file> 19 116 106 118 124 21 94 132 110 99 133 109 107 135 111 86</file>
         </tool>
         <tool>
           <name>ICC430</name>
-          <file> 18 112 102 114 120 20 90 128 106 95 129 105 103 131 107 82</file>
+          <file> 19 116 106 118 124 21 94 132 110 99 133 109 107 135 111 86</file>
         </tool>
       </inputs>
     </file>
@@ -273,13 +302,13 @@
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 69 67</file>
+          <file> 72 70</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 103 131</file>
+          <file> 107 135</file>
         </tool>
       </inputs>
     </file>
@@ -288,21 +317,21 @@
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 73</file>
+          <file> 76</file>
         </tool>
         <tool>
           <name>ICC430</name>
-          <file> 0 116 108</file>
+          <file> 1 120 112</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 105 112 102 114 120 20 90 128 106 103 131 107 82</file>
+          <file> 109 116 106 118 124 21 94 132 110 107 135 111 86</file>
         </tool>
         <tool>
           <name>ICC430</name>
-          <file> 105 112 102 114 120 20 90 128 106 103 131 107 82</file>
+          <file> 109 116 106 118 124 21 94 132 110 107 135 111 86</file>
         </tool>
       </inputs>
     </file>
@@ -311,13 +340,13 @@
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 37 64</file>
+          <file> 40 67</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 103 131</file>
+          <file> 107 135</file>
         </tool>
       </inputs>
     </file>
@@ -326,13 +355,13 @@
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 38 41</file>
+          <file> 41 44</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 103 131</file>
+          <file> 107 135</file>
         </tool>
       </inputs>
     </file>
@@ -341,13 +370,13 @@
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 40 63</file>
+          <file> 43 66</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 103 131</file>
+          <file> 107 135</file>
         </tool>
       </inputs>
     </file>
@@ -356,13 +385,13 @@
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 32 133</file>
+          <file> 35 137</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 103 131</file>
+          <file> 107 135</file>
         </tool>
       </inputs>
     </file>
@@ -371,13 +400,13 @@
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 16 84</file>
+          <file> 17 88</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 103 131</file>
+          <file> 107 135</file>
         </tool>
       </inputs>
     </file>
@@ -386,13 +415,13 @@
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 31 137</file>
+          <file> 34 141</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 103 131</file>
+          <file> 107 135</file>
         </tool>
       </inputs>
     </file>
@@ -401,13 +430,13 @@
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 33 19</file>
+          <file> 36 20</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 103 131</file>
+          <file> 107 135</file>
         </tool>
       </inputs>
     </file>
@@ -416,13 +445,13 @@
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 57 71</file>
+          <file> 60 74</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 103 131</file>
+          <file> 107 135</file>
         </tool>
       </inputs>
     </file>
@@ -431,13 +460,13 @@
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 134 65</file>
+          <file> 138 68</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 103 131</file>
+          <file> 107 135</file>
         </tool>
       </inputs>
     </file>
@@ -446,21 +475,21 @@
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 100</file>
+          <file> 104</file>
         </tool>
         <tool>
           <name>ICC430</name>
-          <file> 125 91 94</file>
+          <file> 129 95 98</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 96 95 102 114 120 20 90 128 106 129 112</file>
+          <file> 100 99 106 118 124 21 94 132 110 133 116</file>
         </tool>
         <tool>
           <name>ICC430</name>
-          <file> 96 95 102 114 120 20 90 128 106 129 112</file>
+          <file> 100 99 106 118 124 21 94 132 110 133 116</file>
         </tool>
       </inputs>
     </file>
@@ -469,17 +498,17 @@
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 136</file>
+          <file> 140</file>
         </tool>
         <tool>
           <name>ICC430</name>
-          <file> 12</file>
+          <file> 13</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 105 112 102 114 120 20 90 128 106 103 34 107 82</file>
+          <file> 109 116 106 118 124 21 94 132 110 107 37 111 86</file>
         </tool>
       </inputs>
     </file>
@@ -488,26 +517,64 @@
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 49</file>
+          <file> 52</file>
         </tool>
         <tool>
           <name>ICC430</name>
-          <file> 42 46 51</file>
+          <file> 45 49 54</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 105 112 102 114 120 20 90 128 106 103 131 107 82</file>
+          <file> 109 116 106 118 124 21 94 132 110 107 135 111 86</file>
         </tool>
         <tool>
           <name>ICC430</name>
-          <file> 105 112 102 114 120 20 90 128 106 103 131 107 82</file>
+          <file> 109 116 106 118 124 21 94 132 110 107 135 111 86</file>
         </tool>
       </inputs>
     </file>
     <file>
       <name>$PROJ_DIR$\msp_mpcond.s43</name>
+      <outputs>
+        <tool>
+          <name>A430</name>
+          <file> 42 6</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>A430</name>
+          <file> 107 37</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\main.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 114</file>
+        </tool>
+        <tool>
+          <name>ICC430</name>
+          <file> 113 3 91</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 107 135 111 86 116 106 118 124 21 94 132 110 93 133 109 19 99 100</file>
+        </tool>
+        <tool>
+          <name>ICC430</name>
+          <file> 107 135 111 86 116 106 118 124 21 94 132 110 93 133 109 19 99 100</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\kara.s43</name>
       <outputs>
         <tool>
           <name>A430</name>
@@ -517,41 +584,7 @@
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 103 34</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\main.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 110</file>
-        </tool>
-        <tool>
-          <name>ICC430</name>
-          <file> 109 2 87</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICC430</name>
-          <file> 103 131 107 82 112 102 114 120 20 90 128 106 89 129 105 18 95 96</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\kara.s43</name>
-      <outputs>
-        <tool>
-          <name>A430</name>
-          <file> 36 4</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>A430</name>
-          <file> 103 131</file>
+          <file> 107 135</file>
         </tool>
       </inputs>
     </file>
@@ -560,13 +593,13 @@
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 101 6</file>
+          <file> 105 7</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 103 34</file>
+          <file> 107 37</file>
         </tool>
       </inputs>
     </file>
@@ -575,13 +608,13 @@
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 72 66</file>
+          <file> 75 69</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 103 131</file>
+          <file> 107 135</file>
         </tool>
       </inputs>
     </file>
@@ -590,21 +623,21 @@
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 52</file>
+          <file> 55</file>
         </tool>
         <tool>
           <name>ICC430</name>
-          <file> 47 43 50</file>
+          <file> 50 46 53</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 105 112 102 114 120 20 90 128 106 103 131 107 82</file>
+          <file> 109 116 106 118 124 21 94 132 110 107 135 111 86</file>
         </tool>
         <tool>
           <name>ICC430</name>
-          <file> 105 112 102 114 120 20 90 128 106 103 131 107 82</file>
+          <file> 109 116 106 118 124 21 94 132 110 107 135 111 86</file>
         </tool>
       </inputs>
     </file>
@@ -613,21 +646,21 @@
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 54</file>
+          <file> 57</file>
         </tool>
         <tool>
           <name>ICC430</name>
-          <file> 44 45 53</file>
+          <file> 47 48 56</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 105 112 102 114 120 20 90 128 106 103 131 107 82</file>
+          <file> 109 116 106 118 124 21 94 132 110 107 135 111 86</file>
         </tool>
         <tool>
           <name>ICC430</name>
-          <file> 105 112 102 114 120 20 90 128 106 103 131 107 82</file>
+          <file> 109 116 106 118 124 21 94 132 110 107 135 111 86</file>
         </tool>
       </inputs>
     </file>
@@ -636,13 +669,13 @@
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 115 117</file>
+          <file> 119 121</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 103 34</file>
+          <file> 107 37</file>
         </tool>
       </inputs>
     </file>
@@ -651,13 +684,13 @@
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 11 119</file>
+          <file> 12 123</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 103 34</file>
+          <file> 107 37</file>
         </tool>
       </inputs>
     </file>
@@ -666,13 +699,13 @@
       <outputs>
         <tool>
           <name>XLINK</name>
-          <file> 88</file>
+          <file> 92</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>XLINK</name>
-          <file> 77 111 36 123 87 69 53 72 50 38 51 58 40 37 108 32 16 31 33 57 134 94 13</file>
+          <file> 81 115 39 127 91 72 56 75 53 41 54 61 43 40 112 35 17 34 36 60 138 98 14</file>
         </tool>
       </inputs>
     </file>
@@ -681,17 +714,17 @@
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 126</file>
+          <file> 130</file>
         </tool>
         <tool>
           <name>ICC430</name>
-          <file> 127</file>
+          <file> 131</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 103 131 107 82</file>
+          <file> 107 135 111 86</file>
         </tool>
       </inputs>
     </file>
@@ -700,21 +733,21 @@
       <outputs>
         <tool>
           <name>BICOMP</name>
-          <file> 92</file>
+          <file> 96</file>
         </tool>
         <tool>
           <name>ICC430</name>
-          <file> 86 130 98</file>
+          <file> 90 134 102</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 112 102 114 120 20 90 128 106 95 129 93 97</file>
+          <file> 116 106 118 124 21 94 132 110 99 133 97 101</file>
         </tool>
         <tool>
           <name>ICC430</name>
-          <file> 112 102 114 120 20 90 128 106 95 129 93 97</file>
+          <file> 116 106 118 124 21 94 132 110 99 133 97 101</file>
         </tool>
       </inputs>
     </file>
@@ -723,16 +756,20 @@
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 108 116</file>
+          <file> 112 120</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 103 34</file>
+          <file> 107 37</file>
         </tool>
       </inputs>
     </file>
+    <forcedrebuild>
+      <name>[MULTI_TOOL]</name>
+      <tool>XLINK</tool>
+    </forcedrebuild>
   </configuration>
   <configuration>
     <name>Release</name>

@@ -12,16 +12,15 @@ typedef struct {
     uint16_t state[25];
 } keccak_ctx;
 
-
 extern void keccak_fupdate(uint16_t* state,uint16_t* io,uint16_t size,uint16_t squeeze);
 
 #ifndef KECCAK_USE_C
 
 #include "msp_mp.h"
 
-#define keccak_update(c,d,s) keccak_fupdate(c->state,d,s,0)
-#define keccak_finish(c,d)   keccak_fupdate(c->state,d,KECCAK_N,1)
-#define keccak_init(c)       clear_mem(c->state,25)
+#define keccak_update(c,d,s) keccak_fupdate((c)->state,(uint16_t*)d,s,0)
+#define keccak_finish(c,d)   keccak_fupdate((c)->state,(uint16_t*)d,KECCAK_N,1)
+#define keccak_init(c)       clear_mem((c)->state,25)
 
 #else 
 

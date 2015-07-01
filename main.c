@@ -25,7 +25,12 @@ void test_freeze()
 
 void test_addsub()
 {
-
+    // Subtract
+    uint16_t a[16] = {65515, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535,65535, 65535, 65535, 65535, 65535, 32767};
+    uint16_t b[16] = {65516, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535,65535, 65535, 65535, 65535, 65535, 32767};
+    uint16_t c[16] = {0};
+    
+    mp_sub(c,a,b);
 }
 
 void test_barret()
@@ -134,7 +139,9 @@ int main( void )
     //sha512(message,32,digest);
     //keccak(message,16,digest,64);
     
-    test_freeze();
+    //test_freeze();
+    
+    test_addsub();
     
     return 0;
 }

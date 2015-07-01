@@ -27,13 +27,12 @@ inadd
     MOV R5,SR
     JMP inadd
 finadd   
-    MOV R5,R13
-    AND #1,R13     ; Extract only C flag, reset second bit for subtraction
-    SUB #32,R12    ; Rewind R12
-    
+  
+    SUB #32,R12    ; Rewind R12  
     POPM.W #2,R6
     
-    ;CALLA #mp_reduce
+    CLR R13
+    CALLA #mp_freeze
 RETA
       
 PUBLIC mp_sub   
@@ -45,16 +44,14 @@ RSEG CODE
 
 mp_sub
     
-    PUSHM.W #3,R6   ; Save R4 - R6
+    PUSHM.W #2,R6   ; Save R5 - R6
     
-    CLR R4
     MOV R14,R6
     ADD #32,R6
     SETC           ; Need to set carry bit for the first SUBC to be equivalent to SUB
 insub
     MOV @R13+,0(R12)
     SUBC @R14+,0(R12) 
-    BIS SR,R4
     MOV SR,R5
     INCD R12
     CMP R14,R6
@@ -62,15 +59,12 @@ insub
     MOV R5,SR
     JMP insub
 finsub
-    MOV R4,R13
-    AND #4,R13      ; Extract only N flag
-    RRAM.W #2,R13   ; Shift it to the first position
-    BIS #2,R13      ; Set the second bit of R13 for subtraction
+
     SUB #32,R12     ; Rewind R12
+    POPM.W #2,R6    ; Restore R5 - R6
     
-    POPM.W #3,R6    ; Restore R4 - R6
-    
-    ;CALLA #mp_reduce
+    MOV #1,R13
+    CALLA #mp_freeze
     
 RETA
   

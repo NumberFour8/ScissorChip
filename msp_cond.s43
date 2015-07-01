@@ -4,9 +4,9 @@ NAME msp_cond
 PUBLIC mp_condsub
 RSEG CODE
 
-; Subtracts 2^255-19 from the number pointed by R12 if the LS bit of R4 is set
+; Subtracts 2^255-19 from the number pointed by R12 if R13 is set
 ; otherwise subtracts nothing.
-; If the second LS bit of R4 is set, addition is performed instead of subtraction. 
+; If the R14 is set, addition is performed instead of subtraction. 
 mp_condsub
     
     PUSHM.W #5,R9 ; Save R5-R9 
@@ -14,30 +14,30 @@ mp_condsub
     MOV R12,R6
     ADD #30,R6
     
-    ; Depending on second bit of R4 we decide whether we subtract or add. This is constant time.
-    BIT #2,R4
+    ; Depending on second bit of R14 we decide whether we subtract or add. This is constant time.
+    TST R14
     JNZ setAdd
     MOV #0xFFED,R5
     MOV #0xFFFF,R8
     MOV #0x7FFF,R9
     JMP andLimbs
 setAdd
-    MOV #0x0011,R5
+    MOV #0x0013,R5 ; Has to be +1 be cause of the missing borrow
     MOV #0x0000,R8
     MOV #0x8000,R9
     JMP andLimbs
 andLimbs
    
-    ; Need to precompute FFFF or 0 to R4
-    AND #1,R4
-    MOV R4,R7
-    CLR R4
-    SUB R7,R4        ; R4 == 0 ? R4 = 0 : R4 = FFFF 
+    ; Need to precompute FFFF or 0 to R13
+    AND #1,R13
+    MOV R13,R7
+    CLR R13
+    SUB R7,R13        ; R13 == 0 ? R13 = 0 : R13 = FFFF 
 
     ; Set or reset the limbs of 2^255-19
-    AND R4,R5
-    AND R4,R8
-    AND R4,R9
+    AND R13,R5
+    AND R13,R8
+    AND R13,R9
     
     SUB R5,0(R12)    ; Subtract LS limb
     MOV SR,R7        ; Save SR
@@ -63,18 +63,20 @@ RETA
 PUBLIC mp_freeze
 RSEG CODE
 
-; Conditionally subtract 2^255-19 from the 255-bit number pointed by R12
+; Conditionally subtract/add 2^255-19 from the 255-bit number pointed by R12.
+; If R13 is set addition is performed.
 
 mp_freeze
  
     PUSHM.W #6,R10
-  
-    CLR R4 ; For carry bit 
+    MOV R13,R14  ; mp_condsub expects add/subtract parameter in R14
 
-; -- The following code does: R4 = (R12 > 2^255-19)
+    CLR R13 ; For subtract bit 
+
+; -- The following code does: R13 = (R12 > 2^255-19)
     MOV #0x7FFF,R5
     CMP 0x1e(R12),R5 
-    MOV SR,R4  
+    MOV SR,R13  
     
     MOV #0xFFFF,R5
     MOV R12,R10
@@ -83,7 +85,7 @@ mp_freeze
     ADD #2,R6       ; R6 contains the stop address, the 2nd LS word
 compr
     CMP @R10,R5      
-    AND SR,R4
+    AND SR,R13
    
     DECD R10
     CMP R6,R10
@@ -91,16 +93,17 @@ compr
 
     MOV #0xFFED,R5      ; Compare the last limb
     CMP @R12,R5
-    AND SR,R4
+    AND SR,R13
  
     ; If zero bit was set, clear the carry bit
-    MOV R4,R5
+    MOV R13,R5
     AND #2,R5
     RRA R5
-    XOR R5,R4
+    XOR R5,R13
 
-    AND #1,R4
-    XOR #1,R4 ; Flip the carry bit
+    AND #1,R13
+    XOR #1,R13 ; Flip the carry bit
+    
     POPM.W #6,R10
     
     CALLA #mp_condsub

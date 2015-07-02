@@ -13,7 +13,7 @@ RSEG CODE
 
 mp_mulmod32_sos
 
-  PUSH R12
+  PUSH.W R12
   PUSHM.W #4,R7
   
   ; Separated Operand Scanning

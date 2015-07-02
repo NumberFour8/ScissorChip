@@ -2163,6 +2163,9 @@
     <name>$PROJ_DIR$\msp_addsub.s43</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\msp_barett.s43</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\msp_barret.c</name>
   </file>
   <file>
@@ -2193,10 +2196,19 @@
     <name>$PROJ_DIR$\msp_mul16_fios.s43</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\msp_mul32_cios.c</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\msp_mul32_cios.s43</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\msp_mul32_fios.c</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\msp_mul32_fios.s43</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\msp_mul32_sos.c</name>
   </file>
   <file>
     <name>$PROJ_DIR$\msp_mul32_sos.s43</name>

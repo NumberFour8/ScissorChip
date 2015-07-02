@@ -8,7 +8,7 @@ static const uint16_t mu[17] = {0x131B, 0x0A2C, 0xE5A3, 0xED9C, 0x29A7, 0x0863, 
 
 void mp_barret252(uint16_t* r,uint16_t* x)
 {
-    // Multiplication of MS part of X with LS part of mu
+    // Multiplication of MS half of X with LS part of mu
     uint16_t carry = 0;
     int i,j;
     uint16_t* xx = x+15;
@@ -24,9 +24,10 @@ void mp_barret252(uint16_t* r,uint16_t* x)
             r[i+17] = carry;
     }
 
-    // Sets the lower part  
+    // Sets the lower part of R to zero 
     for (i = 0; i <= 16;i++) r[i] = 0;
 
+    // Incomplete multiplication of LS half of m and MS half of R
     for (i = 0;i <= 16;i++)
     {
             carry = 0;
@@ -40,7 +41,8 @@ void mp_barret252(uint16_t* r,uint16_t* x)
             if (i == 0) r[16] = carry;
     }
 
-    carry = 0;
+    // Subtraction of LS half of X and LS half of R
+     carry = 0;
     for (i = 0;i < 16;i++)
     {
             int rr = (uint32_t)x[i] - r[i] - carry;

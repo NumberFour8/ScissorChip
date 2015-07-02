@@ -1,0 +1,65 @@
+#include "msp430.h"
+NAME msp_barett
+
+EXTERN clear_mem
+EXTERN mp_mul32
+EXTERN mp_subb
+
+RSEG DATA16_C
+
+; The number 2^252+27742317777372353535851937790883648493
+q:
+  DW 0xD3ED, 0x5CF5, 0x631A, 0x5812, 0x9CD6, 0xA2F7, 0xF9DE, 0x14DE,      0,      0,      0,      0,      0,      0,      0, 0x1000,      0,   0     
+       
+; The mu constant (aligned to multiple of 4 bytes)
+mu:
+  DW 0x131B, 0x0A2C, 0xE5A3, 0xED9C, 0x29A7, 0x0863, 0x215D, 0x2106, 0xFFEB, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0x000F,   0
+  
+PUBLIC mp_barrett252
+RSEG CODE
+
+; Performs Barrett reduction of number X given in R13
+; modulo q = 2^252 + 27742317777372353535851937790883648493
+; and stores the result T in R12. Number pointed by R13 could be at most 66 bytes long.
+; R12 must point to a preallocated memory of at least 80 bytes.
+
+mp_barrett252
+  
+  ; -- First we perform multiplication of the MS half X with LS part of mu
+
+  PUSHM.W #2,R13
+  
+  ADD   #8,R12
+  ADD  #30,R13   ; MS half of R13 (this will misalign X) 
+  MOV  #mu,R14
+  MOV  #36,R15
+  
+  CALLA #mp_mul32
+  
+  ; -- Now we zero the lower part of T
+  MOV @SP,R12
+  ADD  #8,R12
+  MOV #32,R13
+  CALLA #clear_mem
+  
+  
+  ; -- Multiplication of q and MS half of R
+  MOV @SP,R12
+  MOV  #q,R13
+  MOV R12,R14
+  ADD #42,R14
+  
+  CALLA #mp_mul32
+  
+  ; Subtraction of LS half of R from LS half of X 
+  POPM.W #2,R13
+  MOV R12,R14
+  CLR R15
+  
+  CALLA #mp_subb
+
+RETA
+
+END
+
+

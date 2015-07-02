@@ -6,6 +6,8 @@
 #define digest_update(a,b,c)    keccak_update(a,b,c)
 #define digest_finish(a,b)      keccak_finish(a,b)
 
+// BEWARE: signature space must be 66 bytes long, 2 extra bytes needed for Barrett.
+
 void sign(const uint8_t* m,uint16_t size,const keypair* keyp,uint8_t* signature)
 {
     // Compute r = H(h_b,...,h_(2b-1),M)
@@ -15,10 +17,10 @@ void sign(const uint8_t* m,uint16_t size,const keypair* keyp,uint8_t* signature)
     digest_update(&ctx,m,size);
     digest_finish(&ctx,signature);
 
-    uint16_t r[32];
+    uint16_t r[40];
     
-    // Reduce r mod l
-    mp_barret252(r,(uint16_t*)signature);
+    // Reduce r mod l. 
+    mp_barrett252(r,(uint16_t*)signature);
     
     monpoint B,R;
     B.x[0] = 9*38; // Montgomery representation of the base point, X = 9
@@ -35,10 +37,10 @@ void sign(const uint8_t* m,uint16_t size,const keypair* keyp,uint8_t* signature)
     digest_update(&ctx,m,size);
     digest_finish(&ctx,signature);
     
-    uint16_t* t1 = B.x; // By natural structure aligment, t1 has at least 32 accessible bytes!
+    uint16_t* t1 = B.x; // By natural structure aligment, t1 has at least 64 accessible bytes!
     
     // Reduce H(R,A,M) mod l
-    mp_barret252(t1,(uint16_t*)signature);
+    mp_barrett252(t1,(uint16_t*)signature);
     
     // Compute H(R,A,M)*a
     mp_mul32((uint16_t*)signature,t1,(uint16_t*)keyp->secretKey,32); // Guaranteed to be < 2^512
@@ -47,8 +49,8 @@ void sign(const uint8_t* m,uint16_t size,const keypair* keyp,uint8_t* signature)
     mp_addnr((uint16_t*)signature,r);
     
     // Reduce S mod l
-    mp_barret252(t1,(uint16_t*)signature);
+    mp_barrett252(t1,(uint16_t*)signature);
     
-    COORD_COPY(signature,r);
-    COORD_COPY(signature+32,t1);
+    coord_copy(signature,r);
+    coord_copy(signature+32,t1);
 }

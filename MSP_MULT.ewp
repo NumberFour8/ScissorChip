@@ -293,7 +293,7 @@
         <option>
           <name>CCAllowList</name>
           <version>1</version>
-          <state>11111</state>
+          <state>00000</state>
         </option>
         <option>
           <name>CCObjUseModuleName</name>
@@ -409,7 +409,7 @@
         </option>
         <option>
           <name>CCOptLevel</name>
-          <state>3</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCOptStrategy</name>
@@ -418,7 +418,7 @@
         </option>
         <option>
           <name>CCOptLevelSlave</name>
-          <state>3</state>
+          <state>0</state>
         </option>
         <option>
           <name>CInput</name>
@@ -2163,10 +2163,7 @@
     <name>$PROJ_DIR$\msp_addsub.s43</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\msp_barett.s43</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\msp_barret.c</name>
+    <name>$PROJ_DIR$\msp_barrett.s43</name>
   </file>
   <file>
     <name>$PROJ_DIR$\msp_cond.s43</name>
@@ -2196,19 +2193,10 @@
     <name>$PROJ_DIR$\msp_mul16_fios.s43</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\msp_mul32_cios.c</name>
-  </file>
-  <file>
     <name>$PROJ_DIR$\msp_mul32_cios.s43</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\msp_mul32_fios.c</name>
-  </file>
-  <file>
     <name>$PROJ_DIR$\msp_mul32_fios.s43</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\msp_mul32_sos.c</name>
   </file>
   <file>
     <name>$PROJ_DIR$\msp_mul32_sos.s43</name>

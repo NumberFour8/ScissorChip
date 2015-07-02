@@ -3,10 +3,7 @@
 
 #include <stdint.h>
 #include "msp430.h"
-
-#define COORD_COPY(x,y) for (*(x) = 15 ;*(x);(*(x))--) (x)[*(x)] = (y)[*(x)]; \
-                        *(x) = *(y);
-                      
+                     
 // Montgomery XZ coordinates.
 // The coordinates itself must be in Montgomery representation
 typedef struct
@@ -30,8 +27,9 @@ typedef struct {
 extern void mp_add(uint16_t* c,const uint16_t* a,const uint16_t* b);
 
 // Subtracts two 256-bit numbers. 0 <= A,B < 2^256-38
-// Conditional subtraction is performed on underflow.
-extern void mp_sub(uint16_t* c,const uint16_t* a,const uint16_t* b);
+// Conditional subtraction is performed when R15 is set and an underflow occurs.
+extern void mp_subb(uint16_t* c,const uint16_t* a,const uint16_t* b,uint16_t cs);
+#define mp_sub(c,a,b) mp_subb(c,a,b,1)
 
 // Adds 256-bit number A to the 512-bit number C. No reduction is performed
 extern void mp_addnr(uint16_t* c,const uint16_t* a);
@@ -45,26 +43,22 @@ extern void mp_mod32(uint16_t* a);
 // Conditionally subtracts 2^255-19 from number A, 0 <= A < 2^256-38
 extern void mp_freeze(uint16_t* a);
 
-#ifndef MP_USE_C
+// Barett reduction algorithm
+extern void mp_barrett252(uint16_t* r,uint16_t* x);
+
 
 // Multiplication algorithms
-
 extern void mp_mulmod16_fios(uint16_t* c,const uint16_t* a,const uint16_t* b,uint16_t mode);
 extern void mp_mulmod32_fios(uint16_t* c,const uint16_t* a,const uint16_t* b,uint16_t mode);
 extern void mp_mulmod32_sos (uint16_t* c,const uint16_t* a,const uint16_t* b,uint16_t mode);
 extern void mp_mulmod32_cios(uint16_t* c,const uint16_t* a,const uint16_t* b,uint16_t mode);
 //extern void fe_mul(uint16_t* c,uint16_t* a,uint16_t* b);
 
-// Barett reduction algorithm
-extern void mp_barret252(uint16_t* r,uint16_t* x);
-
-#endif
 
 // Defines which multiplication algorithm and reduction algorithm should be used
 #define mp_mulmod(c,a,b)  mp_mulmod32_cios(c,a,b,32) // Use 32-bit CIOS for multiplication 
 #define mp_mulmod1(c,a,b) mp_mulmod32_cios(c,a,b,4)  // Use 32-bit CIOS for multiplication by a single 32-bit number
 #define mp_mod25519(a)    mp_mod32(a)                // Use 32-bit full reduction modulo 2^255-19
-
 
 // Higher level functions //
 
@@ -92,7 +86,10 @@ void clear_mem(uint16_t* dest,const uint16_t count);
 void mp_mul32(uint16_t* r,const uint16_t* a,const uint16_t* b,uint16_t count);
 
 // Macro for clearing the point structure
-#define clear_point(p)  clear_mem(p->x,16);\
-                        clear_mem(p->z,16);
+#define clear_point(p)  clear_mem(p->x,32)
+
+// Macro for copying a point coordinate
+#define coord_copy(x,y) for (*(x) = 15 ;*(x);(*(x))--) (x)[*(x)] = (y)[*(x)]; \
+                        *(x) = *(y);
 
 #endif

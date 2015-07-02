@@ -11,8 +11,8 @@ void ladder(monpoint* R,monpoint* P,const uint16_t *n)
     uint32_t R1 = (uint32_t)P;
     
     monpoint cP; 
-    COORD_COPY(cP.x,P->x);
-    COORD_COPY(cP.z,P->z);
+    coord_copy(cP.x,P->x);
+    coord_copy(cP.z,P->z);
     
     uint16_t c = 0,t;
     for (int i = 255;i >= 0;i--)

@@ -33,9 +33,34 @@ void test_addsub()
     mp_sub(c,a,b);
 }
 
+void test_utils()
+{
+    uint16_t a[16] = {65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535,65535, 65535, 65535, 65535, 65535, 65535};
+    uint16_t b[16] = {65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535,65535, 65535, 65535, 65535, 65535, 65535};
+    uint16_t c[32] = {0};
+  
+    mp_mul32(c,a,b,32);
+    
+    int i;
+    for (i = 0;i < 32; i++)
+      c[i] = 65535*(i < 16);
+    
+    mp_addnr(c,a);
+    
+}
+
 void test_barret()
 {
+    //uint16_t a[32] = {0xe958,0xda0b,0xdea9,0xdc1b,0x97f6,0x6bdc,0x2a3f,0xfbba,0xf458,0x6530,0x985b,
+    //		      0x903f,0x168d,0x6bee,0xacc7,0xcc01,0x143a,0x4e91,0xb749,0x9608,0x32b7,0x2f9a,
+    //		      0x5a2f,0xe5d5,0xd09a,0x9065,0x3d48,0x294c,0x1360,0x5ce6,0x1787,0x4b98};
+    uint16_t a[33] = {0x144b, 0x1ef6, 0xa17b, 0x525d, 0x3a57, 0xcb23, 0xd313, 0xd677, 
+                      0x6e16, 0x1511, 0xeb3b, 0x959d, 0x9892, 0x8be9, 0x6ad0, 0x6ab1,
+                      0xd47c, 0x3fa1, 0x6bc6, 0xc813, 0x83df, 0xcf1e, 0x185e, 0x6e9e,
+                      0xf4bc, 0xef10, 0xf0d6, 0x1a70, 0x56f9, 0xb7cf, 0x4163, 0x0358, 0};
   
+    uint16_t r[40] = {0};
+    mp_barrett252(r,a);
 }
 
 void test_mul()
@@ -141,7 +166,11 @@ int main( void )
     
     //test_freeze();
     
-    test_addsub();
+    //test_addsub();
+    
+    //test_utils();
+    
+    test_barret();
     
     return 0;
 }

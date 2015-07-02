@@ -25,10 +25,10 @@ void mon_dbladd(monpoint* dbl,monpoint* add,const monpoint* dif)
     mp_mulmod(r4,r6,r6);  
     mp_mulmod1(r5,r9,(uint16_t*)&a24); 
     mp_add(r6,r10,r5);
-    mp_mulmod(r5,r0,r4);  // R0 < N
-    mp_mulmod(r4,r1,r2);  // R1 < N
+    mp_mulmod(r5,r0,r4);  
+    mp_mulmod(r4,r1,r2);  
     mp_mulmod(r3,r9,r6);  
-    mp_mulmod(r2,r7,r10); // Freeze R10,R7 ?
+    mp_mulmod(r2,r7,r10); 
 }
 
 void compress(monpoint* R)

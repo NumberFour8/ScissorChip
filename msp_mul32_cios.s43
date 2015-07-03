@@ -38,24 +38,17 @@ mp_mulmod32_cios
 outer_for3
 
   ; (C,S) = t[0] + a[0]*b[i]
-  MOV 0x0(R14),&MPY32L  ; b[i]
-  MOV 0x2(R14),&MPY32H
-  MOV 0x0(R13),&OP2L    ; a[0] 
-  MOV 0x2(R13),&OP2H
-
-  ; Add t[0], t[0] = S
-  ADD RES0,0x0(R12)
-  ADDC RES1,0x2(R12)
-  ADC &RES2
-  ADC &RES3
+  MOV 0x0(R14),&MAC32L  ; b[i]
+  MOV 0x2(R14),&MAC32H
+  CLR &RES0
+  CLR &RES1
+  CLR &RES2
+  CLR &RES3
   
-  BIS #32,&MPY32CTL0 ; Switch to MAC, keep b[i] in OP1
   MOV R13,R6  ; Traverses A
   MOV R13,R8
   ADD R15,R6  ; Excluding sth word
   MOV R12,R5  ; Traverses T
-  ADD #4,R5   ; Start at t[1] already
-  ADD #4,R8   ; and at a[1]
 inner_for3a
    
    ; (C,S) = t[j] + a[j]*b[i] + C

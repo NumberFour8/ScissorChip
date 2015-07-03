@@ -19,7 +19,6 @@ void test_freeze()
     uint16_t a[16] = {65517, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535,65535, 65535, 65535, 65535, 65535, 32767};
     //uint16_t a[16] = {65518, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535,65535, 65535, 65535, 65535, 65535, 32767};
     
-    
     mp_freeze(a);
 }
 
@@ -73,6 +72,33 @@ void test_mul()
     
     uint64_t coeff = 29718394;
     mp_mulmod1(c,(uint16_t*)&coeff,a);
+}
+
+void test_square()
+{
+    uint16_t a[16] = {0};
+    a[0] = 38;
+  
+    uint16_t c[48] = {0};
+    mp_mulmod(c,a,a);
+}
+
+void test_ladderstep()
+{
+    monpoint P,Q,d;
+    clear_point(&P);
+    clear_point(&Q);
+    
+    P.x[0] = 9*38;
+    P.z[0] = 38;
+    
+    Q.x[0] = 38;
+    Q.z[0] = 0;
+    
+    coord_copy(d.x,P.x);
+    coord_copy(d.z,P.z);
+    
+    mon_dbladd(&Q,&P,&d);
 }
 
 int main( void )
@@ -174,7 +200,11 @@ int main( void )
     
     //test_barret();
     
-    test_mul();
+    //test_mul();
+    
+    //test_square();
+    
+    test_ladderstep();
     
     return 0;
 }

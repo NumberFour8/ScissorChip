@@ -4,7 +4,7 @@ void mon_dbladd(monpoint* dbl,monpoint* add,const monpoint* dif)
 {
     bigint r6,r7,r8,r9,r10; // 160 additional bytes of memory
   
-    uint64_t a24 = 4623270; // a24 = (a-2)/4, here in Montgomery representation, +2 additional bytes
+    uint64_t a24 = 121666*38; // a24 = (a+2)/4, here in Montgomery representation, +2 additional bytes
     
     uint16_t *r0 = (uint16_t*)dif->x,*r1 = (uint16_t*)dif->z,
              *r2 = (uint16_t*)dbl->x,*r3 = (uint16_t*)dbl->z,
@@ -23,7 +23,7 @@ void mon_dbladd(monpoint* dbl,monpoint* add,const monpoint* dif)
     mp_mulmod(r2,r6,r6);  // FF = F^2
     mp_sub(r6,r4,r5);     // G  = DA - CB
     mp_mulmod(r4,r6,r6);  // GG = G^2
-    mp_mulmod1(r5,r9,(uint16_t*)&a24); // H = a24*E 
+    mp_mulmod1(r5,(uint16_t*)&a24,r9); // H = a24*E 
     mp_add(r6,r10,r5);    // I  = BB + H
     mp_mulmod(r5,r0,r4);  // Z5 = X1*GG
     mp_mulmod(r4,r1,r2);  // X5 = Z1*FF 

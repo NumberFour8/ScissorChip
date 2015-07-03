@@ -6,22 +6,23 @@
   <configuration>
     <name>Debug</name>
     <outputs>
+      <file>$PROJ_DIR$\Debug\Exe\MSP_MULT.ulp</file>
       <file>$PROJ_DIR$\sha512.c</file>
       <file>$PROJ_DIR$\msp_mul32_fios.s43</file>
       <file>$PROJ_DIR$\msp_mul32_sos.s43</file>
       <file>$PROJ_DIR$\msp_propagate.s43</file>
+      <file>$PROJ_DIR$\Debug\List\main.lst</file>
       <file>$PROJ_DIR$\msp_utils.s43</file>
       <file>$PROJ_DIR$\Debug\List\kara.lst</file>
       <file>$PROJ_DIR$\Debug\List\msp_mp.s43</file>
-      <file>$PROJ_DIR$\Debug\List\main.lst</file>
-      <file>$PROJ_DIR$\Debug\List\msp_mul32_sos.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\msp_sign.r43</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_mul32_cios.r43</file>
+      <file>$PROJ_DIR$\Debug\List\msp_mul32_sos.lst</file>
       <file>$TOOLKIT_DIR$\lib\dlib\dl430xlsfn.r43</file>
       <file>$PROJ_DIR$\keccak.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\msp_sign.r43</file>
+      <file>$PROJ_DIR$\Debug\Obj\msp_sign.pbi</file>
       <file>$TOOLKIT_DIR$\lib\dlib\dl430xlsfn.h</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_barrett.r43</file>
-      <file>$PROJ_DIR$\Debug\Obj\msp_sign.pbi</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_mul32_fios.r43</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_mul16_fios.r43</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_mul32_sos.r43</file>
@@ -33,25 +34,9 @@
       <file>$PROJ_DIR$\Debug\List\msp_ladder.s43</file>
       <file>$PROJ_DIR$\Debug\List\msp_invert.lst</file>
       <file>$PROJ_DIR$\Debug\List\msp_ladder.lst</file>
-      <file>$PROJ_DIR$\kara.s43</file>
-      <file>$PROJ_DIR$\keccak.c</file>
-      <file>$PROJ_DIR$\main.c</file>
-      <file>$PROJ_DIR$\msp_addsub.s43</file>
-      <file>$PROJ_DIR$\msp_barrett.s43</file>
-      <file>$PROJ_DIR$\msp_cond.s43</file>
-      <file>$PROJ_DIR$\msp_invert.c</file>
-      <file>$PROJ_DIR$\msp_keccak.s43</file>
-      <file>$PROJ_DIR$\msp_ladder.c</file>
-      <file>$PROJ_DIR$\msp_mod16_25519.s43</file>
-      <file>$PROJ_DIR$\msp_mod32_25519.s43</file>
-      <file>$PROJ_DIR$\msp_montgomery.s43</file>
-      <file>$PROJ_DIR$\msp_mp.c</file>
-      <file>$PROJ_DIR$\msp_mul16_fios.s43</file>
-      <file>$PROJ_DIR$\msp_mul32_cios.s43</file>
-      <file>$PROJ_DIR$\Debug\List\msp_invert.s43</file>
-      <file>$PROJ_DIR$\msp_sign.c</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_ladder.pbi</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_invert.r43</file>
+      <file>$PROJ_DIR$\Debug\List\msp_invert.s43</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_ladder.r43</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_invert.pbi</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_propagate.r43</file>
@@ -67,9 +52,9 @@
       <file>$PROJ_DIR$\Debug\Obj\msp_cond.r43</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_mp.pbi</file>
       <file>$TOOLKIT_DIR$\config\linker\lnk430f5529.xcl</file>
+      <file>$PROJ_DIR$\Debug\Obj\main.r43</file>
       <file>$TOOLKIT_DIR$\inc\intrinsics.h</file>
       <file>$PROJ_DIR$\Debug\List\msp_mul32_cios.lst</file>
-      <file>$PROJ_DIR$\Debug\Obj\main.r43</file>
       <file>$PROJ_DIR$\Debug\List\MSP_MULT.map</file>
       <file>$TOOLKIT_DIR$\inc\dlib\c\stdlib.h</file>
       <file>$TOOLKIT_DIR$\inc\dlib\c\DLib_Product.h</file>
@@ -81,13 +66,13 @@
       <file>$PROJ_DIR$\Debug\Obj\sha512.pbi</file>
       <file>$TOOLKIT_DIR$\inc\dlib\c\ycheck.h</file>
       <file>$PROJ_DIR$\msp_mp.h</file>
+      <file>$TOOLKIT_DIR$\inc\dlib\c\DLib_Threads.h</file>
       <file>$TOOLKIT_DIR$\inc\msp430.h</file>
       <file>$PROJ_DIR$\Debug\Exe\MSP_MULT.d43</file>
-      <file>$TOOLKIT_DIR$\inc\dlib\c\DLib_Threads.h</file>
       <file>$PROJ_DIR$\Debug\List\main.s43</file>
+      <file>$PROJ_DIR$\Debug\Obj\main.pbi</file>
       <file>$TOOLKIT_DIR$\inc\in430.h</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_mp.r43</file>
-      <file>$PROJ_DIR$\Debug\Obj\main.pbi</file>
       <file>$TOOLKIT_DIR$\config\linker\multiplier32_loc2.xcl</file>
       <file>$TOOLKIT_DIR$\inc\dlib\c\stdint.h</file>
       <file>$TOOLKIT_DIR$\inc\dlib\c\yvals.h</file>
@@ -100,34 +85,50 @@
       <file>$TOOLKIT_DIR$\inc\dlib\c\xencoding_limits.h</file>
       <file>$TOOLKIT_DIR$\inc\dlib\c\ysizet.h</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_utils.r43</file>
+      <file>$PROJ_DIR$\Debug\Obj\MSP_MULT.pbd</file>
       <file>$TOOLKIT_DIR$\inc\msp430f5529.h</file>
       <file>$PROJ_DIR$\Debug\List\msp_mul16_fios.lst</file>
-      <file>$PROJ_DIR$\Debug\Obj\MSP_MULT.pbd</file>
       <file>$PROJ_DIR$\Debug\List\msp_mul32_fios.lst</file>
       <file>$PROJ_DIR$\Debug\List\msp_barrett.lst</file>
       <file>$PROJ_DIR$\Debug\List\msp_sign.s43</file>
       <file>$PROJ_DIR$\Debug\List\msp_sign.lst</file>
+      <file>$PROJ_DIR$\kara.s43</file>
+      <file>$PROJ_DIR$\keccak.c</file>
+      <file>$PROJ_DIR$\main.c</file>
+      <file>$PROJ_DIR$\msp_addsub.s43</file>
+      <file>$PROJ_DIR$\msp_barrett.s43</file>
+      <file>$PROJ_DIR$\msp_cond.s43</file>
+      <file>$PROJ_DIR$\msp_invert.c</file>
+      <file>$PROJ_DIR$\msp_keccak.s43</file>
+      <file>$PROJ_DIR$\msp_ladder.c</file>
+      <file>$PROJ_DIR$\msp_mod16_25519.s43</file>
+      <file>$PROJ_DIR$\msp_mod32_25519.s43</file>
+      <file>$PROJ_DIR$\msp_montgomery.s43</file>
+      <file>$PROJ_DIR$\msp_mp.c</file>
+      <file>$PROJ_DIR$\msp_mul16_fios.s43</file>
+      <file>$PROJ_DIR$\msp_mul32_cios.s43</file>
+      <file>$PROJ_DIR$\msp_sign.c</file>
     </outputs>
     <file>
       <name>$PROJ_DIR$\sha512.c</name>
       <outputs>
         <tool>
           <name>ICC430</name>
-          <file> 90 67 68</file>
+          <file> 75 52 53</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 72</file>
+          <file> 57</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICC430</name>
-          <file> 70 69 73 84 86 13 66 91 77 92 83</file>
+          <file> 55 54 58 69 71 15 51 76 60 77 68</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 70 69 73 84 86 13 66 91 77 92 83</file>
+          <file> 55 54 58 69 71 15 51 76 60 77 68</file>
         </tool>
       </inputs>
     </file>
@@ -136,13 +137,13 @@
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 16 97</file>
+          <file> 17 82</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 75 94</file>
+          <file> 61 80</file>
         </tool>
       </inputs>
     </file>
@@ -151,13 +152,13 @@
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 18 8</file>
+          <file> 19 11</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 75 94</file>
+          <file> 61 80</file>
         </tool>
       </inputs>
     </file>
@@ -166,13 +167,13 @@
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 48 57</file>
+          <file> 33 42</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 75 94</file>
+          <file> 61 80</file>
         </tool>
       </inputs>
     </file>
@@ -181,13 +182,28 @@
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 93 50</file>
+          <file> 78 35</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 75 94</file>
+          <file> 61 80</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Debug\Exe\MSP_MULT.d43</name>
+      <outputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 49</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 45 67 20 74 46 40 16 43 29 22 31 34 23 21 66 18 10 17 19 33 9 78 53 12</file>
         </tool>
       </inputs>
     </file>
@@ -196,13 +212,13 @@
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 19 5</file>
+          <file> 20 7</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 75 94</file>
+          <file> 61 80</file>
         </tool>
       </inputs>
     </file>
@@ -211,21 +227,21 @@
       <outputs>
         <tool>
           <name>ICC430</name>
-          <file> 88 87 89</file>
+          <file> 73 72 74</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 71</file>
+          <file> 56</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICC430</name>
-          <file> 11 83 73 84 86 13 66 91 77 69 92 74 75 94 79 61</file>
+          <file> 13 68 58 69 71 15 51 76 60 54 77 59 61 80 65 47</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 11 83 73 84 86 13 66 91 77 69 92 74 75 94 79 61</file>
+          <file> 13 68 58 69 71 15 51 76 60 54 77 59 61 80 65 47</file>
         </tool>
       </inputs>
     </file>
@@ -234,21 +250,21 @@
       <outputs>
         <tool>
           <name>ICC430</name>
-          <file> 78 7 63</file>
+          <file> 63 5 46</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 81</file>
+          <file> 64</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICC430</name>
-          <file> 75 94 79 61 83 73 84 86 13 66 91 77 65 92 74 11 69 70</file>
+          <file> 61 80 65 47 68 58 69 71 15 51 76 60 50 77 59 13 54 55</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 75 94 79 61 83 73 84 86 13 66 91 77 65 92 74 11 69 70</file>
+          <file> 61 80 65 47 68 58 69 71 15 51 76 60 50 77 59 13 54 55</file>
         </tool>
       </inputs>
     </file>
@@ -257,13 +273,13 @@
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 55 54</file>
+          <file> 40 39</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 75 94</file>
+          <file> 61 80</file>
         </tool>
       </inputs>
     </file>
@@ -272,13 +288,13 @@
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 14 98</file>
+          <file> 16 83</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 75 94</file>
+          <file> 61 80</file>
         </tool>
       </inputs>
     </file>
@@ -287,13 +303,13 @@
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 58 53</file>
+          <file> 43 38</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 75 94</file>
+          <file> 61 80</file>
         </tool>
       </inputs>
     </file>
@@ -302,21 +318,21 @@
       <outputs>
         <tool>
           <name>ICC430</name>
-          <file> 42 25 45</file>
+          <file> 30 26 29</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 47</file>
+          <file> 32</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICC430</name>
-          <file> 74 83 73 84 86 13 66 91 77 75 94 79 61</file>
+          <file> 59 68 58 69 71 15 51 76 60 61 80 65 47</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 74 83 73 84 86 13 66 91 77 75 94 79 61</file>
+          <file> 59 68 58 69 71 15 51 76 60 61 80 65 47</file>
         </tool>
       </inputs>
     </file>
@@ -325,13 +341,13 @@
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 21 23</file>
+          <file> 22 24</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 75 94</file>
+          <file> 61 80</file>
         </tool>
       </inputs>
     </file>
@@ -340,7 +356,75 @@
       <outputs>
         <tool>
           <name>ICC430</name>
-          <file> 24 26 46</file>
+          <file> 25 27 31</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 28</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICC430</name>
+          <file> 59 68 58 69 71 15 51 76 60 61 80 65 47</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 59 68 58 69 71 15 51 76 60 61 80 65 47</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\msp_mod16_25519.s43</name>
+      <outputs>
+        <tool>
+          <name>A430</name>
+          <file> 34 41</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>A430</name>
+          <file> 61 80</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\msp_mod32_25519.s43</name>
+      <outputs>
+        <tool>
+          <name>A430</name>
+          <file> 23 36</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>A430</name>
+          <file> 61 80</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\msp_montgomery.s43</name>
+      <outputs>
+        <tool>
+          <name>A430</name>
+          <file> 21 37</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>A430</name>
+          <file> 61 80</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\msp_mp.c</name>
+      <outputs>
+        <tool>
+          <name>ICC430</name>
+          <file> 8 70 66</file>
         </tool>
         <tool>
           <name>BICOMP</name>
@@ -350,79 +434,11 @@
       <inputs>
         <tool>
           <name>ICC430</name>
-          <file> 74 83 73 84 86 13 66 91 77 75 94 79 61</file>
+          <file> 59 68 58 69 71 15 51 76 60 61 80 65 47</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 74 83 73 84 86 13 66 91 77 75 94 79 61</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\msp_mod16_25519.s43</name>
-      <outputs>
-        <tool>
-          <name>A430</name>
-          <file> 49 56</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>A430</name>
-          <file> 75 94</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\msp_mod32_25519.s43</name>
-      <outputs>
-        <tool>
-          <name>A430</name>
-          <file> 22 51</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>A430</name>
-          <file> 75 94</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\msp_montgomery.s43</name>
-      <outputs>
-        <tool>
-          <name>A430</name>
-          <file> 20 52</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>A430</name>
-          <file> 75 94</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\msp_mp.c</name>
-      <outputs>
-        <tool>
-          <name>ICC430</name>
-          <file> 6 85 80</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 59</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICC430</name>
-          <file> 74 83 73 84 86 13 66 91 77 75 94 79 61</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 74 83 73 84 86 13 66 91 77 75 94 79 61</file>
+          <file> 59 68 58 69 71 15 51 76 60 61 80 65 47</file>
         </tool>
       </inputs>
     </file>
@@ -431,13 +447,13 @@
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 17 95</file>
+          <file> 18 81</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 75 94</file>
+          <file> 61 80</file>
         </tool>
       </inputs>
     </file>
@@ -446,13 +462,13 @@
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 9 62</file>
+          <file> 10 48</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 75 94</file>
+          <file> 61 80</file>
         </tool>
       </inputs>
     </file>
@@ -461,21 +477,21 @@
       <outputs>
         <tool>
           <name>ICC430</name>
-          <file> 99 100 12</file>
+          <file> 84 85 9</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 15</file>
+          <file> 14</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICC430</name>
-          <file> 74 83 73 84 86 13 66 91 77 75 94 79 61 11 69 92</file>
+          <file> 59 68 58 69 71 15 51 76 60 61 80 65 47 13 54 77</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 74 83 73 84 86 13 66 91 77 75 94 79 61 11 69 92</file>
+          <file> 59 68 58 69 71 15 51 76 60 61 80 65 47 13 54 77</file>
         </tool>
       </inputs>
     </file>
@@ -484,24 +500,13 @@
       <outputs>
         <tool>
           <name>XLINK</name>
-          <file> 76 64</file>
+          <file> 62 49</file>
+        </tool>
+        <tool>
+          <name>ULP430</name>
+          <file> 0</file>
         </tool>
       </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Debug\Exe\MSP_MULT.d43</name>
-      <outputs>
-        <tool>
-          <name>XLINK</name>
-          <file> 64</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>XLINK</name>
-          <file> 60 82 19 89 63 55 14 58 45 21 46 49 22 20 80 17 9 16 18 48 12 93 68 10</file>
-        </tool>
-      </inputs>
     </file>
   </configuration>
   <configuration>

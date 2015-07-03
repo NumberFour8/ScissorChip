@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include "msp430.h"
 
-#define DIGITS 20
+#define DIGITS 24
 typedef uint16_t  bigint[DIGITS];
 typedef uint16_t* bigintp;
 
@@ -90,7 +90,7 @@ void clear_mem(uint16_t* dest,const uint16_t count);
 void mp_mul32(bigintp r,const bigintp a,const bigintp b,uint16_t n);
 
 // Macro for clearing the point structure
-#define clear_point(p)  clear_mem(p->x,32)
+#define clear_point(p)  clear_mem((p)->x,80)
 
 // Macro for copying a point coordinate
 #define coord_copy(x,y) for (*(x) = 15 ;*(x);(*(x))--) (x)[*(x)] = (y)[*(x)]; \

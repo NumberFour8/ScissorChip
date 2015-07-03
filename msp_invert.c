@@ -1,8 +1,5 @@
 #include "msp_mp.h"
 
-// Square-root of -1 in Montgomery representation
-//uint16_t sqrtm1[16] = {0xdb04,0xfe2b,0x07d4,0x3b58,0xe9ed,0xb51b,0x90fd,0x02d1,0x3362,0x16bf,0x6d6e,0x1ba8,0xd6c7,0x6b0b,0x7577};
-
 void mp_invert(bigintp r,const bigintp x)
 {
     bigint t1 = {0},t2;
@@ -14,17 +11,22 @@ void mp_invert(bigintp r,const bigintp x)
        mp_mulmod(t1,t2,x);
     }
     
-    mp_mulmod(t2,t1,t1);
-    mp_mulmod(t1,t2,t2);
-    mp_mulmod(r,t1,x);    // 2^252-3, the square-root
+    mp_mulmod(t2,t1,t1); // 0
     
-    mp_mulmod(t1,r,r);
-    mp_mulmod(t2,t1,t1);
+    mp_mulmod(t1,t2,t2); // 1
+    mp_mulmod(r,t1,x);   
+    
+    mp_mulmod(t1,r,r);   // 0
+    
+    mp_mulmod(t2,t1,t1); // 1
     mp_mulmod(t1,t2,x);
-    mp_mulmod(t2,t1,t1);
-    mp_mulmod(r,t2,x);  // 2^255 - 21, the inverse
+    
+    mp_mulmod(t2,t1,t1); // 1
+    mp_mulmod(r,t2,x);   // 2^255 - 21, the inverse
 }
 /*
+// Square-root of -1 in Montgomery representation
+uint16_t sqrtm1[16] = {0xdb04,0xfe2b,0x07d4,0x3b58,0xe9ed,0xb51b,0x90fd,0x02d1,0x3362,0x16bf,0x6d6e,0x1ba8,0xd6c7,0x6b0b,0x7577};
 void mp_squinvert(uint16_t *r,const uint16_t* x,bool inversion)
 {
     uint8_t i;

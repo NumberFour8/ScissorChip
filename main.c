@@ -200,11 +200,11 @@ int main( void )
     
     //test_barret();
     
-    //test_mul();
+    test_mul();
     
     //test_square();
     
-    test_ladderstep();
+    //test_ladderstep();
     
     return 0;
 }

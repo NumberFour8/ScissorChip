@@ -4,19 +4,33 @@
 #include <stdint.h>
 #include "msp430.h"
 
-#define DIGITS 24
+#define CIOS
+
+#ifdef CIOS
+  #define DIGITS 16
+  #define mp_mulmod(c,a,b)  mp_mulmod32_cios(c,a,b,32) // Use 32-bit CIOS for multiplication 
+  #define mp_mulmod1(c,a,b) mp_mulmod32_cios(c,a,b,8)  // Use 32-bit CIOS for multiplication by a single 32-bit number
+#else
+  #define DIGITS 20
+  #define mp_mulmod(c,a,b)  mp_mulmod32_fios(c,a,b,32) // Use 32-bit CIOS for multiplication 
+  #define mp_mulmod1(c,a,b) mp_mulmod32_fios(c,a,b,8)  // Use 32-bit CIOS for multiplication by a single 32-bit number
+#endif
+
 typedef uint16_t  bigint[DIGITS];
-typedef uint16_t* bigintp;
+typedef uint16_t* bigintp;  
 
 // Montgomery XZ coordinates.
 // The coordinates itself must be in Montgomery representation
 typedef struct
 {
-  union {
-     bigint x;    // The Montgomery X coordinate shares the same memory space
-     bigint yed;  // with the Edwards Y coordinate
-  };
-  bigint z;
+    union {
+       bigint x;    // The Montgomery X coordinate shares the same memory space
+       bigint yed;  // with the Edwards Y coordinate
+    };
+    bigint z;
+    #if DIGITS < 20
+    uint16_t reserved[40-2*DIGITS];
+    #endif
 } monpoint;
 
 
@@ -59,9 +73,7 @@ extern void mp_mulmod32_cios(uint16_t* c,const uint16_t* a,const uint16_t* b,uin
 //extern void fe_mul(uint16_t* c,uint16_t* a,uint16_t* b);
 
 
-// Defines which multiplication algorithm and reduction algorithm should be used
-#define mp_mulmod(c,a,b)  mp_mulmod32_cios(c,a,b,32) // Use 32-bit CIOS for multiplication 
-#define mp_mulmod1(c,a,b) mp_mulmod32_cios(c,a,b,8)  // Use 32-bit CIOS for multiplication by a single 32-bit number
+// Defines which reduction algorithm should be used
 #define mp_mod25519(a)    mp_mod32(a)                // Use 32-bit full reduction modulo 2^255-19
 
 // Higher level functions //

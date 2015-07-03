@@ -1,6 +1,6 @@
 #include "msp_mp.h"
 
-void ladder(monpoint* R,monpoint* P,const uint16_t *n)
+void ladder(monpoint* R,monpoint* P,const bigintp n)
 {
     // Set R to neutral element
     clear_point(R);

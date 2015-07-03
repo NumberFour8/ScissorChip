@@ -3,16 +3,20 @@
 
 #include <stdint.h>
 #include "msp430.h"
-                     
+
+#define DIGITS 20
+typedef uint16_t  bigint[DIGITS];
+typedef uint16_t* bigintp;
+
 // Montgomery XZ coordinates.
 // The coordinates itself must be in Montgomery representation
 typedef struct
 {
   union {
-     uint16_t x[16];    // The Montgomery X coordinate shares the same memory space
-     uint16_t yed[16];  // with the Edwards Y coordinate
+     bigint x;    // The Montgomery X coordinate shares the same memory space
+     bigint yed;  // with the Edwards Y coordinate
   };
-  uint16_t z[16];
+  bigint z;
 } monpoint;
 
 
@@ -24,27 +28,27 @@ typedef struct {
 
 // Adds two 256-bit numbers. 0 <= A,B < 2^256-38. 
 // Conditional subtraction is performed on overflow.
-extern void mp_add(uint16_t* c,const uint16_t* a,const uint16_t* b);
+extern void mp_add(bigintp c,const bigintp a,const bigintp b);
 
 // Subtracts two 256-bit numbers. 0 <= A,B < 2^256-38
 // Conditional subtraction is performed when R15 is set and an underflow occurs.
-extern void mp_subb(uint16_t* c,const uint16_t* a,const uint16_t* b,uint16_t cs);
+extern void mp_subb(bigintp c,const bigintp a,const bigintp b,uint16_t cs);
 #define mp_sub(c,a,b) mp_subb(c,a,b,1)
 
 // Adds 256-bit number A to the 512-bit number C. No reduction is performed
-extern void mp_addnr(uint16_t* c,const uint16_t* a);
+extern void mp_addnr(bigintp c,const bigintp a);
 
 // Reduces number A mod 2^255-19 fully (uses 16-bit multiplier)
-extern void mp_mod16(uint16_t* a);
+extern void mp_mod16(bigintp a);
 
 // Reduces number A mod 2^255-19 fully (uses 32-bit multiplier)
-extern void mp_mod32(uint16_t* a);
+extern void mp_mod32(bigintp a);
 
 // Conditionally subtracts 2^255-19 from number A, 0 <= A < 2^256-38
-extern void mp_freeze(uint16_t* a);
+extern void mp_freeze(bigintp a);
 
 // Barett reduction algorithm
-extern void mp_barrett252(uint16_t* r,uint16_t* x);
+extern void mp_barrett252(bigintp r,bigintp x);
 
 
 // Multiplication algorithms
@@ -66,10 +70,10 @@ extern void mp_mulmod32_cios(uint16_t* c,const uint16_t* a,const uint16_t* b,uin
 void mon_dbladd(monpoint* dbl,monpoint* add,const monpoint* dif);
 
 // Computes R = n*P using Montgomery ladder
-void ladder(monpoint* R,monpoint* P,const uint16_t *n);
+void ladder(monpoint* R,monpoint* P,const bigintp n);
 
 // Computes r = x^-1 (mod 2^255-19)
-void mp_invert(uint16_t *r,const uint16_t* x);
+void mp_invert(bigintp r,const bigintp x);
 
 // Converts the point given by Montgomery X coordinate to Edwards Y coordinate
 void compress(monpoint* R);
@@ -82,8 +86,8 @@ void decompress(monpoint* R);
 // Clears the given memory chunk
 void clear_mem(uint16_t* dest,const uint16_t count);
 
-// Performs full multiplication R = A*B where A is 256-bit number and B is count*16 bit number, count > 0
-void mp_mul32(uint16_t* r,const uint16_t* a,const uint16_t* b,uint16_t count);
+// Performs full multiplication R = A*B where A and B n-digit number, n > 0
+void mp_mul32(bigintp r,const bigintp a,const bigintp b,uint16_t n);
 
 // Macro for clearing the point structure
 #define clear_point(p)  clear_mem(p->x,32)

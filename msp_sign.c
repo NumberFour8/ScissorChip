@@ -37,7 +37,7 @@ void sign(const uint8_t* m,uint16_t size,const keypair* keyp,uint8_t* signature)
     digest_update(&ctx,m,size);
     digest_finish(&ctx,signature);
     
-    uint16_t* t1 = B.x; // By natural structure aligment, t1 has at least 64 accessible bytes!
+    uint16_t* t1 = B.x; // By natural structure aligment, t1 has at least 80 accessible bytes!
     
     // Reduce H(R,A,M) mod l
     mp_barrett252(t1,(uint16_t*)signature);

@@ -3,9 +3,9 @@
 // Square-root of -1 in Montgomery representation
 //uint16_t sqrtm1[16] = {0xdb04,0xfe2b,0x07d4,0x3b58,0xe9ed,0xb51b,0x90fd,0x02d1,0x3362,0x16bf,0x6d6e,0x1ba8,0xd6c7,0x6b0b,0x7577};
 
-void mp_invert(uint16_t* r,const uint16_t* x)
+void mp_invert(bigintp r,const bigintp x)
 {
-    uint16_t t1[16] = {0},t2[16];
+    bigint t1 = {0},t2;
     t1[0] = 38;
     
     for (int i = 0;i < 250;i++)

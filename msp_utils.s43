@@ -5,7 +5,7 @@ PUBLIC clear_mem
 RSEG CODE
 
 ; Clears N bytes of memory pointed by R12.
-; N is given by R13 and has to be multiple of 2.
+; N is given by R13 and has to be multiple of 4.
 
 clear_mem
     
@@ -15,7 +15,7 @@ clear_mem
     ADD R13,R8
     
 clrmem
-    DECD R8
+    SUB #4,R8
     CLR 0(R8)
     CLR 2(R8)
     CMP R8,R12

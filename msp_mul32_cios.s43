@@ -19,7 +19,7 @@ mp_mulmod32_cios
   PUSHM.W #8,R11
 
   PUSH.W R13
-  MOV #40,R13
+  MOV #32,R13
   CALLA #clear_mem 
   POP.W R13
 

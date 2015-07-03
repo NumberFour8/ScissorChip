@@ -101,6 +101,15 @@ void test_ladderstep()
     mon_dbladd(&Q,&P,&d);
 }
 
+void test_invert()
+{
+    uint16_t a[16] = {0};
+    a[0] = 380;
+    uint16_t c[16] = {0};
+    
+    mp_invert(c,a);
+}
+
 int main( void )
 {
     // Stop watchdog timer to prevent time out reset
@@ -200,11 +209,13 @@ int main( void )
     
     //test_barret();
     
-    test_mul();
+    //test_mul();
     
     //test_square();
     
     //test_ladderstep();
+    
+    test_invert();
     
     return 0;
 }

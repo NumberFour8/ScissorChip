@@ -33,7 +33,8 @@ mp_mulmod32_cios
 
  ; For loop i = 0 .. s-1
  ; R15 contains size of B
-  ADD R14,R15    ; Traverses B
+  MOV R14,R10
+  ADD #32,R10    ; Traverses B
 outer_for3
 
   ; (C,S) = t[0] + a[0]*b[i]
@@ -51,12 +52,12 @@ outer_for3
   BIS #32,&MPY32CTL0 ; Switch to MAC, keep b[i] in OP1
   MOV R13,R6  ; Traverses A
   MOV R13,R8
-  ADD #32,R6  ; Excluding sth word
+  ADD R15,R6  ; Excluding sth word
   MOV R12,R5  ; Traverses T
   ADD #4,R5   ; Start at t[1] already
   ADD #4,R8   ; and at a[1]
 inner_for3a
-  
+   
    ; (C,S) = t[j] + a[j]*b[i] + C
    MOV RES2,&RES0   ; C
    MOV RES3,&RES1      
@@ -74,7 +75,7 @@ inner_for3a
    
    ADD #4,R5
    CMP R6,R8            ; &a < &a[s]
-   JNE inner_for3a
+   JNZ inner_for3a
    
   ADD  RES2,32(R12)     ; t[s] = t[s] + C
   ADDC RES3,34(R12)
@@ -173,7 +174,7 @@ inner_for3b
    ADC 34(R12)
    
    ADD #4,R14
-   CMP R14,R15 
+   CMP R14,R10 
    JNE outer_for3 ; &b < &b[s]
   
   POPM.W #8,R11

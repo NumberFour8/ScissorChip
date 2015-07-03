@@ -61,7 +61,7 @@ extern void mp_mulmod32_cios(uint16_t* c,const uint16_t* a,const uint16_t* b,uin
 
 // Defines which multiplication algorithm and reduction algorithm should be used
 #define mp_mulmod(c,a,b)  mp_mulmod32_cios(c,a,b,32) // Use 32-bit CIOS for multiplication 
-#define mp_mulmod1(c,a,b) mp_mulmod32_cios(c,a,b,4)  // Use 32-bit CIOS for multiplication by a single 32-bit number
+#define mp_mulmod1(c,a,b) mp_mulmod32_cios(c,a,b,8)  // Use 32-bit CIOS for multiplication by a single 32-bit number
 #define mp_mod25519(a)    mp_mod32(a)                // Use 32-bit full reduction modulo 2^255-19
 
 // Higher level functions //

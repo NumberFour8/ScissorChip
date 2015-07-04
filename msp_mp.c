@@ -40,8 +40,8 @@ void compress(monpoint* R)
     mp_invert(R->x,R->z);    // (X+Z)^-1
     mp_mulmod(R->z,R->x,t1); // (X-Z)*(X+Z)^-1
     
-    uint32_t one = 1;
-    mp_mulmod1(R->yed,R->z,(uint16_t*)&one); // Convert from Montgomery representation
+    uint64_t one = 1;
+    mp_mulmod1(R->yed,(uint16_t*)&one,R->z); // Convert from Montgomery representation
 }
 
 void decompress(monpoint* R)
@@ -49,8 +49,8 @@ void decompress(monpoint* R)
     uint16_t t1[16] = {0};
     t1[0] = 38;
     
-    uint32_t Rsq = 1444;
-    mp_mulmod1(R->z,R->yed,(uint16_t*)&Rsq); // Convert to Montgomery representation
+    uint64_t Rsq = 1444;
+    mp_mulmod1(R->z,(uint16_t*)&Rsq,R->yed); // Convert to Montgomery representation
     
     mp_add(R->x,R->z,t1); // X = 1+Y 
     mp_sub(R->z,t1,R->z); // Z = 1-Y

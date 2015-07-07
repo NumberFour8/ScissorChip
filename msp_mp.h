@@ -3,6 +3,12 @@
 
 #include <stdint.h>
 #include "msp430.h"
+#include "keccak.h"
+
+#define digest_ctx              keccak_ctx
+#define digest_init(c)          keccak_init(c)
+#define digest_update(a,b,c)    keccak_update(a,b,c)
+#define digest_finish(a,b)      keccak_finish(a,b)
 
 #define CIOS
 
@@ -35,9 +41,9 @@ typedef struct
 
 
 typedef struct {
-  uint8_t nonceKey[32];  // Contains upper half of H(k)
-  uint8_t secretKey[32]; // Contains a mod l
-  uint8_t publicKey[32]; // Contains compressed A = a*B
+  uint8_t secretKey[32];   // Contains a mod l
+  uint8_t publicKey[32];   // Contains compressed A = a*B
+  uint8_t sessionKey[32];  // Contains upper half of H(k)
 } keypair;
 
 // Adds two 256-bit numbers. 0 <= A,B < 2^256-38. 
@@ -89,6 +95,9 @@ void mp_invert(bigintp r,const bigintp x);
 
 // Converts the point given by Montgomery X coordinate to Edwards Y coordinate
 void compress(monpoint* P,monpoint* Q);
+
+// Generates EdDSA key pair from the given secret
+void genkeypair(keypair *kp,uint8_t* secret,uint16_t secretSize);
 
 // Utility functions
 

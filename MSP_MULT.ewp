@@ -2160,13 +2160,13 @@
     <name>$PROJ_DIR$\main.c</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\mp_compress.c</name>
-  </file>
-  <file>
     <name>$PROJ_DIR$\msp_addsub.s43</name>
   </file>
   <file>
     <name>$PROJ_DIR$\msp_barrett.s43</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\msp_compress.c</name>
   </file>
   <file>
     <name>$PROJ_DIR$\msp_cond.s43</name>
@@ -2176,6 +2176,9 @@
   </file>
   <file>
     <name>$PROJ_DIR$\msp_keccak.s43</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\msp_keypair.c</name>
   </file>
   <file>
     <name>$PROJ_DIR$\msp_ladder.c</name>

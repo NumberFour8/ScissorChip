@@ -1,5 +1,6 @@
 
 #include "msp430.h"
+#include "driverlib.h"
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -69,6 +70,7 @@ void test_mul()
     uint16_t c[48] = {0};
     
     mp_mulmod(c,a,b); 
+    // RESULT SHOULD BE: {20999, 56674, 14492, 58657, 45441, 63329, 26172, 61934, 11079, 52317, 33744, 5466, 59794, 64383, 32209, 11931}
     
     uint64_t coeff = 29718394;
     mp_mulmod1(c,(uint16_t*)&coeff,a);
@@ -81,6 +83,15 @@ void test_square()
   
     uint16_t c[48] = {0};
     mp_mulmod(c,a,a);
+}
+
+void test_invert()
+{
+    uint16_t a[16] = {0};
+    a[0] = 380;
+    uint16_t c[16] = {0};
+    
+    mp_invert(c,a);
 }
 
 void test_ladderstep()
@@ -101,20 +112,54 @@ void test_ladderstep()
     mon_dbladd(&Q,&P,&d);
 }
 
-void test_invert()
+
+void test_ladder()
 {
-    uint16_t a[16] = {0};
-    a[0] = 380;
-    uint16_t c[16] = {0};
+    bigint k = {3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    monpoint R,B;
+
+    clear_point(&B);
+    B.x[0] = 9*38;
+    B.z[0] = 38;
     
-    mp_invert(c,a);
+    ladder(&R,&B,k);
 }
 
+// MCLK = Master Clock (CPU)
+#define MCLK_FREQ_KHZ 25000
+
+// Reference frequency (Frequency Locked Loop)
+#define FLLREF_KHZ 32
+
+// Ratio used to set DCO (Digitally Controlled Oscillator)
+#define MCLK_FLLREF_RATIO MCLK_FREQ_KHZ/FLLREF_KHZ
+
+void initClocks()
+{
+   PMM_setVCore(PMM_CORE_LEVEL_3);
+  
+   UCS_clockSignalInit(
+        UCS_FLLREF, // The reference for Frequency Locked Loop
+        UCS_REFOCLK_SELECT, // Select 32Khz reference osc
+        UCS_CLOCK_DIVIDER_1
+    );
+
+    // Start the FLL and let it settle
+    // This becomes the MCLCK and SMCLK automatically
+
+    UCS_initFLLSettle(
+        MCLK_FREQ_KHZ,
+        MCLK_FLLREF_RATIO
+    );
+}
 int main( void )
 {
     // Stop watchdog timer to prevent time out reset
     WDTCTL = WDTPW + WDTHOLD;
-
+   
+    initClocks();
+    //uint32_t mclk = UCS_getMCLK();
+    
     // s = 16
     // w = 16
     // r = 2^256
@@ -122,85 +167,7 @@ int main( void )
     register uint16_t g = 0xffed;
     if (g >= 2)
       g = g*100;
-    
-    /*
-    ///// TEST FOR REDUCTION MODULO 2^255-19
-    uint16_t a[32] = {7504, 16612, 57485, 62170, 22001, 11411, 52529, 60020, 54329, 2119,
-                      24177, 16810, 20608, 22320, 62555, 2441, 23453, 59008, 60102, 41223,
-                      35430, 14514, 25097, 2669, 21127, 34679, 41403, 31207, 5329, 64461, 40142, 21019};
-      
-    mp_mod25519(a);
-    
-    // RESULT SHOULD BE: 66B8F17713BA07DA2DE113978F5AB1764514FE2347600C5A9867A1B7143BA339
-    mp_monrep25519(a);
-    */
-    
-    /* 
-    //// TEST FOR MONTGOMERY MULTIPLICATION
-    
-    // 32186194510935479195032402467013996570242823777592960551734090304540054362176
-    // 9840 CAA3 A6B2 4A4B E91A 01DE EEFC 7280 C245 B570 8141 09CC 3E82 78CA BD92 4728
-    uint16_t a[16] = {38976, 51875, 42674, 19019, 59674, 478, 61180, 29312, 49733, 46448, 33089, 2508, 16002, 30922, 48530, 18216};
-
-    // 6212528361852957682582061555079012536300274788041951516526018205058916983696
-    // A390 7ED4 7E61 F55E 3973 C814 4B52 10E4 EA21 35E5 1DC8 516D CCB2 1C6D 2A9C 0DBC
-    uint16_t b[16] = {41872, 32468, 32353, 62814, 14707, 51220, 19282, 4324, 59937, 13797, 7624, 20845, 52402, 7277, 10908, 3516};
-    
-    // 4623308
-    // uint16_t b[2] = {35788, 70}
-    
-    uint16_t c[20] = {0};
-    
-    mp_mulmod(c,a,b);
-    */
-        
-    // RESULT SHOULD BE: {20999, 56674, 14492, 58657, 45441, 63329, 26172, 61934, 11079, 52317, 33744, 5466, 59794, 64383, 32209, 11931}
-    
-    //mp_mulmod1(c,a,b);
-    // RESULT SHOULD BE: {40047, 51647, 47125, 34254, 57505, 5627, 13425, 49323, 61788, 65416, 16024, 64142, 26036, 26143, 42466, 28735}
-    
-  //  for (int i = 0;i < 16;i++)
-  //    printf("%d",c[i]);
-         
-    //uint16_t a[16] = {0xffed, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 0x7fff};
-    /*
-    uint16_t a[16] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    uint16_t b[16] = {0xffec, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 0x7fff};
-
-    mp_add(a,b);
-    */
-    
-    /*   char abc[4] = {'a','b','c', 1};
-    uint8_t hash[64] = {0};
-    keccak((uint8_t*)abc,4,(uint8_t*)hash,64);
-    
-    
-    uint16_t c[16] = {0};
-    
-    uint16_t a[16] = {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    mp_monrep25519(a);
-    
-    uint16_t b[16] = {2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    mp_monrep25519(b);
-    
-    mp_mulmod16(c,a,b);
-    
-    mp_sub(c,c,b);
-    mp_add(c,c,a);
-    mp_add(c,c,a);
-    
-    for (int i = 0;i < 16;i++) b[i] = a[i] = 0;
-    a[0] = 1;
-    
-    mp_mulmod16(c,a,b);
-   */
-    
-    //uint8_t  digest[64] = {0};
-    //uint16_t message[16] = {41872, 32468, 32353, 62814, 14707, 51220, 19282, 4324, 59937, 13797, 7624, 20845, 52402, 7277, 10908, 3516};
-    
-    //sha512(message,32,digest);
-    //keccak(message,16,digest,64);
-    
+     
     //test_freeze();
     
     //test_addsub();
@@ -212,10 +179,13 @@ int main( void )
     //test_mul();
     
     //test_square();
+  
+    //test_invert();
     
     //test_ladderstep();
     
-    test_invert();
+    test_ladder();
+  
     
     return 0;
 }

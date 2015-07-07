@@ -381,7 +381,7 @@
         </option>
         <option>
           <name>newCCIncludePaths</name>
-          <state></state>
+          <state>C:\Users\E869439\Desktop\workspace\dl_5xx_6xx</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -2211,7 +2211,13 @@
     <name>$PROJ_DIR$\msp_utils.s43</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\..\dl_5xx_6xx\pmm.c</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\sha512.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\..\dl_5xx_6xx\ucs.c</name>
   </file>
 </project>
 

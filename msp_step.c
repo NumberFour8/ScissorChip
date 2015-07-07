@@ -23,36 +23,10 @@ void mon_dbladd(monpoint* dbl,monpoint* add,const monpoint* dif)
     mp_mulmod(r2,r6,r6);  // FF = F^2
     mp_sub(r6,r4,r5);     // G  = DA - CB
     mp_mulmod(r4,r6,r6);  // GG = G^2
-    mp_mulmod1(r5,(uint16_t*)&a24,r9); // H = a24*E 
+    mp_mulmod1(r5,&a24,r9); // H = a24*E 
     mp_add(r6,r10,r5);    // I  = BB + H
     mp_mulmod(r5,r0,r4);  // Z5 = X1*GG
     mp_mulmod(r4,r1,r2);  // X5 = Z1*FF 
     mp_mulmod(r3,r9,r6);  // Z4 = E*I
     mp_mulmod(r2,r7,r10); // X4 = AA*BB
 }
-
-void compress(monpoint* R)
-{
-    uint16_t t1[16];
-    
-    mp_sub(t1,R->x,R->z);    // X-Z
-    mp_add(R->z,R->x,R->z);  // X+Z
-    mp_invert(R->x,R->z);    // (X+Z)^-1
-    mp_mulmod(R->z,R->x,t1); // (X-Z)*(X+Z)^-1
-    
-    uint64_t one = 1;
-    mp_mulmod1(R->yed,(uint16_t*)&one,R->z); // Convert from Montgomery representation
-}
-
-void decompress(monpoint* R)
-{
-    uint16_t t1[16] = {0};
-    t1[0] = 38;
-    
-    uint64_t Rsq = 1444;
-    mp_mulmod1(R->z,(uint16_t*)&Rsq,R->yed); // Convert to Montgomery representation
-    
-    mp_add(R->x,R->z,t1); // X = 1+Y 
-    mp_sub(R->z,t1,R->z); // Z = 1-Y
-}
-

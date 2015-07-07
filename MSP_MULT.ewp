@@ -293,7 +293,7 @@
         <option>
           <name>CCAllowList</name>
           <version>1</version>
-          <state>00000</state>
+          <state>11111</state>
         </option>
         <option>
           <name>CCObjUseModuleName</name>
@@ -409,7 +409,7 @@
         </option>
         <option>
           <name>CCOptLevel</name>
-          <state>0</state>
+          <state>3</state>
         </option>
         <option>
           <name>CCOptStrategy</name>
@@ -418,7 +418,7 @@
         </option>
         <option>
           <name>CCOptLevelSlave</name>
-          <state>0</state>
+          <state>3</state>
         </option>
         <option>
           <name>CInput</name>
@@ -2160,6 +2160,9 @@
     <name>$PROJ_DIR$\main.c</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\mp_compress.c</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\msp_addsub.s43</name>
   </file>
   <file>
@@ -2187,9 +2190,6 @@
     <name>$PROJ_DIR$\msp_montgomery.s43</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\msp_mp.c</name>
-  </file>
-  <file>
     <name>$PROJ_DIR$\msp_mul16_fios.s43</name>
   </file>
   <file>
@@ -2206,6 +2206,9 @@
   </file>
   <file>
     <name>$PROJ_DIR$\msp_sign.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\msp_step.c</name>
   </file>
   <file>
     <name>$PROJ_DIR$\msp_utils.s43</name>

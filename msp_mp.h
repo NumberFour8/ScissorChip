@@ -9,11 +9,11 @@
 #ifdef CIOS
   #define DIGITS 16
   #define mp_mulmod(c,a,b)  mp_mulmod32_cios(c,a,b,32) // Use 32-bit CIOS for multiplication 
-  #define mp_mulmod1(c,a,b) mp_mulmod32_cios(c,a,b,8)  // Use 32-bit CIOS for multiplication by a single 32-bit number
+  #define mp_mulmod1(c,a,b) mp_mulmod32_cios(c,(uint16_t*)a,b,8)  // Use 32-bit CIOS for multiplication by a single 32-bit number
 #else
   #define DIGITS 20
   #define mp_mulmod(c,a,b)  mp_mulmod32_fios(c,a,b,32) // Use 32-bit CIOS for multiplication 
-  #define mp_mulmod1(c,a,b) mp_mulmod32_fios(c,a,b,8)  // Use 32-bit CIOS for multiplication by a single 32-bit number
+  #define mp_mulmod1(c,a,b) mp_mulmod32_fios(c,(uint16_t*)a,b,8)  // Use 32-bit CIOS for multiplication by a single 32-bit number
 #endif
 
 typedef uint16_t  bigint[DIGITS];
@@ -88,10 +88,7 @@ void ladder(monpoint* R,monpoint* P,const bigintp n);
 void mp_invert(bigintp r,const bigintp x);
 
 // Converts the point given by Montgomery X coordinate to Edwards Y coordinate
-void compress(monpoint* R);
-
-// Converts the point given by Edwards Y coordinate to Montgomery X coordinate
-void decompress(monpoint* R);
+void compress(monpoint* P,monpoint* Q);
 
 // Utility functions
 
@@ -103,6 +100,8 @@ void mp_mul32(bigintp r,const bigintp a,const bigintp b,uint16_t n);
 
 // Macro for clearing the point structure
 #define clear_point(p)  clear_mem((p)->x,80)
+
+#define clear_coord(c)  clear_mem((c),DIGITS*2)
 
 // Macro for copying a point coordinate
 #define coord_copy(x,y) for (*(x) = 15 ;*(x);(*(x))--) (x)[*(x)] = (y)[*(x)]; \

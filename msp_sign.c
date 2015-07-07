@@ -28,7 +28,7 @@ void sign(const uint8_t* m,uint16_t size,const keypair* keyp,uint8_t* signature)
     
     // Compute R = r*B and encode it
     ladder(&R,&B,r);
-    compress(&R);
+    compress(&R,&B);
     
     // Compute H(R,A,M)
     digest_init(&ctx);

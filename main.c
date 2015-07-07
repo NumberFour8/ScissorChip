@@ -125,6 +125,19 @@ void test_ladder()
     ladder(&R,&B,k);
 }
 
+void test_keccak()
+{
+    uint16_t data[16] = {38976, 51875, 42674, 19019, 59674, 478, 61180, 29312, 49733, 46448, 33089, 2508, 16002, 30922, 48530, 18216};
+    uint16_t digest[16] = {0};
+  
+    keccak_ctx ctx;
+    
+    keccak_init(&ctx);
+    keccak_update(&ctx,(uint8_t*)data,32);
+    keccak_finish(&ctx,digest);
+    
+}
+
 // MCLK = Master Clock (CPU)
 #define MCLK_FREQ_KHZ 25000
 

@@ -41,8 +41,8 @@ typedef struct
 
 
 typedef struct {
-  uint8_t secretKey[32];   // Contains a mod l
   uint8_t publicKey[32];   // Contains compressed A = a*B
+  uint8_t secretKey[32];   // Contains a
   uint8_t sessionKey[32];  // Contains upper half of H(k)
 } keypair;
 

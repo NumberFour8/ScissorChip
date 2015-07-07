@@ -24,7 +24,7 @@ void recoverY(monpoint *R0,monpoint *R1)
     mp_mulmod(t4,t1,R0->z);
     mp_sub(t2,t2,t4);
     mp_mulmod(t1,t2,R1->z);
-    mp_sub(t3,t4,t3);           // t3 now holds Y
+    mp_sub(t3,t1,t3);           // t3 now holds Y
     mp_mulmod(t4,y2,R0->z);
     mp_mulmod(t1,t4,R1->z);
     mp_mulmod(R1->x,t1,R0->x);

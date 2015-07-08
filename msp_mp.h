@@ -113,7 +113,10 @@ void mp_mul32(bigintp r,const bigintp a,const bigintp b,uint16_t n);
 #define clear_coord(c)  clear_mem((c),DIGITS*2)
 
 // Macro for copying a point coordinate
-#define coord_copy(x,y) for (*(x) = 15 ;*(x);(*(x))--) (x)[*(x)] = (y)[*(x)]; \
+#define coord_copy(x,y) for (*(x) = 15;*(x);(*(x))--) (x)[*(x)] = (y)[*(x)]; \
                         *(x) = *(y);
+
+// Macro for clearing memory of any size
+#define set_zero(x,c) for (*(x) = c;*(x);(*(x))--) (x)[*(x)] = 0; 
 
 #endif

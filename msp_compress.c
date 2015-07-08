@@ -2,8 +2,14 @@
 
 // Recovers the Montgomery Y coordinate
 // R1 -> Q.x, Y -> R0.x, Z -> R1.z
-void recoverY(monpoint *R0,monpoint *R1)
+/*void recoverY(monpoint *R0,monpoint *R1)
 {
+    
+}*/
+
+void compress(monpoint* R0,monpoint* R1)
+{
+    //recoverY(R0,R1);
     // Montgomery representation of the 2*Y (32B)
     bigint y2 = {58837, 42342, 44093, 29030, 228, 33005, 392, 27187, 8891, 27038, 43315,
                 35113, 64946, 53159, 39938, 13231};
@@ -29,14 +35,10 @@ void recoverY(monpoint *R0,monpoint *R1)
     mp_mulmod(t1,t4,R1->z);
     mp_mulmod(R1->x,t1,R0->x);
     mp_mulmod(R1->z,t1,R0->z);
-    coord_copy(R0->x,t3);
-}
-
-void compress(monpoint* R0,monpoint* R1)
-{
-    recoverY(R0,R1);
-    
-    bigint t1,t2; // + 64B
+    coord_copy(R0->x,t3);  
+  
+  
+    //bigint t1,t2; // + 64B
     mp_add(R0->z,R1->x,R1->z);  // X+Z
     mp_mulmod(t1,R0->x,R0->z); // (X+Z)*Y
     mp_sub(t2,R1->x,R1->z);    // X-Z

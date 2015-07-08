@@ -2,7 +2,6 @@
 NAME msp_mul32_cios
 
 EXTERN mp_freeze
-EXTERN mp_condsub
 EXTERN clear_mem
 
 PUBLIC mp_mulmod32_cios  

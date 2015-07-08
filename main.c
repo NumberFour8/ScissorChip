@@ -49,6 +49,19 @@ void test_utils()
     
 }
 
+void test_mod()
+{
+    //uint16_t a[32] = {0xe958,0xda0b,0xdea9,0xdc1b,0x97f6,0x6bdc,0x2a3f,0xfbba,0xf458,0x6530,0x985b,
+    //		      0x903f,0x168d,0x6bee,0xacc7,0xcc01,0x143a,0x4e91,0xb749,0x9608,0x32b7,0x2f9a,
+    //		      0x5a2f,0xe5d5,0xd09a,0x9065,0x3d48,0x294c,0x1360,0x5ce6,0x1787,0x4b98};
+    uint16_t a[32] = {0x144b, 0x1ef6, 0xa17b, 0x525d, 0x3a57, 0xcb23, 0xd313, 0xd677, 
+                      0x6e16, 0x1511, 0xeb3b, 0x959d, 0x9892, 0x8be9, 0x6ad0, 0x6ab1,
+                      0xd47c, 0x3fa1, 0x6bc6, 0xc813, 0x83df, 0xcf1e, 0x185e, 0x6e9e,
+                      0xf4bc, 0xef10, 0xf0d6, 0x1a70, 0x56f9, 0xb7cf, 0x4163, 0x0358};
+  
+    mp_mod32(a);
+}
+
 void test_barret()
 {
     //uint16_t a[32] = {0xe958,0xda0b,0xdea9,0xdc1b,0x97f6,0x6bdc,0x2a3f,0xfbba,0xf458,0x6530,0x985b,
@@ -74,6 +87,7 @@ void test_mul()
     
     uint64_t coeff = 29718394;
     mp_mulmod1(c,(uint16_t*)&coeff,a);
+   
 }
 
 void test_square()
@@ -127,15 +141,22 @@ void test_ladder()
 
 void test_keccak()
 {
-    uint16_t data[16] = {38976, 51875, 42674, 19019, 59674, 478, 61180, 29312, 49733, 46448, 33089, 2508, 16002, 30922, 48530, 18216};
-    uint16_t digest[16] = {0};
+    uint16_t data[18]   = {38976, 51875, 42674, 19019, 59674, 478, 61180, 29312, 49733, 46448, 33089, 2508, 16002, 30922,3,2,1,2};
+    uint16_t digest[32] = {0};
   
     keccak_ctx ctx;
     
     keccak_init(&ctx);
-    keccak_update(&ctx,(uint8_t*)data,32);
-    keccak_finish(&ctx,digest);
-    
+    keccak_update(&ctx,(uint8_t*)data,36);
+    keccak_finish(&ctx,digest);   
+}
+
+void test_sha512()
+{
+    uint16_t data[18]   = {38976, 51875, 42674, 19019, 59674, 478, 61180, 29312, 49733, 46448, 33089, 2508, 16002, 30922,3,2,1,2};
+    uint16_t digest[32] = {0};
+  
+    sha512((uint8_t*)data,36,(uint8_t*)digest);
 }
 
 // MCLK = Master Clock (CPU)
@@ -171,7 +192,6 @@ int main( void )
     WDTCTL = WDTPW + WDTHOLD;
    
     initClocks();
-    //uint32_t mclk = UCS_getMCLK();
     
     // s = 16
     // w = 16
@@ -183,22 +203,27 @@ int main( void )
      
     //test_freeze();
     
+    // test_mod();
+    
     //test_addsub();
     
     //test_utils();
     
-    //test_barret();
+     //test_barret();
     
-    //test_mul();
+    // test_mul();
     
     //test_square();
   
-    //test_invert();
+    // test_invert();
     
     //test_ladderstep();
     
-    test_ladder();
+    // test_ladder();
   
+    //test_keccak();
+
+    test_sha512();
     
     return 0;
 }

@@ -11,36 +11,69 @@ RSEG CODE
 
 keccak_fupdate
   
-  MOV R13,R5
-  ADD R14,R5 ; Upper bound of input/output
+  PUSHM.W #6,R11
   
-  MOV R12,R6
-  ADD #18,R6 ; Upper bound of public state, R = 18 bytes
+  CLR R7
+  MOV R13,R9
+  ADD R14,R9 ; Upper bound of input/output
+  
+  MOV R12,R10
+  ADD #18,R10 ; Upper bound of public state, R = 18 bytes
   
 ku_outter
   
-  MOV R12,R10 ; Reset state counter
+  MOV R12,R11 ; Reset state counter
 
 ku_inner      ; Iterates over state words in R12
 
   TST R15     ; If R15 is set, go to squeeze
   JNZ squeeze ; otherwise absorb
   
-  XOR @R13+,0(R10) ; XOR into the state word
-  INCD R10
+; ABSORBTION PHASE
+  INCD R11  
+  CMP R9,R13
+  JZ pad  ; Check if padding is needed
+  
+  MOV @R13+,R8
+  JMP after_pad  ; If not just continue
+pad
+  TST R7
+  JZ first_pad   ; If R7 indicates it is the first pad
+  CLR R8         ; Otherwise it is the middle or last pad, so set to 0
+  JMP pad_fin    ; Check if it is the last pad
+first_pad
+  MOV #0x01,R8
+  MOV R8,R7
+pad_fin
+  CMP R11,R10    ; Are we at the end of the block?
+  JNZ after_pad  ; If not, just continue and keep R8 at 0
+  XOR #0x80,R8    ; If yes, XOR 0x80
+
+after_pad
+  XOR R8,-2(R11) ; XOR into the state word
   JMP fin
+  
+; SQUEEZING PHASE  
 squeeze
-  MOV @R10+,0(R13)
+  MOV @R11+,0(R13)
   INCD R13
+  CMP R13,R9
+  JZ finr       ; In case output length is not multiple of R
   
 fin
-  CMP R6,R10
+  CMP R10,R11
   JNZ ku_inner
   
-  CALLA #keccakf ; Need to setup the registers
+  PUSHM.W #7,R15 ; No need to store padding registers
+  CALLA #keccakf 
+  POPM.W #7,R15
   
-  CMP R13,R5
-  JNZ ku_outter
+  CMP R13,R9
+  JNZ ku_outter ; Process next block
+
+finr
+
+  POPM.W #6,R11
   
 RETA
 

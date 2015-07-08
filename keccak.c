@@ -2,6 +2,8 @@
 
 #define ROTL(x,s) ((x << s) | (x >> (16-s)))
 
+#define RC_LFSR
+
 #ifndef RC_LFSR
   const uint16_t roundc[20] = 
   {

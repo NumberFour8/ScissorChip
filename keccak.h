@@ -20,7 +20,7 @@ extern void keccak_fupdate(uint16_t* state,uint16_t* io,uint16_t size,uint16_t s
 
 #define keccak_update(c,d,s) keccak_fupdate((c)->state,(uint16_t*)d,s,0)
 #define keccak_finish(c,d)   keccak_fupdate((c)->state,(uint16_t*)d,KECCAK_N,1)
-#define keccak_init(c)       clear_mem((c)->state,25)
+#define keccak_init(c)       set_zero((c)->state,25)
 
 #else 
 

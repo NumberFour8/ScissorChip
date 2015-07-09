@@ -66,7 +66,7 @@ const uint8_t keccakf_piln[24] =
 
 void keccakf(keccak_ctx* ctx)
 {
-    int i, j, round;
+    uint8_t i, j, round;
     uint16_t* st = ctx->state, t, bc[5];
 
     for (round = 0; round < KECCAK_ROUNDS; round++)

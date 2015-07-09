@@ -37,7 +37,7 @@ void sign(const uint8_t* m,uint16_t size,const keypair* keyp,uint8_t* signature)
     mp_barrett252(t1,(uint16_t*)signature);
     
     // Compute H(R,A,M)*a
-    mp_mul32((uint16_t*)signature,t1,(uint16_t*)keyp->secretKey,32); // Guaranteed to be < 2^512
+    mp_mul32((uint16_t*)signature,t1,(uint16_t*)keyp->secretKey,32); // Now guaranteed to be < 2^512
     
     // Compute S = r mod l + H(R,A,M)*a
     mp_addnr((uint16_t*)signature,r);
@@ -45,6 +45,7 @@ void sign(const uint8_t* m,uint16_t size,const keypair* keyp,uint8_t* signature)
     // Reduce S mod l
     mp_barrett252(t1,(uint16_t*)signature);
     
-    coord_copy(signature,r);
+    // Craft the final signature
+    coord_copy(signature,R.yed);
     coord_copy(signature+32,t1);
 }

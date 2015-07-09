@@ -85,7 +85,7 @@ extern void mp_mulmod32_cios(uint16_t* c,const uint16_t* a,const uint16_t* b,uin
 // Higher level functions //
 
 // Performs one ladder step
-void mon_dbladd(monpoint* dbl,monpoint* add,const monpoint* dif);
+void mon_dbladd(monpoint* dbl,monpoint* add);
 
 // Computes R = n*P using Montgomery ladder
 void ladder(monpoint* R,monpoint* P,const bigintp n);
@@ -95,6 +95,9 @@ void mp_invert(bigintp r,const bigintp x);
 
 // Converts the point given by Montgomery X coordinate to Edwards Y coordinate
 void compress(monpoint* P,monpoint* Q);
+
+// Signs message with the given key
+void sign(const uint8_t* m,uint16_t size,const keypair* keyp,uint8_t* signature);
 
 // Generates EdDSA key pair from the given secret
 void genkeypair(keypair *kp,uint8_t* secret,uint16_t secretSize);

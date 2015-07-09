@@ -110,7 +110,7 @@ void test_invert()
 
 void test_ladderstep()
 {
-    monpoint P,Q,d;
+    monpoint P,Q;
     clear_point(&P);
     clear_point(&Q);
     
@@ -120,14 +120,11 @@ void test_ladderstep()
     Q.x[0] = 38;
     Q.z[0] = 0;
     
-    coord_copy(d.x,P.x);
-    coord_copy(d.z,P.z);
-    
-    mon_dbladd(&Q,&P,&d);
+    mon_dbladd(&Q,&P);
 }
 
 
-void test_ladder()
+void test_ladder_compress()
 {
     bigint k = {3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
     monpoint R,B;
@@ -137,6 +134,7 @@ void test_ladder()
     B.z[0] = 38;
     
     ladder(&R,&B,k);
+    compress(&R,&B); 
 }
 
 void test_keccak()
@@ -157,6 +155,19 @@ void test_sha512()
     uint16_t digest[32] = {0};
   
     sha512((uint8_t*)data,36,(uint8_t*)digest);
+}
+
+void test_keypair_sign()
+{
+    keypair kp;
+    uint64_t secret = 0xdeadbeeffeedcafe;
+    
+    genkeypair(&kp,(uint8_t*)&secret,8);
+    
+    uint8_t signature[66];
+    uint64_t msg = 0xdeadbabebaadcafe;
+    
+    sign((uint8_t*)&msg,8,&kp,signature);
 }
 
 // MCLK = Master Clock (CPU)
@@ -201,30 +212,32 @@ int main( void )
     if (g >= 2)
       g = g*100;
      
-    //test_freeze();
+    // test_freeze();
     
     // test_mod();
     
-    //test_addsub();
+    // test_addsub();
     
-    //test_utils();
+    // test_utils();
     
-     //test_barret();
+    // test_barret();
     
     // test_mul();
     
-    //test_square();
+    // test_square();
   
     // test_invert();
     
-    //test_ladderstep();
+    // test_ladderstep();
     
-    // test_ladder();
+    // test_ladder_compress();
   
-    //test_keccak();
+    // test_keccak();
 
-    test_sha512();
+    // test_sha512();
     
+     test_keypair_sign();
+   
     return 0;
 }
 

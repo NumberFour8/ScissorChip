@@ -10,9 +10,10 @@ void ladder(monpoint* R,monpoint* P,const bigintp n)
     uint32_t R0 = (uint32_t)R;
     uint32_t R1 = (uint32_t)P;
     
-    monpoint cP; 
-    coord_copy(cP.x,P->x);
-    coord_copy(cP.z,P->z);
+    // We dont need this, since we always start from P = B
+    //monpoint cP; 
+    //coord_copy(cP.x,P->x);
+    //coord_copy(cP.z,P->z);
     
     uint16_t c = 0,t;
     for (int i = 254;i >= 0;i--)
@@ -24,7 +25,7 @@ void ladder(monpoint* R,monpoint* P,const bigintp n)
        R1 = R0 ^ R1 ^ (R0 & c);
        R0 = R0 ^ R1 ^ (R1 & c);
        
-       mon_dbladd((monpoint*)R0,(monpoint*)R1,&cP);
+       mon_dbladd((monpoint*)R0,(monpoint*)R1);
        
        R0 = (uint32_t)R;
        R1 = (uint32_t)P;

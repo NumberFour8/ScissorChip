@@ -1,7 +1,36 @@
 #include "msp430.h"
 NAME msp_mul32_sos
 
-EXTERN mp_mod32
+EXTERN mp_freeze
+EXTERN clear_mem
+
+PUBLIC mp_cpropp
+RSEG CODE
+
+; Propagates carry from address pointed by R10+2 until address given by R11 is reached (inclusive).
+
+mp_cpropp
+
+  MOV SR,R5     ; Copy carry to R9
+  MOV R10,R4    ; Put R10 to R8
+  
+  CMP R11,R10 
+  JGE cpd       ; Do nothing if R10 >= R11
+cpg
+  CMP R4,R11     ; Check if the last word was already processed
+  JZ cpd         ; If yes, quit
+  INCD R4        ; Move onto the next word
+  
+  MOV R5,SR
+  ADC 0x0(R4)  ; Add the carry to what R10 points to
+  MOV SR,R5    ; Put the carry to R9
+  
+  JMP cpg
+  
+cpd
+  MOV R5,SR
+  
+RETA
 
 PUBLIC mp_mulmod32_sos
 RSEG CODE
@@ -9,13 +38,20 @@ RSEG CODE
 ; Performs schoolbook multiplication of A and B.
 ; This function utilizes fully the 32-bit multiplier.
 ; A is pointed by R13, B is pointed by R14.
-; The result T has to be pointed by R12 and at least 64 bytes long. R15 contains the size of B (in bytes).
+; The result T has to be pointed by R12 and at least 32 bytes long. R15 contains the size of B (in bytes).
 
 mp_mulmod32_sos
 
-  PUSH.W R12
-  PUSHM.W #4,R7
-  
+  PUSHM.W #9,R12
+  SUB #64,SP
+
+  MOV R13,R10
+  MOV #64,R13
+  MOV SP,R12
+  CALLA #clear_mem 
+  MOV R10,R13
+
+
   ; Separated Operand Scanning
   ; -------------------------------------- 
 
@@ -27,23 +63,23 @@ mp_mulmod32_sos
 outer_for4
 
   ; (C,S) = t[i] + a[0]*b[i]
-  MOV 0x0(R12),&MPY32L  ; t[i]
-  MOV 0x2(R12),&MPY32H
-  MOV #1,&OP2L          ; 1
-  MOV #0,&OP2H
-    
+  MOV 0x0(SP),&RES0  ; t[i]
+  MOV 0x2(SP),&RES1
+  CLR &RES2
+  CLR &RES3
+  
   MOV 0x0(R14),&MAC32L  ; b[i]
   MOV 0x2(R14),&MAC32H
   MOV 0x0(R13),&OP2L    ; a[0] 
   MOV 0x2(R13),&OP2H
 
   ; t[i] = S
-  MOV RES0,0x0(R12)
-  MOV RES1,0x2(R12)
+  MOV RES0,0x0(SP)
+  MOV RES1,0x2(SP)
 
   MOV R13,R5  ; Traverses A
   ADD #4,R5
-  MOV R12,R7  ; Traverses T starting at i+1
+  MOV SP,R7   ; Traverses T starting at i+1
   ADD #4,R7
 inner_for4
    
@@ -70,15 +106,73 @@ inner_for4
   MOV RES2,0x0(R7)
   MOV RES3,0x2(R7)
 
-  ADD #4,R12
+  ADD #4,SP
   ADD #4,R14  ; b[++i]
   CMP R14,R15
   JNZ outer_for4
 
-  POPM.W #4,R7
-  POP R12
+ 
+  ; ----------------------- REDUCTION --------------------------
+  MOV SP,R9
+  MOV SP,R11
+  MOV #3,R8     ; In the worst-case scenario we need to reduce 3 times
   
-  CALLA #mp_mod32
+  SUB #4, R9    ; Starting point
+  ADD #32,R11   ; Upper pointer bound (beyond the MS word, additions by 2)
+  
+reduce_limbs
+    ADD #4,R9
+    CMP R9,R11
+    JZ limbs_done       ; If terminal address has been reached, go to round_done
+    
+    MOV 0(R9),&MPY32L    ; LSB of LS half
+    MOV 2(R9),&MPY32H
+    MOV #1,&OP2L         ; 1
+    MOV #0,&OP2H
+    
+    MOV 0x20(R9),&MAC32L   ; LSB of MS half 
+    MOV 0x22(R9),&MAC32H
+    MOV #38,&OP2L         ; 38
+    MOV #0,&OP2H
+    
+    MOV R9,R10         ; Propagate the carry from here 
+    ADD #6,R10         ; R11 is already set as an inclusive upper bound +1
+    
+    MOV  RES0,0(R9)     ; Save S to LSB of LS half
+    MOV  RES1,2(R9)
+    ADD  RES2,4(R9)     ; Add the carry to the second-LSB of the LS half
+    ADDC RES3,6(R9)
+    
+    CALLA #mp_cpropp     ; Propagate the carry further
+    
+    CLR 0x20(R9)        ; We don't need this MS limb anymore
+    CLR 0x22(R9)
+    JMP reduce_limbs    ; Proceed with the next digit
+       
+limbs_done  
+    MOV SP,R9
+    MOV SP,R11       
+    ADD #4,R11          ; We lower the terminal address as we don't need to go further than 1 limb  
+    SUB #4,R9           ; Rewind R9
+    DEC R8
+    JNZ reduce_limbs    ; If we didn't reduce 3 times, continue  
+    
+    ; --------------------- COPY BACK FROM THE STACK ---------------------------
+    MOV R12,R13
+    ADD #32,R13
+fcpy
+    MOV @SP+,0(R12)
+    INCD R12
+    CMP R12,R13
+    JNZ fcpy
+        
+    ADD #32,SP
+    POPM.W #9,R12
+    
+    ; --------------------- FREEZE ---------------------------------------------
+    MOV R9,R12
+    CLR R13
+    CALLA #mp_freeze
    
 RETA
 

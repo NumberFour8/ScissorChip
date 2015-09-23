@@ -17,8 +17,8 @@ void sign(const uint8_t* m,uint16_t size,const keypair* keyp,uint8_t* signature)
     mp_barrett252(r,(uint16_t*)signature);
     
     monpoint B,R;
-    B.x[0] = 9*38; // Montgomery representation of the base point, X = 9
-    B.z[0] = 38;
+    B.x[0] = TO_MONREP(9); // Montgomery representation of the base point, X = 9
+    B.z[0] = TO_MONREP(1);
     
     // Compute R = r*B and encode it
     ladder(&R,&B,r); // After ladder: B = R + B always

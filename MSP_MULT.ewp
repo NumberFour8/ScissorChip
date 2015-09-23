@@ -97,7 +97,7 @@
         </option>
         <option>
           <name>OGChipSelectMenu</name>
-          <state>MSP430FR5969	MSP430FR5969</state>
+          <state>MSP430F5529	MSP430F5529</state>
         </option>
         <option>
           <name>GStackHeapOverride</name>

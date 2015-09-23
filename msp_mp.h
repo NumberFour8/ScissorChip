@@ -10,16 +10,41 @@
 #define digest_update(a,b,c)    keccak_update(a,b,c)
 #define digest_finish(a,b)      keccak_finish(a,b)
 
-#define CIOS
+#define SOS
 
 #ifdef CIOS
   #define DIGITS 16
   #define mp_mulmod(c,a,b)  mp_mulmod32_cios(c,a,b,32) // Use 32-bit CIOS for multiplication 
   #define mp_mulmod1(c,a,b) mp_mulmod32_cios(c,(uint16_t*)a,b,8)  // Use 32-bit CIOS for multiplication by a single 32-bit number
-#else
-  #define DIGITS 20
-  #define mp_mulmod(c,a,b)  mp_mulmod32_fios(c,a,b,32) // Use 32-bit CIOS for multiplication 
+  #define USE_MONTGOMERY
+#elif FIPS
+  #define DIGITS 20 // FIOS needs additional 2*4 bytes = 4 16-bit words
+  #define mp_mulmod(c,a,b)  mp_mulmod32_fios(c,a,b,32) // Use 32-bit FIOS for multiplication 
   #define mp_mulmod1(c,a,b) mp_mulmod32_fios(c,(uint16_t*)a,b,8)  // Use 32-bit CIOS for multiplication by a single 32-bit number
+  #define USE_MONTGOMERY
+#else
+  #define DIGITS 16
+  #define mp_mulmod(c,a,b)  mp_mulmod32_sos(c,a,b,32) // Use 32-bit SOS for multiplication 
+  #define mp_mulmod1(c,a,b) mp_mulmod32_sos(c,(uint16_t*)a,b,8)  // Use 32-bit CIOS for multiplication by a single 32-bit number
+#endif
+
+// Macro for clearing the point structure
+#define clear_point(p)  clear_mem((p)->x,80)
+#define clear_coord(c)  clear_mem((c),DIGITS*2)
+
+// Macro for copying a point coordinate
+#define coord_copy(x,y) for (*(x) = 15;*(x);(*(x))--) (x)[*(x)] = (y)[*(x)]; \
+                        *(x) = *(y);
+
+// Macro for clearing memory of any size
+#define set_zero(x,c) for (*(x) = c;*(x);(*(x))--) (x)[*(x)] = 0; 
+
+#ifdef USE_MONTGOMERY
+  #define TO_MONREP(x) x*38
+  #define FROM_MONREP(t,s) { uint32_t tt = 1; mp_mulmod1(t,&tt,x); }
+#else
+  #define TO_MONREP(x) x
+  #define FROM_MONREP(t,s) coord_copy(t,s)
 #endif
 
 typedef uint16_t  bigint[DIGITS];
@@ -35,7 +60,7 @@ typedef struct
     };
     bigint z;
     #if DIGITS < 20
-    uint16_t reserved[40-2*DIGITS];
+    uint16_t reserved[40-2*DIGITS]; // In order to maintain in-memory consistency (see msp_sign.c)
     #endif
 } monpoint;
 
@@ -109,17 +134,5 @@ void clear_mem(uint16_t* dest,const uint16_t count);
 
 // Performs full multiplication R = A*B where A and B n-digit number, n > 0
 void mp_mul32(bigintp r,const bigintp a,const bigintp b,uint16_t n);
-
-// Macro for clearing the point structure
-#define clear_point(p)  clear_mem((p)->x,80)
-
-#define clear_coord(c)  clear_mem((c),DIGITS*2)
-
-// Macro for copying a point coordinate
-#define coord_copy(x,y) for (*(x) = 15;*(x);(*(x))--) (x)[*(x)] = (y)[*(x)]; \
-                        *(x) = *(y);
-
-// Macro for clearing memory of any size
-#define set_zero(x,c) for (*(x) = c;*(x);(*(x))--) (x)[*(x)] = 0; 
 
 #endif

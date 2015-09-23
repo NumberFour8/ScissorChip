@@ -2,20 +2,24 @@
 
 void compress(monpoint* R0,monpoint* R1)
 {
-    // Montgomery representation of the 2*Y (32B)
-    bigint y2 = {58837, 42342, 44093, 29030, 228, 33005, 392, 27187, 8891, 27038, 43315, 35113, 64946, 53159, 39938, 13231};
+    #ifdef USE_MONTGOMERY  
+      // Montgomery representation of the 2*Y (32B)
+      bigint y2 = {58837, 42342, 44093, 29030, 228, 33005, 392, 27187, 8891, 27038, 43315, 35113, 64946, 53159, 39938, 13231};
+    #else
+      bigint y2 = {0}; // TODO: Calculate 2*Y in normal representation
+    #endif
   
     bigint t1,t2,t3,t4;   // 4*32 = 128B
     
     // First, recover the Montgomery Y coordinate
-    uint64_t tt = 9*38;   // 8 B
+    uint64_t tt = TO_MONREP(9);   // 8 B
     mp_mulmod1(t1,&tt,R0->z); 
     mp_add(t2,R0->x,t1);
     mp_sub(t3,R0->x,t1);
     mp_mulmod(t4,t3,t3);
-    mp_mulmod(t3,t4,R1->x);     tt = 2*486662*38; // 2A
+    mp_mulmod(t3,t4,R1->x);     tt = TO_MONREP(2*486662); // 2A
     mp_mulmod1(t1,&tt,R0->z);
-    mp_add(t1,t1,t2);           tt = 9*38;  // x
+    mp_add(t1,t1,t2);           tt = TO_MONREP(9);  // x
     mp_mulmod1(t4,&tt,R0->x);
     mp_add(t4,t4,R0->z);
     mp_mulmod(t2,t1,t4);
@@ -38,8 +42,7 @@ void compress(monpoint* R0,monpoint* R1)
     mp_mulmod(t1,R1->z,t3);     // (X+Z)^-1
     mp_mulmod(R1->x,t1,t2);     // (X-Z)*(X+Z)^-1
     
-    tt = 1; 
-    mp_mulmod1(R0->yed,&tt,R1->x);  // Convert from Montgomery representation
+    FROM_MONREP(R0->yed,R1->x);     // Convert from Montgomery representation
     R0->yed[15] &= 0x7FFF;          // Clear most-significant bit
     R0->yed[15] |= R1->z[0]&1;      // Add the parity bit
 }

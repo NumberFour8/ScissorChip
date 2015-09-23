@@ -4,7 +4,7 @@ void ladder(monpoint* R,monpoint* P,const bigintp n)
 {
     // Set R to neutral element
     clear_point(R);
-    R->x[0] = 38;  // X = 1
+    R->x[0] = TO_MONREP(1);  // X = 1
     R->z[0] = 0;   // Z = 0 
      
     uint32_t R0 = (uint32_t)R;

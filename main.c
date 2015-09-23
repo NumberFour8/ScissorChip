@@ -93,7 +93,7 @@ void test_mul()
 void test_square()
 {
     uint16_t a[16] = {0};
-    a[0] = 38;
+    a[0] = TO_MONREP(1);
   
     uint16_t c[48] = {0};
     mp_mulmod(c,a,a);
@@ -102,7 +102,7 @@ void test_square()
 void test_invert()
 {
     uint16_t a[16] = {0};
-    a[0] = 380;
+    a[0] = TO_MONREP(10);
     uint16_t c[16] = {0};
     
     mp_invert(c,a);
@@ -114,10 +114,10 @@ void test_ladderstep()
     clear_point(&P);
     clear_point(&Q);
     
-    P.x[0] = 9*38;
-    P.z[0] = 38;
+    P.x[0] = TO_MONREP(9);
+    P.z[0] = TO_MONREP(1);
     
-    Q.x[0] = 38;
+    Q.x[0] = TO_MONREP(1);
     Q.z[0] = 0;
     
     mon_dbladd(&Q,&P);
@@ -130,8 +130,8 @@ void test_ladder_compress()
     monpoint R,B;
 
     clear_point(&B);
-    B.x[0] = 9*38;
-    B.z[0] = 38;
+    B.x[0] = TO_MONREP(9);
+    B.z[0] = TO_MONREP(1);
     
     ladder(&R,&B,k);
     compress(&R,&B); 
@@ -222,7 +222,7 @@ int main( void )
     
     // test_barret();
     
-    // test_mul();
+     test_mul();
     
     // test_square();
   
@@ -236,7 +236,7 @@ int main( void )
 
     // test_sha512();
     
-     test_keypair_sign();
+    // test_keypair_sign();
    
     return 0;
 }

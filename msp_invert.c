@@ -5,7 +5,7 @@ void mp_invert(bigintp r,const bigintp x)
     bigint t1,t2;
     clear_mem(t1,32);
     clear_mem(t2,32);
-    t2[0] = t1[0] = 38;
+    t2[0] = t1[0] = TO_MONREP(1);
     
     for (uint8_t i = 0;i < 250;i++)
     {

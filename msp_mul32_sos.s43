@@ -53,7 +53,7 @@ mp_mulmod32_sos
 
 
   ; Separated Operand Scanning
-  ; -------------------------------------- 
+  ; ---------------------------------------------------------------------------- 
 
   ; For loop i = 0 .. s-1
   ; R15 contains size of B
@@ -112,7 +112,7 @@ inner_for4
   JNZ outer_for4
 
  
-  ; ----------------------- REDUCTION --------------------------
+  ; ------------------------------- REDUCTION ----------------------------------
   MOV SP,R9
   MOV SP,R11
   MOV #3,R8     ; In the worst-case scenario we need to reduce 3 times
@@ -169,7 +169,7 @@ fcpy
     ADD #32,SP
     POPM.W #9,R12
     
-    ; --------------------- FREEZE ---------------------------------------------
+    ; ----------------------------- FREEZE -------------------------------------
     MOV R9,R12
     CLR R13
     CALLA #mp_freeze

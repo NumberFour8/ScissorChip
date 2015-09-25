@@ -6,127 +6,77 @@
   <configuration>
     <name>Debug</name>
     <outputs>
-      <file>$PROJ_DIR$\Debug\Obj\mp_compress.pbi</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\usci_i2c.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\mp_compress.r43</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\usci_spi.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\msp_keypair.r43</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\usci_uart.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\keccak.pbi</file>
-      <file>$TOOLKIT_DIR$\inc\dlib\c\ycheck.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\sha512.pbi</file>
-      <file>$PROJ_DIR$\msp_mp.h</file>
-      <file>$TOOLKIT_DIR$\inc\dlib\c\DLib_Threads.h</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\pmm.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\main.pbi</file>
-      <file>$TOOLKIT_DIR$\config\linker\multiplier32_loc2.xcl</file>
-      <file>$PROJ_DIR$\Debug\List\main.s43</file>
-      <file>$TOOLKIT_DIR$\inc\dlib\c\stdint.h</file>
-      <file>$TOOLKIT_DIR$\inc\dlib\c\yvals.h</file>
-      <file>$PROJ_DIR$\Debug\List\msp_mp.lst</file>
+      <file>$PROJ_DIR$\mp_muls.h</file>
+      <file>$PROJ_DIR$\Debug\List\msp_compress.lst</file>
+      <file>$PROJ_DIR$\Debug\Exe\MSP_MULT.ulp</file>
+      <file>$PROJ_DIR$\Debug\Obj\msp_mul32_cios.r43</file>
+      <file>$PROJ_DIR$\Debug\List\main.lst</file>
+      <file>$PROJ_DIR$\msp_mp.c</file>
+      <file>$PROJ_DIR$\Debug\List\msp_step.lst</file>
+      <file>$PROJ_DIR$\mp_compress.c</file>
+      <file>$PROJ_DIR$\Debug\Obj\msp_keypair.pbi</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\eusci_a_uart.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\eusci_b_i2c.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\eusci_b_spi.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\eusci_i2c.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\eusci_spi.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\tlv.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\ucs.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\wdt_a.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\usci_a_spi.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\usci_a_uart.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\usci_b_i2c.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\usci_b_spi.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\adc12_a.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\aes.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\gpio.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\comp_b.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\bak_batt.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\crc.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\dac12_a.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\dma.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\flash.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\eusci_a_spi.h</file>
       <file>$TOOLKIT_DIR$\inc\msp430.h</file>
+      <file>$TOOLKIT_DIR$\inc\in430.h</file>
       <file>$PROJ_DIR$\Debug\Exe\MSP_MULT.d43</file>
       <file>$TOOLKIT_DIR$\inc\dlib\c\DLib_Defaults.h</file>
       <file>$PROJ_DIR$\Debug\List\keccak.lst</file>
-      <file>$TOOLKIT_DIR$\inc\in430.h</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_mp.r43</file>
       <file>$PROJ_DIR$\Debug\List\keccak.s43</file>
       <file>$PROJ_DIR$\Debug\Obj\keccak.r43</file>
       <file>$PROJ_DIR$\Debug\List\sha512.s43</file>
-      <file>$TOOLKIT_DIR$\inc\dlib\c\xencoding_limits.h</file>
       <file>$TOOLKIT_DIR$\inc\dlib\c\ysizet.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\msp_utils.r43</file>
+      <file>$TOOLKIT_DIR$\inc\dlib\c\xencoding_limits.h</file>
       <file>$PROJ_DIR$\Debug\Obj\MSP_MULT.pbd</file>
+      <file>$PROJ_DIR$\Debug\Obj\msp_utils.r43</file>
       <file>$PROJ_DIR$\Debug\List\msp_mul32_fios.lst</file>
-      <file>$PROJ_DIR$\Debug\List\msp_barrett.lst</file>
-      <file>$PROJ_DIR$\Debug\List\msp_sign.s43</file>
-      <file>$PROJ_DIR$\Debug\List\msp_sign.lst</file>
-      <file>$PROJ_DIR$\Debug\List\msp_mul16_fios.lst</file>
-      <file>$TOOLKIT_DIR$\inc\msp430f5529.h</file>
-      <file>$TOOLKIT_DIR$\inc\dlib\c\stdbool.h</file>
-      <file>$PROJ_DIR$\Debug\List\ucs.s43</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\mp_compress.c</file>
-      <file>$PROJ_DIR$\Debug\List\ucs.lst</file>
-      <file>$TOOLKIT_DIR$\inc\msp430fr5969.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\ucs.r43</file>
-      <file>$PROJ_DIR$\Debug\Obj\ucs.pbi</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\inc\hw_memmap.h</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\dac12_a.h</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\crc.h</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\aes.h</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\adc10_a.h</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\dma.h</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\driverlib.h</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\usci_a_spi.h</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\usci_b_i2c.h</file>
       <file>$PROJ_DIR$\msp_mul32_fios_c.c</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\usci_a_uart.h</file>
       <file>$PROJ_DIR$\msp_mul32_cios_c.c</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\usci_b_spi.h</file>
       <file>$PROJ_DIR$\msp_mul32_sos_c.c</file>
-      <file>$PROJ_DIR$\Debug\List\msp_step.lst</file>
-      <file>$PROJ_DIR$\mp_compress.c</file>
-      <file>$PROJ_DIR$\msp_mp.c</file>
-      <file>$PROJ_DIR$\Debug\Obj\msp_keypair.pbi</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\ram.h</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\ref.h</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\sfr.h</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\mpy32.h</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\pmap.h</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\tec.h</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\tlv.h</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\ucs.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\msp_mul16_fios.r43</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\rtc_a.h</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\rtc_b.h</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\rtc_c.h</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\sd24_b.h</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\wdt_a.h</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\timer_a.h</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\timer_b.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\msp_mul32_sos.r43</file>
-      <file>$PROJ_DIR$\Debug\Obj\kara.r43</file>
-      <file>$PROJ_DIR$\Debug\Obj\msp_montgomery.r43</file>
-      <file>$TOOLKIT_DIR$\lib\dlib\dl430xlsfn.r43</file>
-      <file>$PROJ_DIR$\keccak.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\msp_keccak.r43</file>
-      <file>$TOOLKIT_DIR$\lib\dlib\dl430xlsfn.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\msp_barrett.r43</file>
-      <file>$PROJ_DIR$\Debug\Obj\msp_mod32_25519.r43</file>
-      <file>$PROJ_DIR$\Debug\List\msp_keccak.lst</file>
-      <file>$PROJ_DIR$\Debug\List\msp_ladder.s43</file>
-      <file>$PROJ_DIR$\Debug\List\msp_invert.lst</file>
-      <file>$PROJ_DIR$\Debug\List\msp_ladder.lst</file>
-      <file>$PROJ_DIR$\Debug\Obj\msp_ladder.pbi</file>
-      <file>$PROJ_DIR$\Debug\Obj\msp_invert.r43</file>
-      <file>$PROJ_DIR$\Debug\List\msp_invert.s43</file>
-      <file>$PROJ_DIR$\Debug\Obj\msp_ladder.r43</file>
-      <file>$PROJ_DIR$\Debug\Obj\msp_invert.pbi</file>
-      <file>$PROJ_DIR$\Debug\Obj\msp_propagate.r43</file>
-      <file>$PROJ_DIR$\Debug\Obj\msp_mod16_25519.r43</file>
-      <file>$PROJ_DIR$\Debug\List\msp_utils.lst</file>
-      <file>$PROJ_DIR$\Debug\List\msp_mod32_25519.lst</file>
-      <file>$PROJ_DIR$\Debug\List\msp_montgomery.lst</file>
-      <file>$PROJ_DIR$\Debug\List\msp_cond.lst</file>
-      <file>$PROJ_DIR$\Debug\List\msp_addsub.lst</file>
-      <file>$PROJ_DIR$\Debug\Obj\msp_addsub.r43</file>
+      <file>$PROJ_DIR$\Debug\List\kara.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\msp_sign.r43</file>
+      <file>$PROJ_DIR$\Debug\List\msp_mp.s43</file>
+      <file>$PROJ_DIR$\Debug\List\msp_mul32_sos.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\msp_sign.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\msp_mul32_fios.r43</file>
       <file>$PROJ_DIR$\Debug\List\msp_mod16_25519.lst</file>
-      <file>$PROJ_DIR$\Debug\List\msp_propagate.lst</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_cond.r43</file>
+      <file>$PROJ_DIR$\Debug\List\msp_propagate.lst</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_mp.pbi</file>
+      <file>$PROJ_DIR$\Debug\List\MSP_MULT.map</file>
       <file>$TOOLKIT_DIR$\config\linker\lnk430f5529.xcl</file>
       <file>$PROJ_DIR$\Debug\Obj\main.r43</file>
-      <file>$PROJ_DIR$\Debug\List\MSP_MULT.map</file>
-      <file>$TOOLKIT_DIR$\inc\dlib\c\stdlib.h</file>
       <file>$TOOLKIT_DIR$\inc\dlib\c\DLib_Product.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\sha512.r43</file>
+      <file>$TOOLKIT_DIR$\inc\dlib\c\stdlib.h</file>
       <file>$PROJ_DIR$\Debug\List\msp_mul32_cios.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\sha512.r43</file>
       <file>$TOOLKIT_DIR$\inc\intrinsics.h</file>
       <file>$PROJ_DIR$\Debug\List\sha512.lst</file>
       <file>$TOOLKIT_DIR$\inc\dlib\c\string.h</file>
       <file>$PROJ_DIR$\sha512.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\msp_mul32_cios_c.pbi</file>
       <file>$PROJ_DIR$\Debug\List\msp_mul32_sos_c.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\msp_mul32_cios_c.pbi</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_mul32_sos_c.pbi</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_mul32_sos_c.r43</file>
       <file>$PROJ_DIR$\Debug\List\msp_mul32_cios_c.s43</file>
@@ -137,27 +87,9 @@
       <file>$PROJ_DIR$\Debug\List\msp_mul32_fios_c.lst</file>
       <file>$PROJ_DIR$\Debug\List\mp_compress.s43</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_compress.pbi</file>
-      <file>$PROJ_DIR$\msp_utils.s43</file>
-      <file>$PROJ_DIR$\msp_compress.c</file>
-      <file>$PROJ_DIR$\msp_cond.s43</file>
-      <file>$PROJ_DIR$\msp_invert.c</file>
-      <file>$PROJ_DIR$\msp_keccak.s43</file>
-      <file>$PROJ_DIR$\msp_keypair.c</file>
-      <file>$PROJ_DIR$\msp_ladder.c</file>
-      <file>$PROJ_DIR$\msp_mod16_25519.s43</file>
-      <file>$PROJ_DIR$\msp_mod32_25519.s43</file>
-      <file>$PROJ_DIR$\msp_montgomery.s43</file>
-      <file>$PROJ_DIR$\msp_mul16_fios.s43</file>
-      <file>$PROJ_DIR$\msp_mul32_cios.s43</file>
-      <file>$PROJ_DIR$\msp_mul32_fios.s43</file>
-      <file>$PROJ_DIR$\msp_mul32_sos.s43</file>
-      <file>$PROJ_DIR$\msp_propagate.s43</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\pmm.c</file>
-      <file>$PROJ_DIR$\sha512.c</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\ucs.c</file>
-      <file>$PROJ_DIR$\Debug\List\msp_keypair.s43</file>
       <file>$PROJ_DIR$\Debug\List\mp_compress.lst</file>
       <file>$PROJ_DIR$\Debug\List\msp_step.s43</file>
+      <file>$PROJ_DIR$\Debug\List\msp_keypair.s43</file>
       <file>$PROJ_DIR$\Debug\Obj\pmm.pbi</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_mul32_fios_c.pbi</file>
       <file>$PROJ_DIR$\Debug\List\pmm.s43</file>
@@ -169,145 +101,128 @@
       <file>$PROJ_DIR$\Debug\Obj\msp_step.r43</file>
       <file>$PROJ_DIR$\Debug\List\msp_compress.s43</file>
       <file>$PROJ_DIR$\Debug\Obj\msp_mul32_fios_c.r43</file>
-      <file>$PROJ_DIR$\mp_muls.h</file>
-      <file>$PROJ_DIR$\Debug\List\msp_compress.lst</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\sys.h</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\deprecated\IAR\msp430f5xx_6xxgeneric.h</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\adc12_a.h</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\eusci_i2c.h</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\inc\hw_regaccess.h</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\comp_b.h</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\ldopwr.h</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\gpio.h</file>
-      <file>$PROJ_DIR$\Debug\Exe\MSP_MULT.ulp</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\eusci_a_spi.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\msp_mul32_cios.r43</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\eusci_a_uart.h</file>
-      <file>$PROJ_DIR$\Debug\List\main.lst</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\eusci_b_i2c.h</file>
-      <file>$PROJ_DIR$\Debug\Obj\msp_sign.r43</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\eusci_b_spi.h</file>
-      <file>$PROJ_DIR$\Debug\List\msp_mp.s43</file>
-      <file>$PROJ_DIR$\Debug\List\kara.lst</file>
-      <file>$PROJ_DIR$\Debug\List\msp_mul32_sos.lst</file>
-      <file>$PROJ_DIR$\Debug\Obj\msp_sign.pbi</file>
-      <file>$PROJ_DIR$\Debug\Obj\msp_mul32_fios.r43</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\eusci_spi.h</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\bak_batt.h</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\flash.h</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\timer_d.h</file>
-      <file>$PROJ_DIR$\..\dl_5xx_6xx\eusci_uart.h</file>
-      <file>$PROJ_DIR$\kara.s43</file>
-      <file>$PROJ_DIR$\keccak.c</file>
-      <file>$PROJ_DIR$\main.c</file>
-      <file>$PROJ_DIR$\msp_addsub.s43</file>
-      <file>$PROJ_DIR$\msp_barrett.s43</file>
-      <file>$PROJ_DIR$\msp_sign.c</file>
       <file>$PROJ_DIR$\msp_step.c</file>
+      <file>$PROJ_DIR$\msp_utils.s43</file>
+      <file>$PROJ_DIR$\..\dl_5xx_6xx\ucs.c</file>
+      <file>$PROJ_DIR$\sha512.c</file>
+      <file>$PROJ_DIR$\kara.s43</file>
+      <file>$PROJ_DIR$\main.c</file>
+      <file>$PROJ_DIR$\msp_invert.c</file>
+      <file>$PROJ_DIR$\msp_keccak.s43</file>
+      <file>$PROJ_DIR$\msp_cond.s43</file>
+      <file>$PROJ_DIR$\msp_keypair.c</file>
+      <file>$PROJ_DIR$\msp_mod32_25519.s43</file>
+      <file>$PROJ_DIR$\msp_mod16_25519.s43</file>
+      <file>$PROJ_DIR$\Debug\List\msp_ladder.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\msp_invert.r43</file>
+      <file>$PROJ_DIR$\Debug\Obj\msp_ladder.pbi</file>
+      <file>$PROJ_DIR$\Debug\List\msp_invert.s43</file>
+      <file>$PROJ_DIR$\Debug\Obj\msp_ladder.r43</file>
+      <file>$PROJ_DIR$\Debug\Obj\msp_invert.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\msp_propagate.r43</file>
+      <file>$PROJ_DIR$\Debug\Obj\msp_mod16_25519.r43</file>
+      <file>$PROJ_DIR$\Debug\List\msp_utils.lst</file>
+      <file>$PROJ_DIR$\Debug\List\msp_mod32_25519.lst</file>
+      <file>$PROJ_DIR$\Debug\List\msp_montgomery.lst</file>
+      <file>$PROJ_DIR$\Debug\List\msp_cond.lst</file>
+      <file>$PROJ_DIR$\Debug\List\msp_addsub.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\msp_addsub.r43</file>
+      <file>$PROJ_DIR$\Debug\Obj\keccak.pbi</file>
+      <file>$TOOLKIT_DIR$\inc\dlib\c\ycheck.h</file>
+      <file>$TOOLKIT_DIR$\inc\dlib\c\DLib_Threads.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\sha512.pbi</file>
+      <file>$PROJ_DIR$\msp_mp.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\main.pbi</file>
+      <file>$TOOLKIT_DIR$\inc\dlib\c\yvals.h</file>
+      <file>$TOOLKIT_DIR$\config\linker\multiplier32_loc2.xcl</file>
+      <file>$PROJ_DIR$\Debug\List\main.s43</file>
+      <file>$TOOLKIT_DIR$\inc\dlib\c\stdint.h</file>
+      <file>$PROJ_DIR$\msp_barrett.s43</file>
+      <file>$PROJ_DIR$\keccak.c</file>
+      <file>$PROJ_DIR$\msp_compress.c</file>
+      <file>$PROJ_DIR$\msp_addsub.s43</file>
+      <file>$PROJ_DIR$\Debug\Obj\mp_compress.pbi</file>
+      <file>$PROJ_DIR$\Debug\List\msp_mp.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\msp_keypair.r43</file>
+      <file>$PROJ_DIR$\Debug\Obj\mp_compress.r43</file>
+      <file>$PROJ_DIR$\Debug\Obj\msp_mul32_sos.r43</file>
+      <file>$PROJ_DIR$\Debug\Obj\msp_montgomery.r43</file>
+      <file>$PROJ_DIR$\Debug\Obj\kara.r43</file>
+      <file>$TOOLKIT_DIR$\lib\dlib\dl430xlsfn.r43</file>
+      <file>$TOOLKIT_DIR$\lib\dlib\dl430xlsfn.h</file>
+      <file>$PROJ_DIR$\keccak.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\msp_keccak.r43</file>
+      <file>$PROJ_DIR$\Debug\Obj\msp_barrett.r43</file>
+      <file>$PROJ_DIR$\Debug\Obj\msp_mod32_25519.r43</file>
+      <file>$PROJ_DIR$\Debug\List\msp_keccak.lst</file>
+      <file>$PROJ_DIR$\Debug\List\msp_invert.lst</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\usci_i2c.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\usci_spi.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\usci_uart.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\adc10_a.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\inc\hw_memmap.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\driverlib.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\deprecated\IAR\msp430f5xx_6xxgeneric.h</file>
+      <file>$PROJ_DIR$\Debug\List\msp_barrett.lst</file>
+      <file>$PROJ_DIR$\Debug\List\msp_sign.lst</file>
+      <file>$PROJ_DIR$\Debug\List\msp_sign.s43</file>
+      <file>$PROJ_DIR$\Debug\List\msp_mul16_fios.lst</file>
+      <file>$TOOLKIT_DIR$\inc\msp430f5529.h</file>
+      <file>$TOOLKIT_DIR$\inc\dlib\c\stdbool.h</file>
+      <file>$PROJ_DIR$\Debug\List\ucs.s43</file>
+      <file>$PROJ_DIR$\..\dl_5xx_6xx\mp_compress.c</file>
+      <file>$PROJ_DIR$\Debug\List\ucs.lst</file>
+      <file>$PROJ_DIR$\Debug\Obj\ucs.r43</file>
+      <file>$PROJ_DIR$\Debug\Obj\ucs.pbi</file>
+      <file>$PROJ_DIR$\msp_montgomery.s43</file>
+      <file>$PROJ_DIR$\msp_ladder.c</file>
+      <file>$PROJ_DIR$\msp_mul16_fios.s43</file>
+      <file>$PROJ_DIR$\msp_mul32_cios.s43</file>
+      <file>$PROJ_DIR$\msp_mul32_fios.s43</file>
+      <file>$PROJ_DIR$\msp_mul32_sos.s43</file>
+      <file>$PROJ_DIR$\msp_propagate.s43</file>
+      <file>$PROJ_DIR$\msp_sign.c</file>
+      <file>$PROJ_DIR$\..\dl_5xx_6xx\pmm.c</file>
+      <file>$PROJ_DIR$\Debug\List\msp_ladder.s43</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\pmap.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\pmm.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\ram.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\ref.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\rtc_a.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\rtc_b.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\rtc_c.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\sd24_b.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\sfr.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\sys.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\tec.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\timer_a.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\timer_b.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\timer_d.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\eusci_uart.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\ldopwr.h</file>
+      <file>$PROJ_DIR$\..\..\workspace\dl_5xx_6xx\mpy32.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\msp_mul16_fios.r43</file>
     </outputs>
     <file>
-      <name>[ROOT_NODE]</name>
-      <outputs>
-        <tool>
-          <name>XLINK</name>
-          <file> 110 19</file>
-        </tool>
-        <tool>
-          <name>ULP430</name>
-          <file> 173</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Debug\Exe\MSP_MULT.d43</name>
-      <outputs>
-        <tool>
-          <name>XLINK</name>
-          <file> 110</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>XLINK</name>
-          <file> 108 13 79 25 109 103 85 127 106 92 83 4 94 97 86 80 70 175 185 78 96 179 160 29 158 113 42 81</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\dl_5xx_6xx\mp_compress.c</name>
-      <outputs>
-        <tool>
-          <name>BICOMP</name>
-          <file> 0</file>
-        </tool>
-      </outputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\msp_mul32_fios_c.c</name>
+      <name>$PROJ_DIR$\msp_mp.c</name>
       <outputs>
         <tool>
           <name>ICC430</name>
-          <file> 126 128 162</file>
+          <file> 50 136 36</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 153</file>
+          <file> 57</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICC430</name>
-          <file> 163 15 7 16 20 84 112 27 10</file>
+          <file> 125 130 122 127 34 143 61 41 123 31 161 32 65</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 163 15 7 16 20 84 112 27 10</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\msp_mul32_cios_c.c</name>
-      <outputs>
-        <tool>
-          <name>ICC430</name>
-          <file> 123 125 156</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 119</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICC430</name>
-          <file> 163 15 7 16 20 84 112 27 10</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 163 15 7 16 20 84 112 27 10</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\msp_mul32_sos_c.c</name>
-      <outputs>
-        <tool>
-          <name>ICC430</name>
-          <file> 124 120 122</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 121</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICC430</name>
-          <file> 163 15 7 16 20 84 112 27 10</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 163 15 7 16 20 84 112 27 10</file>
+          <file> 125 130 122 127 34 143 61 41 123 31 161 32 65</file>
         </tool>
       </inputs>
     </file>
@@ -316,163 +231,114 @@
       <outputs>
         <tool>
           <name>ICC430</name>
-          <file> 129 150 2</file>
+          <file> 79 81 138</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 0</file>
+          <file> 135</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICC430</name>
-          <file> 9 15 7 16 20 84 112 27 10 18 36 22 115</file>
+          <file> 125 130 122 127 34 143 61 41 123 31 161 32 65</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 9 15 7 16 20 84 112 27 10 18 36 22 115</file>
+          <file> 125 130 122 127 34 143 61 41 123 31 161 32 65</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\msp_mp.c</name>
+      <name>$PROJ_DIR$\Debug\Exe\MSP_MULT.d43</name>
+      <outputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 58</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 59 128 141 38 60 120 146 77 55 108 145 137 111 114 147 140 195 3 53 139 113 49 92 43 90 64 166 142</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\msp_mul32_fios_c.c</name>
       <outputs>
         <tool>
           <name>ICC430</name>
-          <file> 181 17 23</file>
+          <file> 76 78 94</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 107</file>
+          <file> 85</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICC430</name>
-          <file> 9 15 7 16 20 84 112 27 10 18 36 22 115</file>
+          <file> 0 130 122 127 34 143 61 41 123</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 9 15 7 16 20 84 112 27 10 18 36 22 115</file>
+          <file> 0 130 122 127 34 143 61 41 123</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\msp_utils.s43</name>
-      <outputs>
-        <tool>
-          <name>A430</name>
-          <file> 29 98</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>A430</name>
-          <file> 18 41</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\msp_compress.c</name>
+      <name>$PROJ_DIR$\msp_mul32_cios_c.c</name>
       <outputs>
         <tool>
           <name>ICC430</name>
-          <file> 161 164 127</file>
+          <file> 73 75 88</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 130</file>
+          <file> 70</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICC430</name>
-          <file> 9 15 7 16 20 84 112 27 10 18 41 22 115 82 117 28</file>
+          <file> 0 130 122 127 34 143 61 41 123</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 9 15 7 16 20 84 112 27 10 18 36 22 115 82 117 28</file>
+          <file> 0 130 122 127 34 143 61 41 123</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\msp_cond.s43</name>
-      <outputs>
-        <tool>
-          <name>A430</name>
-          <file> 106 101</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>A430</name>
-          <file> 18 41</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\msp_invert.c</name>
+      <name>$PROJ_DIR$\msp_mul32_sos_c.c</name>
       <outputs>
         <tool>
           <name>ICC430</name>
-          <file> 93 89 92</file>
+          <file> 74 69 72</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 95</file>
+          <file> 71</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICC430</name>
-          <file> 9 15 7 16 20 84 112 27 10 18 41 22 115 82 117 28</file>
+          <file> 0 130 122 127 34 143 61 41 123</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 9 15 7 16 20 84 112 27 10 18 36 22 115 82 117 28</file>
+          <file> 0 130 122 127 34 143 61 41 123</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\msp_keccak.s43</name>
-      <outputs>
-        <tool>
-          <name>A430</name>
-          <file> 83 87</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>A430</name>
-          <file> 18 41</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\msp_keypair.c</name>
+      <name>$PROJ_DIR$\msp_step.c</name>
       <outputs>
         <tool>
           <name>ICC430</name>
-          <file> 149 157 4</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 61</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICC430</name>
-          <file> 9 15 7 16 20 84 112 27 10 18 41 22 115 82 117 28</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\msp_ladder.c</name>
-      <outputs>
-        <tool>
-          <name>ICC430</name>
-          <file> 88 90 94</file>
+          <file> 82 6 92</file>
         </tool>
         <tool>
           <name>BICOMP</name>
@@ -482,163 +348,158 @@
       <inputs>
         <tool>
           <name>ICC430</name>
-          <file> 9 15 7 16 20 84 112 27 10 18 41 22 115 82 117 28</file>
+          <file> 125 130 122 127 34 143 61 41 123 31 161 32 65 144 67 40</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 9 15 7 16 20 84 112 27 10 18 41 22 115 82 117 28</file>
+          <file> 125 130 122 127 34 143 61 41 123 31 161 32 65 144 67 40</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\msp_mod16_25519.s43</name>
+      <name>$PROJ_DIR$\msp_utils.s43</name>
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 97 104</file>
+          <file> 43 115</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 18 41</file>
+          <file> 31 161</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\msp_mod32_25519.s43</name>
+      <name>$PROJ_DIR$\..\dl_5xx_6xx\ucs.c</name>
       <outputs>
-        <tool>
-          <name>A430</name>
-          <file> 86 99</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>A430</name>
-          <file> 18 41</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\msp_montgomery.s43</name>
-      <outputs>
-        <tool>
-          <name>A430</name>
-          <file> 80 100</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>A430</name>
-          <file> 18 41</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\msp_mul16_fios.s43</name>
-      <outputs>
-        <tool>
-          <name>A430</name>
-          <file> 70 35</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>A430</name>
-          <file> 18 41</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\msp_mul32_cios.s43</name>
-      <outputs>
-        <tool>
-          <name>A430</name>
-          <file> 175 114</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>A430</name>
-          <file> 18 41</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\msp_mul32_fios.s43</name>
-      <outputs>
-        <tool>
-          <name>A430</name>
-          <file> 185 31</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>A430</name>
-          <file> 18 41</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\msp_mul32_sos.s43</name>
-      <outputs>
-        <tool>
-          <name>A430</name>
-          <file> 78 183</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>A430</name>
-          <file> 18 41</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\msp_propagate.s43</name>
-      <outputs>
-        <tool>
-          <name>A430</name>
-          <file> 96 105</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>A430</name>
-          <file> 18 41</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\dl_5xx_6xx\pmm.c</name>
-      <outputs>
-        <tool>
-          <name>ICC430</name>
-          <file> 154 155 158</file>
-        </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 152</file>
+          <file> 167</file>
         </tool>
       </outputs>
-      <inputs>
-        <tool>
-          <name>ICC430</name>
-          <file> 169 15 7 16 20 84 112 27 10 37 44 18 41 22 115 166</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 169 15 7 16 20 84 112 27 10 37 44 18 41 22 115 166</file>
-        </tool>
-      </inputs>
     </file>
     <file>
       <name>$PROJ_DIR$\sha512.c</name>
       <outputs>
         <tool>
           <name>ICC430</name>
-          <file> 26 116 113</file>
+          <file> 39 66 64</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 124</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICC430</name>
+          <file> 68 67 122 127 34 143 61 41 123 40 130</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 68 67 122 127 34 143 61 41 123 40 130</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\kara.s43</name>
+      <outputs>
+        <tool>
+          <name>A430</name>
+          <file> 141 48</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>A430</name>
+          <file> 31 161</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\main.c</name>
+      <outputs>
+        <tool>
+          <name>ICC430</name>
+          <file> 129 4 60</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 126</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICC430</name>
+          <file> 31 161 32 65 155 154 156 130 122 127 34 143 61 41 123 162 153 21 22 25 24 26 27 28 30 9 10 11 12 13 192 29 23 193 194 178 179 180 181 182 183 184 185 186 187 188 189 190 191 14 15 17 18 19 20 150 151 152 16 62 40 125 144 67 68</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 31 161 32 65 155 154 156 130 122 127 34 143 61 41 123 162 153 21 22 25 24 26 27 28 30 9 10 11 12 13 192 29 23 193 194 178 179 180 181 182 183 184 185 186 187 188 189 190 191 14 15 17 18 19 20 150 151 152 16 62 40 125 144 67 68</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\msp_invert.c</name>
+      <outputs>
+        <tool>
+          <name>ICC430</name>
+          <file> 110 149 108</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 112</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICC430</name>
+          <file> 125 130 122 127 34 143 61 41 123 31 161 32 65 144 67 40</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 125 130 122 127 34 143 61 41 123 31 161 32 65 144 67 40</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\msp_keccak.s43</name>
+      <outputs>
+        <tool>
+          <name>A430</name>
+          <file> 145 148</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>A430</name>
+          <file> 31 161</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\msp_cond.s43</name>
+      <outputs>
+        <tool>
+          <name>A430</name>
+          <file> 55 118</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>A430</name>
+          <file> 31 161</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\msp_keypair.c</name>
+      <outputs>
+        <tool>
+          <name>ICC430</name>
+          <file> 83 89 137</file>
         </tool>
         <tool>
           <name>BICOMP</name>
@@ -648,110 +509,41 @@
       <inputs>
         <tool>
           <name>ICC430</name>
-          <file> 118 117 7 16 20 84 112 27 10 28 15</file>
+          <file> 125 130 122 127 34 143 61 41 123 31 161 32 65 144 67 40</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 118 117 7 16 20 84 112 27 10 28 15</file>
+          <file> 125 130 122 127 34 143 61 41 123 31 161 32 65 144 67 40</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\dl_5xx_6xx\ucs.c</name>
-      <outputs>
-        <tool>
-          <name>ICC430</name>
-          <file> 38 40 42</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 43</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICC430</name>
-          <file> 169 15 7 16 20 84 112 27 10 37 44 18 41 22 115 166</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 169 15 7 16 20 84 112 27 10 37 44 18 41 22 115 166</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\kara.s43</name>
+      <name>$PROJ_DIR$\msp_mod32_25519.s43</name>
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 79 182</file>
+          <file> 147 116</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 18 41</file>
+          <file> 31 161</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\keccak.c</name>
-      <outputs>
-        <tool>
-          <name>ICC430</name>
-          <file> 24 21 25</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 6</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICC430</name>
-          <file> 82 15 7 16 20 84 112 27 10 117 28 9 18 41 22 115</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 82 15 7 16 20 84 112 27 10 117 28 9 18 36 22 115</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\main.c</name>
-      <outputs>
-        <tool>
-          <name>ICC430</name>
-          <file> 177 109</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 12</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICC430</name>
-          <file> 18 41 22 115 50 44 166 15 7 16 20 84 112 27 10 37 48 167 47 187 170 46 45 49 174 176 178 180 168 186 190 188 172 171 65 66 11 62 63 71 72 73 74 64 165 67 76 77 189 68 69 51 54 52 56 1 3 5 75 111 28 9 82 117 118</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 18 36 22 115 50 44 166 15 7 16 20 84 112 27 10 37 48 167 47 187 170 46 45 49 174 176 178 180 168 186 190 188 172 171 65 66 11 62 63 71 72 73 74 64 165 67 76 77 189 68 69 51 54 52 56 1 3 5 75 111 28 9 82 117 118</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\msp_addsub.s43</name>
+      <name>$PROJ_DIR$\msp_mod16_25519.s43</name>
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 103 102</file>
+          <file> 114 54</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 18 41</file>
+          <file> 31 161</file>
         </tool>
       </inputs>
     </file>
@@ -760,13 +552,209 @@
       <outputs>
         <tool>
           <name>A430</name>
-          <file> 85 32</file>
+          <file> 146 157</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>A430</name>
-          <file> 18 41</file>
+          <file> 31 161</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\keccak.c</name>
+      <outputs>
+        <tool>
+          <name>ICC430</name>
+          <file> 37 35 38</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 121</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICC430</name>
+          <file> 144 130 122 127 34 143 61 41 123 67 40 125 31 161 32 65</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 144 130 122 127 34 143 61 41 123 67 40 125 31 161 32 65</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\msp_compress.c</name>
+      <outputs>
+        <tool>
+          <name>ICC430</name>
+          <file> 93 1 77</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 80</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICC430</name>
+          <file> 125 130 122 127 34 143 61 41 123 31 161 32 65 144 67 40</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 125 130 122 127 34 143 61 41 123 31 161 32 65 144 67 40</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\msp_addsub.s43</name>
+      <outputs>
+        <tool>
+          <name>A430</name>
+          <file> 120 119</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>A430</name>
+          <file> 31 161</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>[ROOT_NODE]</name>
+      <outputs>
+        <tool>
+          <name>XLINK</name>
+          <file> 58 33</file>
+        </tool>
+        <tool>
+          <name>ULP430</name>
+          <file> 2</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\dl_5xx_6xx\mp_compress.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 135</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\msp_montgomery.s43</name>
+      <outputs>
+        <tool>
+          <name>A430</name>
+          <file> 140 117</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>A430</name>
+          <file> 31 161</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\msp_ladder.c</name>
+      <outputs>
+        <tool>
+          <name>ICC430</name>
+          <file> 177 107 111</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 109</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICC430</name>
+          <file> 125 130 122 127 34 143 61 41 123 31 161 32 65 144 67 40</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 125 130 122 127 34 143 61 41 123 31 161 32 65 144 67 40</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\msp_mul16_fios.s43</name>
+      <outputs>
+        <tool>
+          <name>A430</name>
+          <file> 195 160</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>A430</name>
+          <file> 31 161</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\msp_mul32_cios.s43</name>
+      <outputs>
+        <tool>
+          <name>A430</name>
+          <file> 3 63</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>A430</name>
+          <file> 31 161</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\msp_mul32_fios.s43</name>
+      <outputs>
+        <tool>
+          <name>A430</name>
+          <file> 53 44</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>A430</name>
+          <file> 31 161</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\msp_mul32_sos.s43</name>
+      <outputs>
+        <tool>
+          <name>A430</name>
+          <file> 139 51</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>A430</name>
+          <file> 31 161</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\msp_propagate.s43</name>
+      <outputs>
+        <tool>
+          <name>A430</name>
+          <file> 113 56</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>A430</name>
+          <file> 31 161</file>
         </tool>
       </inputs>
     </file>
@@ -775,53 +763,36 @@
       <outputs>
         <tool>
           <name>ICC430</name>
-          <file> 33 34 179</file>
+          <file> 159 158 49</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 184</file>
+          <file> 52</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>ICC430</name>
-          <file> 9 15 7 16 20 84 112 27 10 18 41 22 115 82 117 28</file>
+          <file> 125 130 122 127 34 143 61 41 123 31 161 32 65 144 67 40</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 9 15 7 16 20 84 112 27 10 18 41 22 115 82 117 28</file>
+          <file> 125 130 122 127 34 143 61 41 123 31 161 32 65 144 67 40</file>
         </tool>
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\msp_step.c</name>
+      <name>$PROJ_DIR$\..\dl_5xx_6xx\pmm.c</name>
       <outputs>
         <tool>
-          <name>ICC430</name>
-          <file> 151 58 160</file>
-        </tool>
-        <tool>
           <name>BICOMP</name>
-          <file> 159</file>
+          <file> 84</file>
         </tool>
       </outputs>
-      <inputs>
-        <tool>
-          <name>ICC430</name>
-          <file> 9 15 7 16 20 84 112 27 10 18 41 22 115 82 117 28</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 9 15 7 16 20 84 112 27 10 18 41 22 115 82 117 28</file>
-        </tool>
-      </inputs>
     </file>
     <forcedrebuild>
       <name>$PROJ_DIR$\mp_compress.c</name>
       <tool>ICC430</tool>
-    </forcedrebuild>
-    <forcedrebuild>
-      <name>[REBUILD_ALL]</name>
     </forcedrebuild>
   </configuration>
   <configuration>

@@ -8,3 +8,4 @@ msp_barrett_c.c
 msp_mul32_cios_c.c
 msp_mul32_fios_c.c
 msp_mul32_sos_c.c
+/targetConfigs/

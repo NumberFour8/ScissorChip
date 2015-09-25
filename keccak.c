@@ -17,12 +17,13 @@
 #else
   uint16_t keccak_lfsr(uint16_t* state)
   {
-    asm("MOV R12,R4\n"
-        "AND #1,R4\n"
-        "RLA 0(R12)\n"
-        "JNC lfsr_fin\n"
-        "XOR #0x71,0(R12)\n"
-        "lfsr_fin: MOV R4,R12");
+    asm(" MOV R12,R4\n"
+        " AND #1,R4\n"
+        " RLA 0(R12)\n"
+        " JNC lfsr_fin\n"
+        " XOR #0x71,0(R12)\n"
+        "lfsr_fin:\n"
+        " MOV R4,R12");
   }
     
   uint16_t keccak_rc(uint16_t k)

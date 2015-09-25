@@ -179,31 +179,46 @@ void test_keypair_sign()
 // Ratio used to set DCO (Digitally Controlled Oscillator)
 #define MCLK_FLLREF_RATIO MCLK_FREQ_KHZ/FLLREF_KHZ
 
-/*void initClocks()
+void initClocks()
 {
-   PMM_setVCore(PMM_CORE_LEVEL_3);
+
+	#if defined (__MSP430F5529__)
+	   PMM_setVCore(PMM_CORE_LEVEL_3);
   
-   UCS_clockSignalInit(
-        UCS_FLLREF, // The reference for Frequency Locked Loop
-        UCS_REFOCLK_SELECT, // Select 32Khz reference osc
-        UCS_CLOCK_DIVIDER_1
-    );
+	   UCS_clockSignalInit(
+			UCS_FLLREF, // The reference for Frequency Locked Loop
+			UCS_REFOCLK_SELECT, // Select 32Khz reference osc
+			UCS_CLOCK_DIVIDER_1
+		);
 
-    // Start the FLL and let it settle
-    // This becomes the MCLCK and SMCLK automatically
+		// Start the FLL and let it settle
+		// This becomes the MCLCK and SMCLK automatically
 
-    UCS_initFLLSettle(
-        MCLK_FREQ_KHZ,
-        MCLK_FLLREF_RATIO
-    );
-}*/
+		UCS_initFLLSettle(
+			MCLK_FREQ_KHZ,
+			MCLK_FLLREF_RATIO
+		);
+	#elif defined(__MSP430FR5969__)
+    	CS_setDCOFreq(CS_DCORSEL_0, CS_DCOFSEL_6);
+
+        CS_initClockSignal(CS_SMCLK,CS_DCOCLK_SELECT,CS_CLOCK_DIVIDER_1);
+        CS_initClockSignal(CS_MCLK,CS_DCOCLK_SELECT,CS_CLOCK_DIVIDER_1);
+
+        //Set wait state to 1
+       /* FRAMCtl_configureWaitStateControl(FRAMCTL_ACCESS_TIME_CYCLES_1);
+
+        GPIO_setOutputLowOnPin(GPIO_PORT_P3,GPIO_PIN4);
+        GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P3,GPIO_PIN4,GPIO_TERNARY_MODULE_FUNCTION);
+        PMM_unlockLPM5();*/
+    #endif
+}
 
 int main( void )
 {
-    // Stop watchdog timer to prevent time out reset
-    WDTCTL = WDTPW + WDTHOLD;
+    // Stop WDT
+	WDTCTL = WDTPW + WDTHOLD;
    
-    //initClocks();
+    initClocks();
     
     // s = 16
     // w = 16
@@ -223,7 +238,7 @@ int main( void )
     
     // test_barret();
     
-     test_mul();
+    // test_mul();
     
     // test_square();
   
@@ -237,7 +252,7 @@ int main( void )
 
     // test_sha512();
     
-    // test_keypair_sign();
+     test_keypair_sign();
    
     return 0;
 }

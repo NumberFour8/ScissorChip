@@ -1,27 +1,27 @@
-#include "msp430.h"
-NAME msp_mul32_kara
+	.cdecls C,LIST,"msp430.h"
 
-EXTERN mp_cprop
-EXTERN mp_bprop
-EXTERN mp_mod32
-EXTERN clear_mem
-EXTERN mp_mul32
 
-PUBLIC mp_add_128   
-RSEG CODE       
+	.global mp_cprop
+	.global mp_bprop
+	.global mp_mod32
+	.global clear_mem
+	.global mp_mul32
+
+	.global mp_add_128
+	.text
 
 ; Adds two 128-bit numbers A and B and stores the result in C.
 ; B is pointed by R11, A is pointed by R10
 ; The result C is pointed by R9
 
-mp_add_128
+mp_add_128:
   
     PUSHM.W #2,R6       ; Save R5-R6
     
     MOV R11,R6
     ADD #16,R6
     CLRC   ; Need to reset carry bit for the first ADDC to be equivalent to ADD
-inadd128
+inadd128:
     MOV @R10+,0(R9)
     ADDC @R11+,0(R9) 
     MOV SR,R5
@@ -31,25 +31,26 @@ inadd128
     MOV R5,SR
     JMP inadd128
 
-fin128   
+fin128:
     POPM.W #2,R6
-RETA
 
-PUBLIC mp_add_np   
-RSEG CODE       
+	RETA
+
+	.global mp_add_np
+	.text
 
 ; Adds two N-byte numbers A and B in place, result is stored in A.
 ; B is pointed by R10, A is pointed by R9
 ; N is pointed by R15. On return, R9 is pointing at last processed word.
 
-mp_add_np
+mp_add_np:
   
     PUSHM.W #2,R6       ; Save R5-R6
     
     MOV R10,R6
     ADD R15,R6
     CLRC   ; Need to reset carry bit for the first ADDC to be equivalent to ADD
-inadd128p
+inadd128p:
     ADDC @R10+,0(R9) 
     MOV SR,R5
     INCD R9
@@ -58,24 +59,25 @@ inadd128p
     MOV R5,SR
     JMP inadd128p
 
-fin128p
+fin128p:
     DECD R9
     MOV R5,SR ; Restore the carry flag for further propagation
     POPM.W #2,R6
-RETA
+
+	RETA
 
 ; Subtracts two N-byte numbers B from A in place, result is stored in A.
 ; B is pointed by R10, A is pointed by R9
 ; N is pointed by R15. On return, R9 is pointing at last processed word.
 
-mp_sub_np
+mp_sub_np:
   
     PUSHM.W #2,R6       ; Save R5-R6
     
     MOV R10,R6
     ADD R15,R6
     SETC   ; Need to set the carry bit for the first SUBC to be equivalent to SUB
-insub128p
+insub128p:
     SUBC @R10+,0(R9) 
     MOV SR,R5
     INCD R9
@@ -83,21 +85,21 @@ insub128p
     JZ fins128p
     MOV R5,SR
     JMP insub128p
-fins128p
+fins128p:
     DECD R9
     MOV R5,SR ; Restore the carry flag for further propagation
     POPM.W #2,R6
-RETA
 
-PUBLIC mp_mulmod32_kara
-RSEG CODE
+	RETA
+
+	.global mp_mulmod32_kara
 
 ; Performs 1-level Karatsuba multiplication of A and B.
 ; This function utilizes fully the 32-bit multiplier.
 ; A is pointed by R13, B is pointed by R14.
 ; The result T has to be pointed by R12 and at least 96 bytes long. R15 contains the size of B (in bytes).
 
-mp_mulmod32_kara
+mp_mulmod32_kara:
 
       MOV R12,R8
       ADD #54,R8 ; Upper bound for carry/borrow propagation
@@ -136,7 +138,7 @@ mp_mulmod32_kara
       ADD #16,R9
       
       MOV #20,R15
-      CALLA #mp_mul32_128
+      CALLA #mp_mul32
       
       ; b*d
       MOV R13,R10  ; b
@@ -151,7 +153,7 @@ mp_mulmod32_kara
       CALLA #clear_mem
       
       MOV #16,R15
-      CALLA #mp_mul32_128
+      CALLA #mp_mul32
 
       ; Add b*d to lower half
       MOV R12,R10
@@ -197,7 +199,7 @@ mp_mulmod32_kara
       CALLA #clear_mem
       
       MOV #16,R15
-      CALLA #mp_mul32_128
+      CALLA #mp_mul32
       
       ; Subtract a*c from the upper half
       MOV R12,R10
@@ -247,6 +249,6 @@ mp_mulmod32_kara
       
       CALLA #mp_mod32
       
-RETA
+	RETA
 
-END
+	.end

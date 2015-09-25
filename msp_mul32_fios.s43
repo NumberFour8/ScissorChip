@@ -1,11 +1,10 @@
-#include "msp430.h"
-NAME msp_mul32_fios
+	.cdecls C,LIST,"msp430.h"
 
-EXTERN mp_freeze
-EXTERN mp_cprop
+	.global mp_freeze
+	.global mp_cprop
 
-PUBLIC mp_mulmod32_fios
-RSEG CODE       
+	.global mp_mulmod32_fios
+	.text
 
 ; Performs modular multiplication of A and B which are both in Montgomery representation.
 ; This function utilizes fully the 32-bit multiplier.
@@ -14,7 +13,7 @@ RSEG CODE
 ; The result T has to be pointed by R12
 ; BEWARE: the number T has to be 40 bytes long as the additional 8 bytes of memory is required
 
-mp_mulmod32_fios
+mp_mulmod32_fios:
   
   PUSHM.W #8,R11
   
@@ -39,8 +38,8 @@ outer_for2
   MOV 0x0(R14),&OP2L    ; b[i]
   MOV 0x2(R14),&OP2H
   
-  MOV RES0,R5       ; Store S in R5
-  MOV RES1,R6       ; and R6
+  MOV &RES0,R5       ; Store S in R5
+  MOV &RES1,R6       ; and R6
  
   ; ADD(t[1],C)
   PUSH.W R10  ; Save R10
@@ -50,8 +49,8 @@ outer_for2
   ADD #6,R10         ; Start adding carry after t[1]
   ADD #34,R11        ; until (s+1)th word inclusive (thus propagate further to t[s] and t[s+1])
   
-  ADD  RES2,-2(R10)
-  ADDC RES3, 0(R10)
+  ADD  &RES2,-2(R10)
+  ADDC &RES3, 0(R10)
   CALLA #mp_cprop    ; Propagate the carry (start at t[2])
   
   POP.W R10   ; Restore R10
@@ -62,8 +61,8 @@ outer_for2
   MOV #0xCA1B,&OP2L     ; n'[0]
   MOV #0x286B,&OP2H
   
-  MOV RES0,R4       ; Store m to R4
-  MOV RES1,R7      ; and R7
+  MOV &RES0,R4       ; Store m to R4
+  MOV &RES1,R7      ; and R7
   
   ; (C,S) = S + m*n[0]
   MOV R5,&MPY32L        ; S
@@ -86,8 +85,8 @@ outer_for2
   
 inner_for2       
     
-    MOV RES2,R6
-    MOV RES3,R11
+    MOV &RES2,R6
+    MOV &RES3,R11
     
     ; (C,S) = t[j] + a[j]*b[i] + C
     MOV 0x0(R5),&MPY32L ; t[j]
@@ -113,15 +112,15 @@ inner_for2
     ADD #34,R11  ; Propagate further to t[s], t[s+1]
     ADD #6,R10
     
-    ADD  RES2,-2(R10)
-    ADDC RES3, 0(R10)
+    ADD  &RES2,-2(R10)
+    ADDC &RES3, 0(R10)
     CALLA #mp_cprop    
     
     POP.W R10 ; Restore R10
     
     ; (C,S) = S + m*n[j]
-    MOV RES0,&MPY32L     ; S
-    MOV RES1,&MPY32H
+    MOV &RES0,&MPY32L     ; S
+    MOV &RES1,&MPY32H
     MOV #1,&OP2L         ; 1
     MOV #0,&OP2H
     
@@ -131,8 +130,8 @@ inner_for2
     MOV #0xFFFF,&OP2H
     
     ; t[j-1] = S
-    MOV RES0,-4(R5)     ; TODO: Maybe swap? Endianness!
-    MOV RES1,-2(R5)
+    MOV &RES0,-4(R5)     ; TODO: Maybe swap? Endianness!
+    MOV &RES1,-2(R5)
     
     ADD #4,R8  ; Advance to a[++j]
     ADD #4,R5  ; Advance to t[++j]
@@ -140,8 +139,8 @@ inner_for2
     JNZ inner_for2
     
   ; The last iteration of the inner for is unrolled
-  MOV RES2,R6
-  MOV RES3,R11
+  MOV &RES2,R6
+  MOV &RES3,R11
     
   ; (C,S) = t[s-1] + a[s-1]*b[i] + C
   MOV 0x0(R5),&MPY32L ; t[s-1]
@@ -160,14 +159,14 @@ inner_for2
   MOV 0x2(R14),&OP2H
   
   ; ADD(t[s],C)
-  ADD  RES2,0x0(R10)  ; Propagate to t[s] and t[s+1]
-  ADDC RES3,0x2(R10)
+  ADD  &RES2,0x0(R10)  ; Propagate to t[s] and t[s+1]
+  ADDC &RES3,0x2(R10)
   ADC 0x4(R10)
   ADC 0x6(R10)
   
   ; (C,S) = S + m*n[s-1]
-  MOV RES0,&MPY32L
-  MOV RES1,&MPY32H
+  MOV &RES0,&MPY32L
+  MOV &RES1,&MPY32H
   MOV #1,&OP2L
   MOV #0,&OP2H
     
@@ -177,8 +176,8 @@ inner_for2
   MOV #0x7FFF,&OP2H
     
   ; t[s-2] = S
-  MOV RES0,-4(R5)
-  MOV RES1,-2(R5)
+  MOV &RES0,-4(R5)
+  MOV &RES1,-2(R5)
   
   ; Now the final post-processing
     
@@ -186,8 +185,8 @@ inner_for2
   MOV 0x0(R10),R4      ; m is not needed anymore
   MOV 0x2(R10),R7
   
-  ADD  RES2,R4    ; Store S in R4 and R7
-  ADDC RES3,R7
+  ADD  &RES2,R4    ; Store S in R4 and R7
+  ADDC &RES3,R7
   
   MOV R4 ,0x0(R5)  ; t[s-1] = S
   MOV R7, 0x2(R5)  
@@ -210,6 +209,6 @@ inner_for2
   CLR R13
   CALLA #mp_freeze ; Conditionally subtract 2^255-19 in constant time
   
-RETA
+  RETA
 
-END
+	.end

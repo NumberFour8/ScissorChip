@@ -1,14 +1,14 @@
-#include "msp430.h"
-NAME msp_montgomery
+	.cdecls C,LIST,"msp430.h"
 
-EXTERN mp_cprop
 
-PUBLIC mp_monrep25519
-RSEG CODE
+	.global mp_cprop
+
+	.global mp_monrep25519
+	.text
 
 ; Converts the given value to the Montgomery representation modulo 2^255-19
 ; r = 2^256
-mp_monrep25519
+mp_monrep25519:
 
   PUSHM.W #3,R11 ; Save registers R9 - R11
   
@@ -19,23 +19,23 @@ mp_monrep25519
   MOV #0,&MPY   ; Initialize accumulator
   MOV #0,&OP2
   
-repmul
+repmul:
   CMP R10,R11   ; Check if we already processed the last word
   JZ repfin     ; If we did, finish multiplying
 
   MOV 0x0(R10),&MAC  ; Multiply digit by 38
   MOV #38,&OP2
  
-  MOV RESLO,0x0(R10) ; Put lower word in the result 
+  MOV &RESLO,0x0(R10) ; Put lower word in the result
   INCD R10           ; Move R10 to the next word
   
-  MOV RESHI,&MPY     ; Put carry into the accumulator 
+  MOV &RESHI,&MPY     ; Put carry into the accumulator
   MOV #1,&OP2
   
   JMP repmul
   
-repfin    
-  MOV RESLO,R9
+repfin:
+  MOV &RESLO,R9
   RLA R9
   MOV 0x1e(R12),R10
   AND #0x7FFF,0x1e(R12)
@@ -48,14 +48,14 @@ repfin
   MOV R9,&MAC          ; The overflow carry is in R9 
   MOV #19,&OP2         ; 19
     
-  MOV RESLO,0x0(R12)   ; Save S to LSB of LS half
+  MOV &RESLO,0x0(R12)   ; Save S to LSB of LS half
   MOV R12,R10
   INCD R10             ; Now we start propagating from R12+4 (mp_cprop adds 2) 
-  ADD RESHI,0x0(R10)   ; Add the carry to second LS word and propagate
+  ADD &RESHI,0x0(R10)   ; Add the carry to second LS word and propagate
   CALLA #mp_cprop
 
   POPM.W #3,R11      ; Restore registers R9 - R11
   
-RETA
+  RETA
 
-END
+	.end

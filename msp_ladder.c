@@ -16,7 +16,8 @@ void ladder(monpoint* R,monpoint* P,const bigintp n)
     //coord_copy(cP.z,P->z);
     
     uint16_t c = 0,t;
-    for (int i = 254;i >= 0;i--)
+    int i;
+    for (i = 254;i >= 0;i--)
     {
        t = i&15; // i mod 16
        c = ((n[i/16] & (0x8000 >> (15-t))) >> t) - 1;

@@ -1,11 +1,10 @@
-#include "msp430.h"
-NAME msp_mul32_cios
+	.cdecls C,LIST,"msp430.h"
 
-EXTERN mp_freeze
-EXTERN clear_mem
+	.global mp_freeze
+	.global clear_mem
 
-PUBLIC mp_mulmod32_cios  
-RSEG CODE 
+	.global mp_mulmod32_cios
+	.text
 
 ; Performs modular multiplication of A and B which are both in Montgomery representation.
 ; This function utilizes fully the 32-bit multiplier.
@@ -13,7 +12,7 @@ RSEG CODE
 ; A is pointed by R13, B is pointed by R14.
 ; The result T has to be pointed by R12. R15 contains the size of B (in bytes).
 
-mp_mulmod32_cios
+mp_mulmod32_cios:
 
   PUSHM.W #8,R11
 
@@ -38,7 +37,7 @@ mp_mulmod32_cios
  ; R15 contains size of B
   MOV R14,R10
   ADD #32,R10    ; Traverses B
-outer_for3
+outer_for3:
 
   ; (C,S) = t[0] + a[0]*b[i]
   MOV 0x0(R14),&MAC32L  ; b[i]
@@ -52,11 +51,11 @@ outer_for3
   MOV R13,R8
   ADD R15,R6  ; Excluding sth word
   MOV R12,R5  ; Traverses T
-inner_for3a
+inner_for3a:
    
    ; (C,S) = t[j] + a[j]*b[i] + C
-   MOV RES2,&RES0   ; C
-   MOV RES3,&RES1      
+   MOV &RES2,&RES0   ; C
+   MOV &RES3,&RES1
    CLR &RES2
    CLR &RES3
    
@@ -64,8 +63,8 @@ inner_for3a
    MOV @R8+,&OP2H
    
    ; t[j] = S
-   ADD RES0,0(R5)
-   ADDC RES1,2(R5)
+   ADD &RES0,0(R5)
+   ADDC &RES1,2(R5)
    ADC &RES2
    ADC &RES3
    
@@ -73,8 +72,8 @@ inner_for3a
    CMP R6,R8            ; &a < &a[s]
    JNZ inner_for3a
    
-  ADD  RES2,0(SP)     ; t[s] = t[s] + C
-  ADDC RES3,2(SP)
+  ADD  &RES2,0(SP)     ; t[s] = t[s] + C
+  ADDC &RES3,2(SP)
   
   ; t[s+1] = C
   CLR 4(SP)
@@ -88,8 +87,8 @@ inner_for3a
   MOV #0x286B,&OP2H
   
   ; Store m in R4 and R7
-  MOV RES0,R4
-  MOV RES1,R7
+  MOV &RES0,R4
+  MOV &RES1,R7
   
   ; (C,S) = t[0] + m*n[0]
   MOV #1,&OP2L          ; 1
@@ -110,8 +109,8 @@ inner_for3a
 inner_for3b
    
     ; (C,S) = t[j] + C + m*n[j]
-    MOV RES2,&RES0    ; C
-    MOV RES3,&RES1      
+    MOV &RES2,&RES0    ; C
+    MOV &RES3,&RES1
     CLR &RES2
     CLR &RES3
     
@@ -124,15 +123,15 @@ inner_for3b
     MOV R7,&OP2H
    
     ; t[j-1] = S
-    MOV RES0,-8(R12)
-    MOV RES1,-6(R12)
+    MOV &RES0,-8(R12)
+    MOV &RES1,-6(R12)
     
     CMP R12,R5
     JNE inner_for3b ; &t < &t[s]
    
    ; (C,S) = t[s-1] + m*n[s-1] + C
-   MOV RES2,&RES0    ; C
-   MOV RES3,&RES1      
+   MOV &RES2,&RES0    ; C
+   MOV &RES3,&RES1
    CLR &RES2
    CLR &RES3
    
@@ -147,8 +146,8 @@ inner_for3b
    MOV #0x7FFF,&OP2H
    
    ; t[s-2] = S
-   MOV RES0,-4(R12)
-   MOV RES1,-2(R12)
+   MOV &RES0,-4(R12)
+   MOV &RES1,-2(R12)
     
    ; Reset pointer to T
    MOV R11,R12
@@ -158,8 +157,8 @@ inner_for3b
    ADDC 2(SP),&RES3
     
    ; t[s-1] = S
-   MOV RES2,28(R12)
-   MOV RES3,30(R12)
+   MOV &RES2,28(R12)
+   MOV &RES3,30(R12)
     
    ; t[s] = t[s+1] 
    MOV 4(SP),0(SP)
@@ -179,6 +178,6 @@ inner_for3b
   CLR R13
   CALLA #mp_freeze ; Conditionally subtract 2^255-19 in constant time
     
-RETA
+  RETA
 
-END
+	.end

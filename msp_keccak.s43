@@ -1,15 +1,15 @@
-#include "msp430.h"
-NAME msp_keccak
+	.cdecls C,LIST,"msp430.h"
 
-EXTERN keccakf
 
-PUBLIC keccak_fupdate
-RSEG CODE
+	.global keccakf
+
+	.global keccak_fupdate
+	.text
 
 ; State is pointed by R12, input/output by R13. Size is contained in R14.
 ; If R15 = 0 absorbtion, otherwise squeezing is performed.
 
-keccak_fupdate
+keccak_fupdate:
   
   PUSHM.W #6,R11
   
@@ -20,11 +20,11 @@ keccak_fupdate
   MOV R12,R10
   ADD #18,R10 ; Upper bound of public state, R = 18 bytes
   
-ku_outter
+ku_outter:
   
   MOV R12,R11 ; Reset state counter
 
-ku_inner      ; Iterates over state words in R12
+ku_inner:      ; Iterates over state words in R12
 
   TST R15     ; If R15 is set, go to squeeze
   JNZ squeeze ; otherwise absorb
@@ -36,31 +36,31 @@ ku_inner      ; Iterates over state words in R12
   
   MOV @R13+,R8
   JMP after_pad  ; If not just continue
-pad
+pad:
   TST R7
   JZ first_pad   ; If R7 indicates it is the first pad
   CLR R8         ; Otherwise it is the middle or last pad, so set to 0
   JMP pad_fin    ; Check if it is the last pad
-first_pad
+first_pad:
   MOV #0x01,R8
   MOV R8,R7
-pad_fin
+pad_fin:
   CMP R11,R10    ; Are we at the end of the block?
   JNZ after_pad  ; If not, just continue and keep R8 at 0
   XOR #0x80,R8    ; If yes, XOR 0x80
 
-after_pad
+after_pad:
   XOR R8,-2(R11) ; XOR into the state word
   JMP fin
   
 ; SQUEEZING PHASE  
-squeeze
+squeeze:
   MOV @R11+,0(R13)
   INCD R13
   CMP R13,R9
   JZ finr       ; In case output length is not multiple of R
   
-fin
+fin:
   CMP R10,R11
   JNZ ku_inner
   
@@ -71,10 +71,10 @@ fin
   CMP R13,R9
   JNZ ku_outter ; Process next block
 
-finr
+finr:
 
   POPM.W #6,R11
   
-RETA
+  RETA
 
-END
+	.end

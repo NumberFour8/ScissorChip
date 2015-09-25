@@ -1,20 +1,19 @@
-#include "msp430.h"
-NAME msp_utils
+	.cdecls C,LIST,"msp430.h"
+	.text
 
-PUBLIC clear_mem
-RSEG CODE
+	.global clear_mem
 
 ; Clears N bytes of memory pointed by R12.
 ; N is given by R13 and has to be multiple of 4.
 
-clear_mem
+clear_mem:
     
     PUSH.W R8
     
     MOV R12,R8
     ADD R13,R8
     
-clrmem
+clrmem:
     SUB #4,R8
     CLR 0(R8)
     CLR 2(R8)
@@ -22,18 +21,17 @@ clrmem
     JNZ clrmem
     
     POP.W R8
-RETA
+	RETA
 
 
-PUBLIC mp_mul32
-RSEG CODE
+	.global mp_mul32
 
 ; Performs schoolbook multiplication of two n-byte numbers A and B.
 ; A is pointed by R13, B is pointed by R14
 ; Result is pointed by R12 and must be at least 2n bytes long.
 ; n is given by R15
 
-mp_mul32
+mp_mul32:
  
   PUSHM.W #4,R8
   
@@ -43,7 +41,7 @@ mp_mul32
   MOV R13,R8   ; Prepare the limit for A
   ADD R15,R7
   ADD R15,R8
-outer_for5
+outer_for5:
 
   MOV 0x0(R14),&MAC32L  ; b[i]
   MOV 0x2(R14),&MAC32H
@@ -60,8 +58,8 @@ outer_for5
 inner_for5
    
     ; (C,S) = t[i+j] + a[j]*b[i] + C
-   MOV RES2,&RES0   ; C
-   MOV RES3,&RES1     
+   MOV &RES2,&RES0   ; C
+   MOV &RES3,&RES1
    CLR &RES2
    CLR &RES3
    
@@ -69,8 +67,8 @@ inner_for5
    MOV @R6+,&OP2H
 
    ; t[i+j] += S
-   ADD  RES0,0x0(R5)
-   ADDC RES1,0x2(R5)
+   ADD  &RES0,0x0(R5)
+   ADDC &RES1,0x2(R5)
    ADC &RES2       
    ADC &RES3
    
@@ -79,8 +77,8 @@ inner_for5
    JNZ inner_for5
 
   ; t[i+s] = C
-  MOV RES2,0x0(R5)
-  MOV RES3,0x2(R5)
+  MOV &RES2,0x0(R5)
+  MOV &RES3,0x2(R5)
 
   ADD #4,R12   ; t[++i]
   ADD #4,R14   ; b[++i]
@@ -89,15 +87,14 @@ inner_for5
 
   POPM.W #4,R8
   
-RETA
+  RETA
 
-PUBLIC mp_addnr
-RSEG CODE
+	.global mp_addnr
 
 ; Adds 256-bit number B to the 512-bit destination A.
 ; No modular reduction is performed. A is given by R12, B is given by R13.
 
-mp_addnr
+mp_addnr:
 
     PUSHM.W #3,R6
 
@@ -108,7 +105,7 @@ mp_addnr
     
     CLR R6
     DECD R12
-addnr
+addnr:
     INCD R12
     CMP R12,R5
     JZ addnrfin
@@ -119,17 +116,17 @@ addnr
     ADDC @R13+,0(R12)
     MOV SR,R6
     JMP addnr
-addnrcp
+addnrcp:
     
     MOV R6,SR
     ADC 0(R12)
     MOV SR,R6
     JMP addnr
     
-addnrfin
+addnrfin:
 
     POPM.W #3,R6
 
-RETA
+	RETA
 
-END
+	.end

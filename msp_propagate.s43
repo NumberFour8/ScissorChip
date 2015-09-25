@@ -1,12 +1,12 @@
-#include "msp430.h"
-NAME msp_propagate
+	.cdecls C,LIST,"msp430.h"
 
-PUBLIC mp_cprop
-RSEG CODE
+
+	.global mp_cprop
+	.text
 
 ; Propagates carry from address pointed by R10+2 until address given by R11 is reached (inclusive).
 
-mp_cprop
+mp_cprop:
 
   PUSHM.W #2,R9     ; Save R8 and R9
   
@@ -15,7 +15,7 @@ mp_cprop
   
   CMP R11,R10 
   JGE cpd       ; Do nothing if R10 >= R11
-cpg
+cpg:
   CMP R8,R11     ; Check if the last word was already processed
   JZ cpd         ; If yes, quit
   INCD R8        ; Move onto the next word
@@ -26,18 +26,18 @@ cpg
   
   JMP cpg
   
-cpd
+cpd:
   MOV R9,SR
   POPM.W #2,R9      ; Restore R8 and R9
   
-RETA
+  RETA
 
-PUBLIC mp_bprop
-RSEG CODE
+	.global mp_bprop
+	.text
 
 ; Propagates borrow from address pointed by R10+2 until address given by R11 is reached (inclusive).
 
-mp_bprop
+mp_bprop:
 
   PUSHM.W #2,R9     ; Save R8 and R9
   
@@ -46,7 +46,7 @@ mp_bprop
   
   CMP R11,R10 
   JGE bpd       ; Do nothing if R10 >= R11
-bpg
+bpg:
   CMP R8,R11     ; Check if the last word was already processed
   JZ bpd         ; If yes, quit
   INCD R8        ; Move onto the next word
@@ -57,10 +57,10 @@ bpg
   
   JMP bpg
   
-bpd
+bpd:
   MOV R9,SR
   POPM.W #2,R9      ; Restore R8 and R9
   
-RETA
+  RETA
 
-END
+	.end

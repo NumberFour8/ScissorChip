@@ -7,7 +7,8 @@ void mp_invert(bigintp r,const bigintp x)
     clear_mem(t2,32);
     t2[0] = t1[0] = TO_MONREP(1);
     
-    for (uint8_t i = 0;i < 250;i++)
+    uint8_t i;
+    for (i = 0;i < 250;i++)
     {
        mp_mulmod(t2,t1,t1);
        mp_mulmod(t1,t2,x);

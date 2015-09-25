@@ -1,22 +1,22 @@
-#include "msp430.h"
-NAME msp_mul32_sos
+ 	.cdecls C,LIST,"msp430.h"
+;NAME msp_mul32_sos
 
-EXTERN mp_freeze
-EXTERN clear_mem
+	.global mp_freeze
+	.global clear_mem
 
-PUBLIC mp_cpropp
-RSEG CODE
+	.global mp_cpropp
+	.text
 
 ; Propagates carry from address pointed by R10+2 until address given by R11 is reached (inclusive).
 
-mp_cpropp
+mp_cpropp:
 
   MOV SR,R5     ; Copy carry to R9
   MOV R10,R4    ; Put R10 to R8
   
   CMP R11,R10 
   JGE cpd       ; Do nothing if R10 >= R11
-cpg
+cpg:
   CMP R4,R11     ; Check if the last word was already processed
   JZ cpd         ; If yes, quit
   INCD R4        ; Move onto the next word
@@ -27,20 +27,19 @@ cpg
   
   JMP cpg
   
-cpd
+cpd:
   MOV R5,SR
   
-RETA
+  RETA
 
-PUBLIC mp_mulmod32_sos
-RSEG CODE
+	.global mp_mulmod32_sos
 
 ; Performs schoolbook multiplication of A and B.
 ; This function utilizes fully the 32-bit multiplier.
 ; A is pointed by R13, B is pointed by R14.
 ; The result T has to be pointed by R12 and at least 32 bytes long. R15 contains the size of B (in bytes).
 
-mp_mulmod32_sos
+mp_mulmod32_sos:
 
   PUSHM.W #9,R12
   SUB #64,SP
@@ -74,8 +73,8 @@ outer_for4
   MOV 0x2(R13),&OP2H
 
   ; t[i] = S
-  MOV RES0,0x0(SP)
-  MOV RES1,0x2(SP)
+  MOV &RES0,0x0(SP)
+  MOV &RES1,0x2(SP)
 
   MOV R13,R5  ; Traverses A
   ADD #4,R5
@@ -84,8 +83,8 @@ outer_for4
 inner_for4
    
     ; (C,S) = t[i+j] + a[j]*b[i] + C
-   MOV RES2,&RES0   ; C
-   MOV RES3,&RES1
+   MOV &RES2,&RES0   ; C
+   MOV &RES3,&RES1
    CLR &RES2
    CLR &RES3
    
@@ -103,8 +102,8 @@ inner_for4
    JNZ inner_for4
 
   ; t[i+s] = C
-  MOV RES2,0x0(R7)
-  MOV RES3,0x2(R7)
+  MOV &RES2,0x0(R7)
+  MOV &RES3,0x2(R7)
 
   ADD #4,SP
   ADD #4,R14  ; b[++i]
@@ -120,7 +119,7 @@ inner_for4
   SUB #4, R9    ; Starting point
   ADD #32,R11   ; Upper pointer bound (beyond the MS word, additions by 2)
   
-reduce_limbs
+reduce_limbs:
     ADD #4,R9
     CMP R9,R11
     JZ limbs_done       ; If terminal address has been reached, go to round_done
@@ -138,10 +137,10 @@ reduce_limbs
     MOV R9,R10         ; Propagate the carry from here 
     ADD #6,R10         ; R11 is already set as an inclusive upper bound +1
     
-    MOV  RES0,0(R9)     ; Save S to LSB of LS half
-    MOV  RES1,2(R9)
-    ADD  RES2,4(R9)     ; Add the carry to the second-LSB of the LS half
-    ADDC RES3,6(R9)
+    MOV  &RES0,0(R9)     ; Save S to LSB of LS half
+    MOV  &RES1,2(R9)
+    ADD  &RES2,4(R9)     ; Add the carry to the second-LSB of the LS half
+    ADDC &RES3,6(R9)
     
     CALLA #mp_cpropp     ; Propagate the carry further
     
@@ -149,7 +148,7 @@ reduce_limbs
     CLR 0x22(R9)
     JMP reduce_limbs    ; Proceed with the next digit
        
-limbs_done  
+limbs_done:
     MOV SP,R9
     MOV SP,R11       
     ADD #4,R11          ; We lower the terminal address as we don't need to go further than 1 limb  
@@ -160,7 +159,7 @@ limbs_done
     ; --------------------- COPY BACK FROM THE STACK ---------------------------
     MOV R12,R13
     ADD #32,R13
-fcpy
+fcpy:
     MOV @SP+,0(R12)
     INCD R12
     CMP R12,R13
@@ -174,6 +173,6 @@ fcpy
     CLR R13
     CALLA #mp_freeze
    
-RETA
+	RETA
 
-END
+	.end

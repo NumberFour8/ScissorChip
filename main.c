@@ -179,7 +179,7 @@ void test_keypair_sign()
 // Ratio used to set DCO (Digitally Controlled Oscillator)
 #define MCLK_FLLREF_RATIO MCLK_FREQ_KHZ/FLLREF_KHZ
 
-void initClocks()
+/*void initClocks()
 {
    PMM_setVCore(PMM_CORE_LEVEL_3);
   
@@ -196,13 +196,14 @@ void initClocks()
         MCLK_FREQ_KHZ,
         MCLK_FLLREF_RATIO
     );
-}
+}*/
+
 int main( void )
 {
     // Stop watchdog timer to prevent time out reset
     WDTCTL = WDTPW + WDTHOLD;
    
-    initClocks();
+    //initClocks();
     
     // s = 16
     // w = 16

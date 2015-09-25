@@ -1,16 +1,16 @@
-#include "msp430.h"
-NAME msp_mod32_25519
+	.cdecls C,LIST,"msp430.h"
 
-EXTERN mp_cprop
-EXTERN mp_freeze
 
-PUBLIC mp_mod32
-RSEG CODE
+	.global mp_cprop
+	.global mp_freeze
+
+	.global mp_mod32
+	.text
 
 ; Reduces the number A modulo 2^255-19
 ; A is given by R12 and must be 512-bits (64 bytes) long in little-endian.
 
-mp_mod32
+mp_mod32:
 
   PUSHM.W #4,R11
 
@@ -21,7 +21,7 @@ mp_mod32
   SUB #4, R9    ; Starting point
   ADD #32,R11   ; Upper pointer bound (beyond the MS word, additions by 2)
   
-reduce_limbs
+reduce_limbs:
     ADD #4,R9
     CMP R9,R11
     JZ limbs_done       ; If terminal address has been reached, go to round_done
@@ -39,10 +39,10 @@ reduce_limbs
     MOV R9,R10         ; Propagate the carry from here 
     ADD #6,R10         ; R11 is already set as an inclusive upper bound +1
     
-    MOV  RES0,0(R9)     ; Save S to LSB of LS half
-    MOV  RES1,2(R9)
-    ADD  RES2,4(R9)     ; Add the carry to the second-LSB of the LS half
-    ADDC RES3,6(R9)
+    MOV  &RES0,0(R9)     ; Save S to LSB of LS half
+    MOV  &RES1,2(R9)
+    ADD  &RES2,4(R9)     ; Add the carry to the second-LSB of the LS half
+    ADDC &RES3,6(R9)
     
     CALLA #mp_cprop     ; Propagate the carry further
     
@@ -50,7 +50,7 @@ reduce_limbs
     CLR 0x22(R9)
     JMP reduce_limbs    ; Proceed with the next digit
        
-limbs_done  
+limbs_done:
     MOV R12,R9
     MOV R12,R11       
     ADD #4,R11          ; We lower the terminal address as we don't need to go further than 1 limb  
@@ -61,6 +61,7 @@ limbs_done
     POPM.W #4,R11
  
     CALLA #mp_freeze
-RETA
 
-END
+	RETA
+
+	.end

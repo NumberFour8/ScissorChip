@@ -1,23 +1,23 @@
-#include "msp430.h"
-NAME msp_addsub
+	.cdecls C,LIST,"msp430.h"
 
-EXTERN mp_freeze
 
-PUBLIC mp_add   
-RSEG CODE       
+	.global mp_freeze
+
+	.global mp_add
+	.text
 
 ; Adds two 256-bit numbers A and B and stores the result in C.
 ; B is pointed by R14, A is pointed by R13
 ; The result C is pointed by R12
 
-mp_add
+mp_add:
   
     PUSHM.W #2,R6       ; Save R5-R6
     
     MOV R14,R6
     ADD #32,R6
     CLRC   ; Need to reset carry bit for the first ADDC to be equivalent to ADD
-inadd
+inadd:
     MOV @R13+,0(R12)
     ADDC @R14+,0(R12) 
     MOV SR,R5
@@ -26,31 +26,31 @@ inadd
     JZ finadd
     MOV R5,SR
     JMP inadd
-finadd   
+finadd:
   
     SUB #32,R12    ; Rewind R12  
     POPM.W #2,R6
     
     CLR R13
     CALLA #mp_freeze
-RETA
+	RETA
       
-PUBLIC mp_subb   
-RSEG CODE       
+	.global mp_subb
+	.text
 
 ; Subtracts B from A where A and B are 256-bit numbers and stores the result in C.
 ; B is pointed by R14, A is pointed by R13
 ; The result C is pointed by R12. 
 ; If R15 is set no conditional addition of 2^255-19 is done.
 
-mp_subb
+mp_subb:
     
     PUSHM.W #3,R6   ; Save R4 - R6
     
     MOV R14,R6
     ADD #32,R6
     SETC             ; Need to set carry bit for the first SUBC to be equivalent to SUB
-insub
+insub:
     MOV @R14+,R4     ; Small workaround allowing to perform A = B-A
     MOV @R13+,0(R12)
     SUBC R4,0(R12) 
@@ -60,7 +60,7 @@ insub
     JZ finsub
     MOV R5,SR
     JMP insub
-finsub
+finsub:
 
     SUB #32,R12     ; Rewind R12
     POPM.W #3,R6    ; Restore R4 - R6
@@ -71,8 +71,8 @@ finsub
     MOV #1,R13
     CALLA #mp_freeze
 
-subret
+subret:
 
-RETA
+	RETA
   
-END
+	.end

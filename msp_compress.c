@@ -6,7 +6,7 @@ void compress(monpoint* R0,monpoint* R1)
       // Montgomery representation of the 2*Y (32B)
       bigint y2 = {58837, 42342, 44093, 29030, 228, 33005, 392, 27187, 8891, 27038, 43315, 35113, 64946, 53159, 39938, 13231};
     #else
-      bigint y2 = {0}; // TODO: Calculate 2*Y in normal representation
+      bigint y2 = {42930, 64925, 35652, 21459, 50020, 56056, 39676, 9338, 41625, 61073, 47704, 49213, 3433, 28993, 13123, 16732};
     #endif
   
     bigint t1,t2,t3,t4;   // 4*32 = 128B

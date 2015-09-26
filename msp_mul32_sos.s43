@@ -1,5 +1,5 @@
  	.cdecls C,LIST,"msp430.h"
-;NAME msp_mul32_sos
+	;NAME msp_mul32_sos
 
 	.global mp_freeze
 	.global clear_mem
@@ -41,6 +41,7 @@ cpd:
 
 mp_mulmod32_sos:
 
+  NOP
   PUSHM.W #9,R12
   SUB #64,SP
 
@@ -62,8 +63,8 @@ mp_mulmod32_sos:
 outer_for4
 
   ; (C,S) = t[i] + a[0]*b[i]
-  MOV 0x0(SP),&RES0  ; t[i]
-  MOV 0x2(SP),&RES1
+  MOV 0x0(R12),&RES0  ; t[i]
+  MOV 0x2(R12),&RES1
   CLR &RES2
   CLR &RES3
   
@@ -73,12 +74,12 @@ outer_for4
   MOV 0x2(R13),&OP2H
 
   ; t[i] = S
-  MOV &RES0,0x0(SP)
-  MOV &RES1,0x2(SP)
+  MOV &RES0,0x0(R12)
+  MOV &RES1,0x2(R12)
 
   MOV R13,R5  ; Traverses A
   ADD #4,R5
-  MOV SP,R7   ; Traverses T starting at i+1
+  MOV R12,R7   ; Traverses T starting at i+1
   ADD #4,R7
 inner_for4
    
@@ -105,7 +106,7 @@ inner_for4
   MOV &RES2,0x0(R7)
   MOV &RES3,0x2(R7)
 
-  ADD #4,SP
+  ADD #4,R12
   ADD #4,R14  ; b[++i]
   CMP R14,R15
   JNZ outer_for4
@@ -157,6 +158,8 @@ limbs_done:
     JNZ reduce_limbs    ; If we didn't reduce 3 times, continue  
     
     ; --------------------- COPY BACK FROM THE STACK ---------------------------
+
+	MOV 80(SP),R12		; Utilize previously saved R12 on the stack
     MOV R12,R13
     ADD #32,R13
 fcpy:
@@ -165,11 +168,10 @@ fcpy:
     CMP R12,R13
     JNZ fcpy
         
-    ADD #32,SP
+    ADD #32,SP			; Restore stack to original position
     POPM.W #9,R12
     
     ; ----------------------------- FREEZE -------------------------------------
-    MOV R9,R12
     CLR R13
     CALLA #mp_freeze
    

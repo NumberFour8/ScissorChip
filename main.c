@@ -82,11 +82,11 @@ void test_mul()
     uint16_t b[16] = {41872, 32468, 32353, 62814, 14707, 51220, 19282, 4324, 59937, 13797, 7624, 20845, 52402, 7277, 10908, 3516};
     uint16_t c[48] = {0};
     
-    mp_mulmod(c,a,b); 
+    mp_mulmod(c,a,b);
     // RESULT SHOULD BE: {20999, 56674, 14492, 58657, 45441, 63329, 26172, 61934, 11079, 52317, 33744, 5466, 59794, 64383, 32209, 11931}
     
     uint64_t coeff = 29718394;
-    mp_mulmod1(c,(uint16_t*)&coeff,a);
+    mp_mulmod1(c,&coeff,a);
    
 }
 
@@ -238,7 +238,7 @@ int main( void )
     
     // test_barret();
     
-    // test_mul();
+    test_mul();
     
     // test_square();
   
@@ -252,7 +252,7 @@ int main( void )
 
     // test_sha512();
     
-     test_keypair_sign();
+    // test_keypair_sign();
    
     return 0;
 }

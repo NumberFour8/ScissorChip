@@ -10,7 +10,7 @@
 #define digest_update(a,b,c)    keccak_update(a,b,c)
 #define digest_finish(a,b)      keccak_finish(a,b)
 
-#define CIOS
+#define SOS
 
 #ifdef CIOS
   #define DIGITS 16
@@ -25,7 +25,7 @@
 #else
   #define DIGITS 16
   #define mp_mulmod(c,a,b)  mp_mulmod32_sos(c,a,b,32) // Use 32-bit SOS for multiplication 
-  #define mp_mulmod1(c,a,b) mp_mulmod32_sos(c,(uint16_t*)a,b,8)  // Use 32-bit CIOS for multiplication by a single 32-bit number
+  #define mp_mulmod1(c,a,b) mp_mulmod32_sos(c,b,(uint16_t*)a,8)  // Use 32-bit CIOS for multiplication by a single 32-bit number
 #endif
 
 // Macro for clearing the point structure

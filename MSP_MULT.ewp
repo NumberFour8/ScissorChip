@@ -2223,6 +2223,9 @@
     <name>$PROJ_DIR$\sha512.c</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\tweetnacl.c</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\..\dl_5xx_6xx\ucs.c</name>
   </file>
 </project>

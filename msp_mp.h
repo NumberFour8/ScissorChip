@@ -90,7 +90,7 @@ extern void mp_mod16(bigintp a);
 extern void mp_mod32(bigintp a);
 
 // Conditionally subtracts 2^255-19 from number A, 0 <= A < 2^256-38
-extern void mp_freeze(bigintp a);
+extern void mp_freeze(bigintp a,uint16_t add);
 
 // Barett reduction algorithm
 extern void mp_barrett252(bigintp r,bigintp x);

@@ -109,7 +109,7 @@
         </option>
         <option>
           <name>GHeapSize2</name>
-          <state>160</state>
+          <state>4096</state>
         </option>
         <option>
           <name>RadioDataModelType</name>
@@ -293,7 +293,7 @@
         <option>
           <name>CCAllowList</name>
           <version>1</version>
-          <state>11111</state>
+          <state>00000</state>
         </option>
         <option>
           <name>CCObjUseModuleName</name>
@@ -381,7 +381,7 @@
         </option>
         <option>
           <name>newCCIncludePaths</name>
-          <state>C:\Users\E869439\Desktop\workspace\dl_5xx_6xx</state>
+          <state>C:\Users\E869439\Desktop\workspace_ccs\dl_5xx_6xx</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -409,7 +409,7 @@
         </option>
         <option>
           <name>CCOptLevel</name>
-          <state>3</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCOptStrategy</name>
@@ -418,7 +418,7 @@
         </option>
         <option>
           <name>CCOptLevelSlave</name>
-          <state>3</state>
+          <state>0</state>
         </option>
         <option>
           <name>CInput</name>
@@ -2151,9 +2151,6 @@
     </settings>
   </configuration>
   <file>
-    <name>$PROJ_DIR$\kara.s43</name>
-  </file>
-  <file>
     <name>$PROJ_DIR$\keccak.c</name>
   </file>
   <file>
@@ -2202,6 +2199,9 @@
     <name>$PROJ_DIR$\msp_mul32_fios.s43</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\msp_mul32_karatsuba.s43</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\msp_mul32_sos.s43</name>
   </file>
   <file>
@@ -2221,6 +2221,9 @@
   </file>
   <file>
     <name>$PROJ_DIR$\sha512.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\test.c</name>
   </file>
   <file>
     <name>$PROJ_DIR$\..\dl_5xx_6xx\ucs.c</name>

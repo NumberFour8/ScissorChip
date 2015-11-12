@@ -1,0 +1,979 @@
+ #include "msp430.h"
+NAME msp_mul32_karatsuba
+
+EXTERN mp_freeze
+
+PUBLIC mp_mulmod32_karatsuba
+RSEG CODE
+
+mp_mulmod32_karatsuba:
+
+    dint
+    nop
+    pushm.w     #9,R12
+
+    sub.w       #128,SP
+    
+    mov.w       #RES1,R15
+
+    ; h = f * g
+    ; R12 holds pointer to h
+    ; R13 holds pointer to f
+    ; R14 holds pointer to g
+    ; SP (0 ... 30)   hold L = A_l * B_l
+    ; SP (32 ... 62)  hold H = A_h * B_h
+    ; SP (64 ... 78)  hold A_l - A_h
+    ; SP (80 ... 94)  hold B_l - B_h
+    ; SP (96 ... 126) hold -M+L+H
+  
+    ; Computation of L = A_l * B_l
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;
+    ; first row
+    ;;;;;;;;;;;;;;;;;;;;;;;;
+
+    mov.w       @R13+,R4        ; R4 holds f0
+    mov.w       @R13+,R5        ; R5 holds f1
+    
+    add.w       #8,R14
+    mov.w       @R14+,R8        ; R8 holds g4
+    mov.w       @R14+,R9        ; R9 holds g5
+    mov.w       @R14+,R10       ; R10 holds g6
+    mov.w       @R14+,R11       ; R11 holds g7
+
+    mov.w       R4,&MPY32L
+    mov.w       R5,&MPY32H
+    mov.w       R8,&OP2L  
+    mov.w       R9,&OP2H  
+    mov.w       &RES0,8(SP)
+    mov.w       @R15+,10(SP)
+    mov.w       @R15+,&RES0
+    mov.w       @R15+,&RES1
+    clr.w       &RES2
+    clr.w       &RES3
+    
+    sub.w       #6,R15
+    
+    bis.w       #0x0020,&MPY32CTL0      ; leave R4 and R5 in input registers and switch from MPY to MAC
+    mov.w       R10,&OP2L  
+    mov.w       R11,&OP2H  
+    mov.w       @R13+,R6        ; R6 holds f2
+    mov.w       @R13+,R7        ; R7 holds f3
+    mov.w       R6,&MAC32L
+    mov.w       R7,&MAC32H
+    mov.w       &SUMEXT,R12
+    mov.w       R8,&OP2L  
+    mov.w       R9,&OP2H  
+    mov.w       &RES0,12(SP)
+    mov.w       @R15+,14(SP)
+    mov.w       @R15+,&RES0
+    mov.w       @R15+,&RES1
+    add.w       &SUMEXT,R12
+    mov.w       R12,&RES2
+    clr.w       &RES3
+    
+    sub.w       #6,R15
+
+    mov.w       R10,&OP2L  
+    mov.w       R11,&OP2H  
+    mov.w       &RES0,16(SP)
+    mov.w       @R15+,18(SP)
+    mov.w       @R15+,20(SP)
+    mov.w       @R15+,22(SP)
+    
+    sub.w       #6,R15
+    
+    ;;;;;;;;;;;;;;;;;;;;;;;;
+    ; second row
+    ;;;;;;;;;;;;;;;;;;;;;;;;
+    
+    sub.w       #16,R14
+    mov.w       @R14+,R8        ; R8 holds g0
+    mov.w       @R14+,R9        ; R9 holds g1
+    mov.w       @R14+,R10       ; R10 holds g2
+    mov.w       @R14+,R11       ; R11 holds g3
+
+    mov.w       R4,&MPY32L
+    mov.w       R5,&MPY32H
+    mov.w       R8,&OP2L  
+    mov.w       R9,&OP2H  
+    mov.w       &RES0,0(SP)
+    mov.w       @R15+,2(SP)
+    mov.w       @R15+,&RES0
+    mov.w       @R15+,&RES1
+    clr.w       &RES2
+    clr.w       &RES3
+    
+    sub.w       #6,R15
+    
+    bis.w       #0x0020,&MPY32CTL0      ; leave R4 and R5 in input registers and switch from MPY to MAC
+    mov.w       R10,&OP2L  
+    mov.w       R11,&OP2H  
+    mov.w       @R13+,R4        ; R4 holds f4
+    mov.w       @R13+,R5        ; R5 holds f5
+    mov.w       R6,&MAC32L
+    mov.w       R7,&MAC32H
+    mov.w       &SUMEXT,R12
+    mov.w       R8,&OP2L  
+    mov.w       R9,&OP2H  
+    mov.w       &RES0,4(SP)
+    mov.w       @R15+,6(SP)
+    mov.w       @R15+,&RES0
+    mov.w       @R15+,&RES1
+    add.w       &SUMEXT,R12
+    mov.w       R12,&RES2
+    clr.w       &RES3
+    
+    sub.w       #6,R15
+
+    mov.w       R10,&OP2L  
+    mov.w       R11,&OP2H  
+    mov.w       @R13+,R6            ; R6 holds f6
+    mov.w       @R13+,R7            ; R7 holds f7
+    mov.w       R4,&MAC32L
+    mov.w       R5,&MAC32H
+    mov.w       &SUMEXT,R12
+    mov.w       R8,&OP2L  
+    mov.w       R9,&OP2H  
+    add.w       &RES0,8(SP)
+    addc.w      @R15+,10(SP)
+    adc.w       &RES2
+    adc.w       &RES3
+    addc.w      &SUMEXT,R12
+    mov.w       @R15+,&RES0
+    mov.w       @R15+,&RES1
+    mov.w       R12,&RES2
+    clr.w       &RES3
+    
+
+    mov.w       R10,&OP2L  
+    mov.w       R11,&OP2H  
+    sub.w       #6,R15
+    mov.w       R6,&MAC32L
+    mov.w       R7,&MAC32H
+    mov.w       &SUMEXT,R12
+    mov.w       R8,&OP2L  
+    mov.w       R9,&OP2H  
+    add.w       &RES0,12(SP)
+    addc.w      @R15+,14(SP)
+    adc.w       &RES2
+    adc.w       &RES3
+    addc.w      &SUMEXT,R12
+    mov.w       @R15+,&RES0
+    mov.w       @R15+,&RES1
+    mov.w       R12,&RES2
+    clr.w       &RES3
+      
+    sub.w       #6,R15
+   
+    mov.w       R10,&OP2L  
+    mov.w       R11,&OP2H  
+    mov.w       @R14+,R8           ; R8 holds f12
+    mov.w       @R14+,R9           ; R9 holds f13
+    mov.w       R4,&MAC32L
+    mov.w       R5,&MAC32H
+    mov.w       &SUMEXT,R12
+    mov.w       R8,&OP2L  
+    mov.w       R9,&OP2H
+    add.w       &RES0,16(SP)
+    addc.w      @R15+,18(SP)
+    adc.w       &RES2
+    adc.w       &RES3
+    addc.w      &SUMEXT,R12
+    mov.w       @R15+,&RES0
+    mov.w       @R15+,&RES1
+    mov.w       R12,&RES2
+    clr.w       &RES3
+    
+    sub.w       #6,R15
+    
+    mov.w       @R14+,R10           ; R10 holds f14
+    mov.w       @R14+,R11           ; R11 holds f15
+   
+    mov.w       R10,&OP2L  
+    mov.w       R11,&OP2H  
+    mov.w       @R13+,R4        ; R4 holds f8
+    mov.w       @R13+,R5        ; R5 holds f9
+    mov.w       R6,&MAC32L
+    mov.w       R7,&MAC32H
+    mov.w       &SUMEXT,R12
+    mov.w       R8,&OP2L  
+    mov.w       R9,&OP2H  
+    add.w       &RES0,20(SP)
+    addc.w      @R15+,22(SP)
+    adc.w       &RES2
+    adc.w       &RES3
+    addc.w      &SUMEXT,R12
+    mov.w       @R15+,&RES0
+    mov.w       @R15+,&RES1
+    mov.w       R12,&RES2
+    clr.w       &RES3
+    
+    sub.w       #6,R15
+    
+    mov.w       R10,&OP2L  
+    mov.w       R11,&OP2H  
+    mov.w       &RES0,24(SP)
+    mov.w       @R15+,26(SP)
+    mov.w       @R15+,28(SP)
+    mov.w       @R15+,30(SP)
+    
+    sub.w       #6,R15
+    
+
+    ; Computation of H = A_h * B_h
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;
+    ; first row
+    ;;;;;;;;;;;;;;;;;;;;;;;;
+
+          
+    add.w       #8,R14
+    mov.w       @R14+,R8        ; R8 holds g12
+    mov.w       @R14+,R9        ; R9 holds g13
+    mov.w       @R14+,R10       ; R10 holds g14
+    mov.w       @R14+,R11       ; R11 holds g15
+
+    mov.w       R4,&MPY32L
+    mov.w       R5,&MPY32H
+    mov.w       R8,&OP2L  
+    mov.w       R9,&OP2H  
+    mov.w       &RES0,40(SP)
+    mov.w       @R15+,42(SP)
+    mov.w       @R15+,&RES0
+    mov.w       @R15+,&RES1
+    clr.w       &RES2
+    clr.w       &RES3
+    
+    sub.w       #6,R15
+    
+    bis.w       #0x0020,&MPY32CTL0      ; leave R4 and R5 in input registers and switch from MPY to MAC
+    mov.w       R10,&OP2L  
+    mov.w       R11,&OP2H  
+    mov.w       @R13+,R6        ; R6 holds f10
+    mov.w       @R13+,R7        ; R7 holds f11
+    mov.w       R6,&MAC32L
+    mov.w       R7,&MAC32H
+    mov.w       &SUMEXT,R12
+    mov.w       R8,&OP2L  
+    mov.w       R9,&OP2H  
+    mov.w       &RES0,44(SP)
+    mov.w       @R15+,46(SP)
+    mov.w       @R15+,&RES0
+    mov.w       @R15+,&RES1
+    add.w       &SUMEXT,R12
+    mov.w       R12,&RES2
+    clr.w       &RES3
+    
+    sub.w       #6,R15
+
+    mov.w       R10,&OP2L  
+    mov.w       R11,&OP2H  
+    mov.w       &RES0,48(SP)
+    mov.w       @R15+,50(SP)
+    mov.w       @R15+,52(SP)
+    mov.w       @R15+,54(SP)
+    
+    sub.w       #6,R15
+    
+    ;;;;;;;;;;;;;;;;;;;;;;;;
+    ; second row
+    ;;;;;;;;;;;;;;;;;;;;;;;;
+          
+    sub.w       #16,R14
+    mov.w       @R14+,R8        ; R8 holds g8
+    mov.w       @R14+,R9        ; R9 holds g9
+    mov.w       @R14+,R10       ; R10 holds g10
+    mov.w       @R14+,R11       ; R11 holds g11
+
+    mov.w       R4,&MPY32L
+    mov.w       R5,&MPY32H
+    mov.w       R8,&OP2L  
+    mov.w       R9,&OP2H  
+    mov.w       &RES0,32(SP)
+    mov.w       @R15+,34(SP)
+    mov.w       @R15+,&RES0
+    mov.w       @R15+,&RES1
+    clr.w       &RES2
+    clr.w       &RES3
+    
+    sub.w       #6,R15
+    
+    bis.w       #0x0020,&MPY32CTL0      ; leave R4 and R5 in input registers and switch from MPY to MAC
+    mov.w       R10,&OP2L  
+    mov.w       R11,&OP2H  
+    mov.w       @R13+,R4        ; R4 holds f4
+    mov.w       @R13+,R5        ; R5 holds f5
+    mov.w       R6,&MAC32L
+    mov.w       R7,&MAC32H
+    mov.w       &SUMEXT,R12
+    mov.w       R8,&OP2L  
+    mov.w       R9,&OP2H  
+    mov.w       &RES0,36(SP)
+    mov.w       @R15+,38(SP)
+    mov.w       @R15+,&RES0
+    mov.w       @R15+,&RES1
+    add.w       &SUMEXT,R12
+    mov.w       R12,&RES2
+    clr.w       &RES3
+    
+    sub.w       #6,R15
+    
+
+    mov.w       R10,&OP2L  
+    mov.w       R11,&OP2H  
+    mov.w       @R13+,R6            ; R6 holds f6
+    mov.w       @R13+,R7            ; R7 holds f7
+    mov.w       R4,&MAC32L
+    mov.w       R5,&MAC32H
+    mov.w       &SUMEXT,R12
+    mov.w       R8,&OP2L  
+    mov.w       R9,&OP2H  
+    add.w       &RES0,40(SP)
+    addc.w      @R15+,42(SP)
+    adc.w       &RES2
+    adc.w       &RES3
+    addc.w      &SUMEXT,R12
+    mov.w       @R15+,&RES0
+    mov.w       @R15+,&RES1
+    mov.w       R12,&RES2
+    clr.w       &RES3
+    
+
+    mov.w       R10,&OP2L  
+    mov.w       R11,&OP2H  
+    sub.w       #6,R15
+    mov.w       R6,&MAC32L
+    mov.w       R7,&MAC32H
+    mov.w       &SUMEXT,R12
+    mov.w       R8,&OP2L  
+    mov.w       R9,&OP2H  
+    add.w       &RES0,44(SP)
+    addc.w      @R15+,46(SP)
+    adc.w       &RES2
+    adc.w       &RES3
+    addc.w      &SUMEXT,R12
+    mov.w       @R15+,&RES0
+    mov.w       @R15+,&RES1
+    mov.w       R12,&RES2
+    clr.w       &RES3
+    
+    sub.w       #6,R15
+   
+    mov.w       R10,&OP2L  
+    mov.w       R11,&OP2H  
+    mov.w       @R14+,R8           ; R8 holds f12
+    mov.w       @R14+,R9           ; R9 holds f13
+    mov.w       R4,&MAC32L
+    mov.w       R5,&MAC32H
+    mov.w       &SUMEXT,R12
+    mov.w       R8,&OP2L  
+    mov.w       R9,&OP2H  
+    add.w       &RES0,48(SP)
+    addc.w      @R15+,50(SP)
+    adc.w       &RES2
+    adc.w       &RES3
+    addc.w      &SUMEXT,R12
+    mov.w       @R15+,&RES0
+    mov.w       @R15+,&RES1
+    mov.w       R12,&RES2
+    clr.w       &RES3
+    
+    
+    mov.w       @R14+,R10           ; R10 holds f14
+    mov.w       @R14+,R11           ; R11 holds f15
+   
+    mov.w       R10,&OP2L  
+    mov.w       R11,&OP2H  
+    sub.w       #6,R15
+    mov.w       R6,&MAC32L
+    mov.w       R7,&MAC32H
+    mov.w       &SUMEXT,R12
+    mov.w       R8,&OP2L  
+    mov.w       R9,&OP2H  
+    add.w       &RES0,52(SP)
+    addc.w      @R15+,54(SP)
+    adc.w       &RES2
+    adc.w       &RES3
+    addc.w      &SUMEXT,R12
+    mov.w       @R15+,&RES0
+    mov.w       @R15+,&RES1
+    mov.w       R12,&RES2
+    clr.w       &RES3
+    
+    sub.w       #6,R15
+    
+    mov.w       R10,&OP2L  
+    mov.w       R11,&OP2H  
+    mov.w       &RES0,56(SP)
+    mov.w       @R15+,58(SP)
+    mov.w       @R15+,60(SP)
+    mov.w       @R15+,62(SP)
+    
+    sub.w       #6,R15
+
+    ; Set R13 and R14 to original value
+
+    sub.w       #32,R13
+    sub.w       #32,R14
+
+    ; Computation of L and H finished here
+
+
+    ; Computation of |A_l - A_h|
+
+    clr.w       R12
+
+    mov.w       @R13+,R4
+    mov.w       @R13+,R5
+    mov.w       @R13+,R6
+    mov.w       @R13+,R7
+    mov.w       @R13+,R8
+    mov.w       @R13+,R9
+    mov.w       @R13+,R10
+    mov.w       @R13+,R11
+
+    sub.w       @R13+,R4
+    subc.w      @R13+,R5
+    subc.w      @R13+,R6
+    subc.w      @R13+,R7
+    subc.w      @R13+,R8
+    subc.w      @R13+,R9
+    subc.w      @R13+,R10
+    subc.w      @R13+,R11
+    
+    sbc.w       R12
+    push.w      R12
+        
+    xor.w       R12,R4
+    xor.w       R12,R5
+    xor.w       R12,R6
+    xor.w       R12,R7
+    xor.w       R12,R8
+    xor.w       R12,R9
+    xor.w       R12,R10
+    xor.w       R12,R11
+    
+    and.w       #1,R12
+
+    add.w       R12,R4
+    adc.w       R5
+    adc.w       R6
+    adc.w       R7
+    adc.w       R8
+    adc.w       R9
+    adc.w       R10
+    adc.w       R11
+    
+    mov.w       R4,66(SP)
+    mov.w       R5,68(SP)
+    mov.w       R6,70(SP)
+    mov.w       R7,72(SP)
+    mov.w       R8,74(SP)
+    mov.w       R9,76(SP)
+    mov.w       R10,78(SP)
+    mov.w       R11,80(SP)
+    
+    ; Computation of |B_l - B_h|
+
+    clr.w       R12
+
+    mov.w       @R14+,R4
+    mov.w       @R14+,R5
+    mov.w       @R14+,R6
+    mov.w       @R14+,R7
+    mov.w       @R14+,R8
+    mov.w       @R14+,R9
+    mov.w       @R14+,R10
+    mov.w       @R14+,R11
+
+    sub.w       @R14+,R4
+    subc.w      @R14+,R5
+    subc.w      @R14+,R6
+    subc.w      @R14+,R7
+    subc.w      @R14+,R8
+    subc.w      @R14+,R9
+    subc.w      @R14+,R10
+    subc.w      @R14+,R11
+    
+    sbc.w       R12
+    xor.w       R12,0(SP)
+        
+    xor.w       R12,R4
+    xor.w       R12,R5
+    xor.w       R12,R6
+    xor.w       R12,R7
+    xor.w       R12,R8
+    xor.w       R12,R9
+    xor.w       R12,R10
+    xor.w       R12,R11
+    
+    and.w       #1,R12
+
+    add.w       R12,R4
+    adc.w       R5
+    adc.w       R6
+    adc.w       R7
+    adc.w       R8
+    adc.w       R9
+    adc.w       R10
+    adc.w       R11
+    
+    mov.w       R4,82(SP)
+    mov.w       R5,84(SP)
+    mov.w       R6,86(SP)
+    mov.w       R7,88(SP)
+    mov.w       R8,90(SP)
+    mov.w       R9,92(SP)
+    mov.w       R10,94(SP)
+    mov.w       R11,96(SP)
+
+
+    ; Computation of M
+
+    mov.w       SP,R13
+    add.w       #66,R13
+    mov.w       SP,R14
+    add.w       #82,R14
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;
+    ; first row
+    ;;;;;;;;;;;;;;;;;;;;;;;;
+
+    mov.w       @R13+,R4        ; R4 holds f0
+    mov.w       @R13+,R5        ; R5 holds f1
+    
+    mov.w       R4,&MPY32L
+    mov.w       R5,&MPY32H
+    mov.w       R8,&OP2L  
+    mov.w       R9,&OP2H  
+    mov.w       &RES0,106(SP)
+    mov.w       @R15+,108(SP)
+    mov.w       @R15+,&RES0
+    mov.w       @R15+,&RES1
+    clr.w       &RES2
+    clr.w       &RES3
+    
+    sub.w       #6,R15
+    
+    bis.w       #0x0020,&MPY32CTL0      ; leave R4 and R5 in input registers and switch from MPY to MAC
+    mov.w       R10,&OP2L  
+    mov.w       R11,&OP2H  
+    mov.w       @R13+,R6        ; R6 holds f2
+    mov.w       @R13+,R7        ; R7 holds f3
+    mov.w       R6,&MAC32L
+    mov.w       R7,&MAC32H
+    mov.w       &SUMEXT,R12
+    mov.w       R8,&OP2L  
+    mov.w       R9,&OP2H  
+    mov.w       &RES0,110(SP)
+    mov.w       @R15+,112(SP)
+    mov.w       @R15+,&RES0
+    mov.w       @R15+,&RES1
+    add.w       &SUMEXT,R12
+    mov.w       R12,&RES2
+    clr.w       &RES3
+    
+    sub.w       #6,R15
+
+    mov.w       R10,&OP2L  
+    mov.w       R11,&OP2H  
+    mov.w       &RES0,114(SP)
+    mov.w       @R15+,116(SP)
+    mov.w       @R15+,118(SP)
+    mov.w       @R15+,120(SP)
+    
+    sub.w       #6,R15
+    
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;
+    ; second row
+    ;;;;;;;;;;;;;;;;;;;;;;;;
+
+    mov.w       @R14+,R8        ; R8 holds g0
+    mov.w       @R14+,R9        ; R9 holds g1
+    mov.w       @R14+,R10       ; R10 holds g2
+    mov.w       @R14+,R11       ; R11 holds g3
+    
+    mov.w       R4,&MPY32L
+    mov.w       R5,&MPY32H
+    mov.w       R8,&OP2L  
+    mov.w       R9,&OP2H  
+    mov.w       &RES0,98(SP)
+    mov.w       @R15+,100(SP)
+    mov.w       @R15+,&RES0
+    mov.w       @R15+,&RES1
+    clr.w       &RES2
+    clr.w       &RES3
+    
+    sub.w       #6,R15
+    
+    bis.w       #0x0020,&MPY32CTL0      ; leave R4 and R5 in input registers and switch from MPY to MAC
+    mov.w       R10,&OP2L  
+    mov.w       R11,&OP2H  
+    mov.w       @R13+,R4        ; R4 holds f4
+    mov.w       @R13+,R5        ; R5 holds f5
+    mov.w       R6,&MAC32L
+    mov.w       R7,&MAC32H
+    mov.w       &SUMEXT,R12
+    mov.w       R8,&OP2L  
+    mov.w       R9,&OP2H  
+    mov.w       &RES0,102(SP)
+    mov.w       @R15+,104(SP)
+    mov.w       @R15+,&RES0
+    mov.w       @R15+,&RES1
+    add.w       &SUMEXT,R12
+    mov.w       R12,&RES2
+    clr.w       &RES3
+    
+    sub.w       #6,R15
+    
+
+    mov.w       R10,&OP2L  
+    mov.w       R11,&OP2H  
+    mov.w       @R13+,R6            ; R6 holds f6
+    mov.w       @R13+,R7            ; R7 holds f7
+    mov.w       R4,&MAC32L
+    mov.w       R5,&MAC32H
+    mov.w       &SUMEXT,R12
+    mov.w       R8,&OP2L  
+    mov.w       R9,&OP2H  
+    add.w       &RES0,106(SP)
+    addc.w      @R15+,108(SP)
+    adc.w       &RES2
+    adc.w       &RES3
+    addc.w      &SUMEXT,R12
+    mov.w       @R15+,&RES0
+    mov.w       @R15+,&RES1
+    mov.w       R12,&RES2
+    clr.w       &RES3
+    
+    
+
+    mov.w       R10,&OP2L  
+    mov.w       R11,&OP2H  
+    sub.w       #6,R15
+    mov.w       R6,&MAC32L
+    mov.w       R7,&MAC32H
+    mov.w       &SUMEXT,R12
+    mov.w       R8,&OP2L  
+    mov.w       R9,&OP2H  
+    add.w       &RES0,110(SP)
+    addc.w      @R15+,112(SP)
+    adc.w       &RES2
+    adc.w       &RES3
+    addc.w      &SUMEXT,R12
+    mov.w       @R15+,&RES0
+    mov.w       @R15+,&RES1
+    mov.w       R12,&RES2
+    clr.w       &RES3
+    
+    sub.w       #6,R15
+    
+   
+    mov.w       R10,&OP2L  
+    mov.w       R11,&OP2H  
+    mov.w       @R14+,R8           ; R8 holds f12
+    mov.w       @R14+,R9           ; R9 holds f13
+    mov.w       R4,&MAC32L
+    mov.w       R5,&MAC32H
+    mov.w       &SUMEXT,R12
+    mov.w       R8,&OP2L  
+    mov.w       R9,&OP2H  
+    add.w       &RES0,114(SP)
+    addc.w      @R15+,116(SP)
+    adc.w       &RES2
+    adc.w       &RES3
+    addc.w      &SUMEXT,R12
+    mov.w       @R15+,&RES0
+    mov.w       @R15+,&RES1
+    mov.w       R12,&RES2
+    clr.w       &RES3
+    
+    
+    mov.w       @R14+,R10           ; R10 holds f14
+    mov.w       @R14+,R11           ; R11 holds f15
+   
+    mov.w       R10,&OP2L  
+    mov.w       R11,&OP2H  
+    sub.w       #6,R15
+    mov.w       R6,&MAC32L
+    mov.w       R7,&MAC32H
+    mov.w       &SUMEXT,R12
+    mov.w       R8,&OP2L  
+    mov.w       R9,&OP2H  
+    add.w       &RES0,118(SP)
+    addc.w      @R15+,120(SP)
+    adc.w       &RES2
+    adc.w       &RES3
+    addc.w      &SUMEXT,R12
+    mov.w       @R15+,&RES0
+    mov.w       @R15+,&RES1
+    mov.w       R12,&RES2
+    clr.w       &RES3
+    
+    sub.w       #6,R15
+    
+    mov.w       R10,&OP2L  
+    mov.w       R11,&OP2H  
+    mov.w       &RES0,122(SP)
+    mov.w       @R15+,124(SP)
+    mov.w       @R15+,126(SP)
+    mov.w       @R15+,128(SP)
+    
+    sub.w       #6,R15
+
+    
+    ; Computation of -M_hat
+    
+    pop.w       R12
+    xor.w       #0xffff,R12
+    clr.w       R11
+
+    mov.w       @R14+,R4
+    mov.w       @R14+,R5
+    mov.w       @R14+,R6
+    mov.w       @R14+,R7
+    mov.w       @R14+,R8
+    mov.w       @R14+,R9
+    mov.w       @R14+,R10
+
+    xor.w       R12,R4
+    xor.w       R12,R5
+    xor.w       R12,R6
+    xor.w       R12,R7
+    xor.w       R12,R8
+    xor.w       R12,R9
+    xor.w       R12,R10
+    xor.w       R12,110(SP)
+    xor.w       R12,112(SP)
+    xor.w       R12,114(SP)
+    xor.w       R12,116(SP)
+    xor.w       R12,118(SP)
+    xor.w       R12,120(SP)
+    xor.w       R12,122(SP)
+    xor.w       R12,124(SP)
+    xor.w       R12,126(SP)
+    xor.w       R12,R11
+    
+    and.w       #1,R12
+    
+    add.w       R12,R4
+    adc.w       R5
+    adc.w       R6
+    adc.w       R7
+    adc.w       R8
+    adc.w       R9
+    adc.w       R10
+    adc.w       110(SP)
+    adc.w       112(SP)
+    adc.w       114(SP)
+    adc.w       116(SP)
+    adc.w       118(SP)
+    adc.w       120(SP)
+    adc.w       122(SP)
+    adc.w       124(SP)
+    adc.w       126(SP)
+    adc.w       R11
+  
+    ; Computation L + H - M_hat
+
+    sub.w       #80,R13
+
+    add.w       @R13+,R4
+    addc.w      @R13+,R5
+    addc.w      @R13+,R6
+    addc.w      @R13+,R7
+    addc.w      @R13+,R8
+    addc.w      @R13+,R9
+    addc.w      @R13+,R10
+    addc.w      @R13+,110(SP)
+    addc.w      @R13+,112(SP)
+    addc.w      @R13+,114(SP)
+    addc.w      @R13+,116(SP)
+    addc.w      @R13+,118(SP)
+    addc.w      @R13+,120(SP)
+    addc.w      @R13+,122(SP)
+    addc.w      @R13+,124(SP)
+    addc.w      @R13+,126(SP)
+    adc.w       R11
+
+    add.w       @R13+,R4
+    addc.w      @R13+,R5
+    addc.w      @R13+,R6
+    addc.w      @R13+,R7
+    addc.w      @R13+,R8
+    addc.w      @R13+,R9
+    addc.w      @R13+,R10
+    addc.w      @R13+,110(SP)
+    addc.w      @R13+,112(SP)
+    addc.w      @R13+,114(SP)
+    addc.w      @R13+,116(SP)
+    addc.w      @R13+,118(SP)
+    addc.w      @R13+,120(SP)
+    addc.w      @R13+,122(SP)
+    addc.w      @R13+,124(SP)
+    addc.w      @R13+,126(SP)
+    adc.w       R11
+    
+    add.w       #46,R13
+    
+    add.w       R4,16(SP)
+    addc.w      R5,18(SP)
+    addc.w      R6,20(SP)
+    addc.w      R7,22(SP)
+    addc.w      R8,24(SP)
+    addc.w      R9,26(SP)
+    addc.w      R10,28(SP)
+    addc.w      @R13+,30(SP)
+    addc.w      @R13+,32(SP)
+    addc.w      @R13+,34(SP)
+    addc.w      @R13+,36(SP)
+    addc.w      @R13+,38(SP)
+    addc.w      @R13+,40(SP)
+    addc.w      @R13+,42(SP)
+    addc.w      @R13+,44(SP)
+    addc.w      @R13+,46(SP)
+
+    addc.w      R11,48(SP)
+    adc.w       50(SP)
+    adc.w       52(SP)
+    adc.w       54(SP)
+    adc.w       56(SP)
+    adc.w       58(SP)
+    adc.w       60(SP)
+    adc.w       62(SP)
+
+    
+
+    ;;;;;;;;;;;;;;;;;;;;;;;
+    ; Reduction
+    ;;;;;;;;;;;;;;;;;;;;;;;
+    
+    mov.w       144(SP),R12
+    
+    
+    mov.w       #RES2,R14
+    
+    mov.w       SP,R4
+    add.w       #32,R4
+    
+    clr.w       &RES2
+    clr.w       &RES3
+     
+    mov.w       #38,&MAC32L
+       
+    mov.w       @SP+,&RES0
+    mov.w       @SP+,&RES1
+    mov.w       @R4+,&OP2L
+    mov.w       @R4+,&OP2H
+    mov.w       &RES0,0(R12)
+    mov.w       @R15,2(R12)
+    mov.w       @R14,&RES0
+    clr.w       &RES1
+    clr.w       &RES2
+    
+    add.w       @SP+,&RES0
+    addc.w      @SP+,&RES1
+    mov.w       @R4+,&OP2L
+    mov.w       @R4+,&OP2H
+    mov.w       &RES0,4(R12)
+    mov.w       @R15,6(R12)
+    mov.w       @R14,&RES0
+    clr.w       &RES1
+    clr.w       &RES2
+    
+    add.w       @SP+,&RES0
+    addc.w      @SP+,&RES1
+    mov.w       @R4+,&OP2L
+    mov.w       @R4+,&OP2H
+    mov.w       &RES0,8(R12)
+    mov.w       @R15,10(R12)
+    mov.w       @R14,&RES0
+    clr.w       &RES1
+    clr.w       &RES2
+    
+    add.w       @SP+,&RES0
+    addc.w      @SP+,&RES1
+    mov.w       @R4+,&OP2L
+    mov.w       @R4+,&OP2H
+    mov.w       &RES0,12(R12)
+    mov.w       @R15,14(R12)
+    mov.w       @R14,&RES0
+    clr.w       &RES1
+    clr.w       &RES2
+    
+    add.w       @SP+,&RES0
+    addc.w      @SP+,&RES1
+    mov.w       @R4+,&OP2L
+    mov.w       @R4+,&OP2H
+    mov.w       &RES0,16(R12)
+    mov.w       @R15,18(R12)
+    mov.w       @R14,&RES0
+    clr.w       &RES1
+    clr.w       &RES2
+    
+    add.w       @SP+,&RES0
+    addc.w      @SP+,&RES1
+    mov.w       @R4+,&OP2L
+    mov.w       @R4+,&OP2H
+    mov.w       &RES0,20(R12)
+    mov.w       @R15,22(R12)
+    mov.w       @R14,&RES0
+    clr.w       &RES1
+    clr.w       &RES2
+    
+    add.w       @SP+,&RES0
+    addc.w      @SP+,&RES1
+    mov.w       @R4+,&OP2L
+    mov.w       @R4+,&OP2H
+    mov.w       &RES0,24(R12)
+    mov.w       @R15,26(R12)
+    mov.w       @R14,&RES0
+    clr.w       &RES1
+    clr.w       &RES2
+    
+    add.w       @SP+,&RES0
+    addc.w      @SP+,&RES1
+    mov.w       @R4+,&OP2L
+    mov.w       @R4,&OP2H
+    mov.w       &RES0,28(R12)
+    mov.w       @R15,30(R12)
+    
+    mov.w       #38,&MPY32L
+    mov.w       @R14,&OP2L
+    
+    add.w       &RES0,0(R12)
+    adc.w       2(R12)
+    adc.w       4(R12)
+    adc.w       6(R12)
+    adc.w       8(R12)
+    adc.w       10(R12)
+    adc.w       12(R12)
+    adc.w       14(R12)
+    adc.w       16(R12)
+    adc.w       18(R12)
+    adc.w       20(R12)
+    adc.w       22(R12)
+    adc.w       24(R12)
+    adc.w       26(R12)
+    adc.w       28(R12)
+    adc.w       30(R12)
+    
+    clr.w       R11
+    adc.w       R11
+    mov.w       R11,&OP2L
+    add.w       &RES0,0(R12)
+
+    add.w       #96,SP
+    
+    popm.w      #9,R12
+    eint
+    
+    CLR R13
+    CALLA #mp_freeze
+    
+    reta
+  
+END
+

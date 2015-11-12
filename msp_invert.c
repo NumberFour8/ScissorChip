@@ -23,7 +23,8 @@ void mp_invert(bigintp r,const bigintp x)
     mp_mulmod(t2,t1,t1); // 1
     mp_mulmod(t1,t2,x);
     
-    mp_mulmod(r,t1,t1); // 1,  2^255 - 21, the inverse
+    mp_mulmod(t2,t1,t1); // 1 ->  2^255 - 21, the inverse
+    mp_mulmod(r,t2,x);
 }
 /*
 // Square-root of -1 in Montgomery representation

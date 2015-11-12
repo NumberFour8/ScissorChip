@@ -10,22 +10,26 @@
 #define digest_update(a,b,c)    keccak_update(a,b,c)
 #define digest_finish(a,b)      keccak_finish(a,b)
 
-#define SOS
+#define KARATSUBA
 
 #ifdef CIOS
   #define DIGITS 16
   #define mp_mulmod(c,a,b)  mp_mulmod32_cios(c,a,b,32) // Use 32-bit CIOS for multiplication 
   #define mp_mulmod1(c,a,b) mp_mulmod32_cios(c,(uint16_t*)a,b,8)  // Use 32-bit CIOS for multiplication by a single 32-bit number
   #define USE_MONTGOMERY
-#elif FIPS
+#elif defined (FIPS)
   #define DIGITS 20 // FIOS needs additional 2*4 bytes = 4 16-bit words
   #define mp_mulmod(c,a,b)  mp_mulmod32_fios(c,a,b,32) // Use 32-bit FIOS for multiplication 
-  #define mp_mulmod1(c,a,b) mp_mulmod32_fios(c,(uint16_t*)a,b,8)  // Use 32-bit CIOS for multiplication by a single 32-bit number
+  #define mp_mulmod1(c,a,b) mp_mulmod32_fios(c,(uint16_t*)a,b,8)  // Use 32-bit FIOS for multiplication by a single 32-bit number
   #define USE_MONTGOMERY
-#else
+#elif defined (SOS)
   #define DIGITS 16
   #define mp_mulmod(c,a,b)  mp_mulmod32_sos(c,a,b,32) // Use 32-bit SOS for multiplication 
-  #define mp_mulmod1(c,a,b) mp_mulmod32_sos(c,(uint16_t*)a,b,8)  // Use 32-bit CIOS for multiplication by a single 32-bit number
+  #define mp_mulmod1(c,a,b) mp_mulmod32_sos(c,b,(uint16_t*)a,8)  // Use 32-bit SOS for multiplication by a single 32-bit number
+#else 
+  #define DIGITS 16
+  #define mp_mulmod(c,a,b)  mp_mulmod32_karatsuba(c,a,b) // Use 32-bit Karatsuba for multiplication 
+  #define mp_mulmod1(c,a,b) { uint32_t t[8] = {0}; t[0] = *a;  mp_mulmod32_karatsuba(c,(uint16_t*)t,b); } // Use 32-bit Karatsuba for multiplication by a single 32-bit number
 #endif
 
 // Macro for clearing the point structure
@@ -90,7 +94,7 @@ extern void mp_mod16(bigintp a);
 extern void mp_mod32(bigintp a);
 
 // Conditionally subtracts 2^255-19 from number A, 0 <= A < 2^256-38
-extern void mp_freeze(bigintp a);
+extern void mp_freeze(bigintp a,uint16_t add);
 
 // Barett reduction algorithm
 extern void mp_barrett252(bigintp r,bigintp x);
@@ -101,8 +105,7 @@ extern void mp_mulmod16_fios(uint16_t* c,const uint16_t* a,const uint16_t* b,uin
 extern void mp_mulmod32_fios(uint16_t* c,const uint16_t* a,const uint16_t* b,uint16_t mode);
 extern void mp_mulmod32_sos (uint16_t* c,const uint16_t* a,const uint16_t* b,uint16_t mode);
 extern void mp_mulmod32_cios(uint16_t* c,const uint16_t* a,const uint16_t* b,uint16_t mode);
-//extern void fe_mul(uint16_t* c,uint16_t* a,uint16_t* b);
-
+extern void mp_mulmod32_karatsuba(uint16_t* c,const uint16_t* a,const uint16_t* b);
 
 // Defines which reduction algorithm should be used
 #define mp_mod25519(a)    mp_mod32(a)                // Use 32-bit full reduction modulo 2^255-19

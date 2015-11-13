@@ -10,7 +10,7 @@
 #define digest_update(a,b,c)    keccak_update(a,b,c)
 #define digest_finish(a,b)      keccak_finish(a,b)
 
-#define KARATSUBA
+#define SOS
 
 #ifdef CIOS
   #define DIGITS 16

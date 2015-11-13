@@ -53,7 +53,7 @@ void runSuiteCritical(const suite* s)
 	printf("-- STARTING SUITE %s -- \n",s->name);
 	while (ptr != NULL)
 	{
-		printf("Running test %s -> ",ptr->name);
+		printf("Running %s -> ",ptr->name);
 		if (!ptr->enable)
                 {
                     printf("SKIP\n");
@@ -80,7 +80,7 @@ bool runSuiteCareless(const suite* s)
 	printf("-- STARTING SUITE %s -- \n",s->name);
 	while (ptr != NULL)
 	{
-		printf("Running test %s -> ",ptr->name);
+		printf("Running %s -> ",ptr->name);
 		if (!ptr->enable)
                 {
                     printf("SKIP\n");

@@ -224,10 +224,38 @@ TEST_DEF(test_ladderstep)
     TEST_SUCCESS();
 }
 
+TEST_DEF(test_ladder_ecdh)
+{
+    bigint k  = {3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    bigint in = {0};
+    monpoint R,B;
+
+    clear_point(&B);
+    B.x[0] = TO_MONREP(9);
+    B.z[0] = TO_MONREP(1);
+
+    ladder(&R,&B,k);
+    
+    #ifdef USE_MONTGOMERY
+      
+    #else
+      ASSERT_ARRAYEQ_U16(B.x, 44984,24659,17990,37664,56665,60274,51477,1182,43764,15883,59100,52148,64280,44486,55324,7303);
+      ASSERT_ARRAYEQ_U16(B.z, 10937,25570,56075,7672,22895,46674,50562,44091,5264,2112,39581,46920,60988,39007,41793,18839);
+      ASSERT_ARRAYEQ_U16(R.x, 52452,42096,41226,10163,1,0,0,11569,39919,2757,13122,26587,51031,25968,12667,32509);
+      ASSERT_ARRAYEQ_U16(R.z, 34997,10578,3004,43559,842,0,0,32137,13115,27986,54093,14376,42332,50768,60345,7348);
+   
+      mp_invert(B.x,R.z);
+      mp_mulmod(in,R.x,B.x);
+    
+      ASSERT_ARRAYEQ_U16(in, 15378, 64369, 943, 49162, 2137, 25116, 20071, 63618, 47716, 49691, 19857, 17747, 44006, 27991, 48154, 7186);
+    #endif
+    
+    TEST_SUCCESS();
+}
 
 TEST_DEF(test_ladder_compress)
 {
-    bigint k = {3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    bigint k = {22345, 60878, 40404, 32106, 54038, 36180, 13922, 902, 54475, 38238, 35398, 51482, 13254, 31310, 39358, 57932};
     monpoint R,B;
 
     clear_point(&B);
@@ -235,8 +263,20 @@ TEST_DEF(test_ladder_compress)
     B.z[0] = TO_MONREP(1);
     
     ladder(&R,&B,k);
-    compress(&R,&B); 
-
+    
+    #ifdef USE_MONTGOMERY
+      
+    #else
+      ASSERT_ARRAYEQ_U16(R.x, 63006,28644,44265,9185,33923,48121,51980,23908,38771,1718,46197,32435,18122,53933,36099,4808);
+      ASSERT_ARRAYEQ_U16(R.z, 3545,16207,41653,15957,25103,38278,42406,4993,36983,5436,48071,8390,2364,39552,61650,21950);
+      ASSERT_ARRAYEQ_U16(B.x, 16754,40237,6137,42591,44425,21070,63751,35325,13647,8660,18105,27194,33862,35485,48211,19452);
+      ASSERT_ARRAYEQ_U16(B.z, 14256,8892,21486,39142,8108,25515,62437,52148,45153,34258,1357,40973,47573,35166,58310,4933);
+      
+      compress(&R,&B); 
+    
+      //ASSERT_ARRAYEQ_U16(in, 15378, 64369, 943, 49162, 2137, 25116, 20071, 63618, 47716, 49691, 19857, 17747, 44006, 27991, 48154, 7186);
+    #endif
+    
     TEST_SUCCESS();
 }
 
@@ -279,35 +319,6 @@ TEST_DEF(test_keypair_sign)
     TEST_SUCCESS();
 }
 
-TEST_DEF(test_ladder_ecdh)
-{
-    bigint k  = {3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-    bigint in = {0};
-    monpoint R,B;
-
-    clear_point(&B);
-    B.x[0] = TO_MONREP(9);
-    B.z[0] = TO_MONREP(1);
-
-    ladder(&R,&B,k);
-    
-    #ifdef USE_MONTGOMERY
-      
-    #else
-      ASSERT_ARRAYEQ_U16(B.x, 44984,24659,17990,37664,56665,60274,51477,1182,43764,15883,59100,52148,64280,44486,55324,7303);
-      ASSERT_ARRAYEQ_U16(B.z, 10937,25570,56075,7672,22895,46674,50562,44091,5264,2112,39581,46920,60988,39007,41793,18839);
-      ASSERT_ARRAYEQ_U16(R.x, 52452,42096,41226,10163,1,0,0,11569,39919,2757,13122,26587,51031,25968,12667,32509);
-      ASSERT_ARRAYEQ_U16(R.z, 34997,10578,3004,43559,842,0,0,32137,13115,27986,54093,14376,42332,50768,60345,7348);
-   
-      mp_invert(B.x,R.z);
-      mp_mulmod(in,R.x,B.x);
-    
-      ASSERT_ARRAYEQ_U16(in, 15378, 64369, 943, 49162, 2137, 25116, 20071, 63618, 47716, 49691, 19857, 17747, 44006, 27991, 48154, 7186);
-    #endif
-    
-    TEST_SUCCESS();
-}
-
 int main( void )
 {
     // Stop WDT
@@ -333,7 +344,7 @@ int main( void )
     ADD_TEST(arithmetic,test_barrett);
     ADD_TEST(arithmetic,test_mul);
     ADD_TEST(arithmetic,test_square);
-    ADD_TEST(arithmetic,test_invert);
+    ADD_TEST(arithmetic,test_invert)->enable = false;
 
     runSuiteCareless(&arithmetic);
     freeSuite(&arithmetic);
@@ -343,9 +354,8 @@ int main( void )
     createSuite("Curve tests",&curve);
     
     ADD_TEST(curve,test_ladderstep);
-    ADD_TEST(curve,test_ladder_ecdh);
-
-    //ADD_TEST(curve,test_ladder_compress);
+    ADD_TEST(curve,test_ladder_ecdh)->enable = false;
+    ADD_TEST(curve,test_ladder_compress);
   
     runSuiteCareless(&curve);
     freeSuite(&curve);

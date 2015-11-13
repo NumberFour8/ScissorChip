@@ -16,7 +16,6 @@ PUBLIC mp_mulmod32_sos
 
 mp_mulmod32_sos:
 
-  NOP
   PUSHM.W #9,R12
   SUB #64,SP
 
@@ -38,23 +37,23 @@ mp_mulmod32_sos:
 outer_for4
 
   ; (C,S) = t[i] + a[0]*b[i]
-  MOV 0x0(R12),&RES0  ; t[i]
-  MOV 0x2(R12),&RES1
+  MOV 0(R12),&RES0  ; t[i]
+  MOV 2(R12),&RES1
   CLR &RES2
   CLR &RES3
   
-  MOV 0x0(R14),&MAC32L  ; b[i]
-  MOV 0x2(R14),&MAC32H
-  MOV 0x0(R13),&OP2L    ; a[0] 
-  MOV 0x2(R13),&OP2H
+  MOV 0(R14),&MAC32L  ; b[i]
+  MOV 2(R14),&MAC32H
+  MOV 0(R13),&OP2L    ; a[0] 
+  MOV 2(R13),&OP2H
 
   ; t[i] = S
-  MOV &RES0,0x0(R12)
-  MOV &RES1,0x2(R12)
+  MOV &RES0,0(R12)
+  MOV &RES1,2(R12)
 
   MOV R13,R5  ; Traverses A
   ADD #4,R5
-  MOV R12,R7   ; Traverses T starting at i+1
+  MOV R12,R7  ; Traverses T starting at i+1
   ADD #4,R7
 inner_for4
    

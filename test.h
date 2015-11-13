@@ -6,11 +6,19 @@
 
 #define TEST_DEF(name) bool name(const void* data,const uint32_t size)
 
-#define ASSERT_ARRAYEQ(tp,c,val,...) {const tp temp[c] = {__VA_ARGS__}; if (memcmp((void*)temp,(void*)val,c*sizeof(tp)) != 0) return 0; }
-#define ASSERT_ARRAYEQ_U16(val,...) ASSERT_ARRAYEQ(uint16_t,16,val,__VA_ARGS__)
-#define ASSERT_ARRAYEQ_U32(val,...) ASSERT_ARRAYEQ(uint16_t,32,val,__VA_ARGS__)
+#ifdef ENABLE_TEST_ASSERTION
 
-#define TEST_SUCCESS() return 1;
+  #define ASSERT_ARRAYEQ(tp,c,val,...) {const tp temp[c] = {__VA_ARGS__}; if (memcmp((void*)temp,(void*)val,c*sizeof(tp)) != 0) return 0; }
+  #define ASSERT_ARRAYEQ_U16(val,...) ASSERT_ARRAYEQ(uint16_t,16,val,__VA_ARGS__)
+  #define ASSERT_ARRAYEQ_U32(val,...) ASSERT_ARRAYEQ(uint16_t,32,val,__VA_ARGS__)
+#else
+  #define ASSERT_ARRAYEQ(tp,c,val,...)
+  #define ASSERT_ARRAYEQ_U16(val,...)
+  #define ASSERT_ARRAYEQ_U32(val,...)
+#endif
+
+#define TEST_SUCCESS() return 1
+#define TEST_FAIL() return 0
 
 #define ADD_TEST_ARG(s,name,arg,sz) addToSuite(&s,#name,name,arg,sz)
 #define ADD_TEST(s,name) ADD_TEST_ARG(s,name,NULL,0)

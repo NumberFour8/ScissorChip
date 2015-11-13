@@ -9,6 +9,8 @@
 #include "keccak.h"
 #include "sha512.h"
 
+#define ENABLE_TEST_ASSERTION
+
 #include "test.h"
 
 // MCLK = Master Clock (CPU)
@@ -210,6 +212,15 @@ TEST_DEF(test_ladderstep)
     
     mon_dbladd(&Q,&P);
 
+    #ifdef USE_MONTGOMERY
+    
+    #else
+      ASSERT_ARRAYEQ_U16(Q.x,1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+      ASSERT_ARRAYEQ_U16(Q.z,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+      ASSERT_ARRAYEQ_U16(P.x,324, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+      ASSERT_ARRAYEQ_U16(P.z, 36, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    #endif
+      
     TEST_SUCCESS();
 }
 
@@ -279,8 +290,21 @@ TEST_DEF(test_ladder_ecdh)
     B.z[0] = TO_MONREP(1);
 
     ladder(&R,&B,k);
-    mp_invert(in,B.z);
-
+    
+    #ifdef USE_MONTGOMERY
+      
+    #else
+      ASSERT_ARRAYEQ_U16(B.x, 44984,24659,17990,37664,56665,60274,51477,1182,43764,15883,59100,52148,64280,44486,55324,7303);
+      ASSERT_ARRAYEQ_U16(B.z, 10937,25570,56075,7672,22895,46674,50562,44091,5264,2112,39581,46920,60988,39007,41793,18839);
+      ASSERT_ARRAYEQ_U16(R.x, 52452,42096,41226,10163,1,0,0,11569,39919,2757,13122,26587,51031,25968,12667,32509);
+      ASSERT_ARRAYEQ_U16(R.z, 34997,10578,3004,43559,842,0,0,32137,13115,27986,54093,14376,42332,50768,60345,7348);
+   
+      mp_invert(B.x,R.z);
+      mp_mulmod(in,R.x,B.x);
+    
+      ASSERT_ARRAYEQ_U16(in, 15378, 64369, 943, 49162, 2137, 25116, 20071, 63618, 47716, 49691, 19857, 17747, 44006, 27991, 48154, 7186);
+    #endif
+    
     TEST_SUCCESS();
 }
 
@@ -315,14 +339,17 @@ int main( void )
     freeSuite(&arithmetic);
     
     // Curve tests
-    //suite curve;
-    //createSuite("Curve tests",&curve);
-    // ADD_TEST(curve,test_ladderstep);
+    suite curve;
+    createSuite("Curve tests",&curve);
     
-    // ADD_TEST(curve,test_ladder_compress);
-  
-    // ADD_TEST(curve,test_ladder_ecdh);
+    ADD_TEST(curve,test_ladderstep);
+    ADD_TEST(curve,test_ladder_ecdh);
 
+    //ADD_TEST(curve,test_ladder_compress);
+  
+    runSuiteCareless(&curve);
+    freeSuite(&curve);
+    
     // Signing tests
     //suite sign;
     //createSuite("Signing tests",&sign);

@@ -42,7 +42,7 @@ void compress(monpoint* R0,monpoint* R1)
     mp_mulmod(t1,R1->z,t3);     // (X+Z)^-1
     mp_mulmod(R1->x,t1,t2);     // (X-Z)*(X+Z)^-1
     
-    FROM_MONREP(R0->yed,R1->x);     // Convert from Montgomery representation
-    R0->yed[15] &= 0x7FFF;          // Clear most-significant bit
-    R0->yed[15] |= R1->z[0]&1;      // Add the parity bit
+    FROM_MONREP(R0->yed,R1->x);        // Convert from Montgomery representation
+    R0->yed[15] &= 0x7FFF;             // Clear most-significant bit
+    R0->yed[15] |= (R1->z[0]&1) << 15; // Add the parity bit
 }

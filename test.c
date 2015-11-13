@@ -67,7 +67,7 @@ void runSuiteCritical(const suite* s)
 		else printf("SUCCESS\n");
 		ptr = ptr->next;
 	}
-	printf("-- SUITE SUCCEEDED --\n");
+	printf("-- SUITE SUCCEEDED --\n\n");
 }
 
 bool runSuiteCareless(const suite* s)
@@ -99,7 +99,7 @@ bool runSuiteCareless(const suite* s)
                 ++tests;
 	}
 
-	printf("-- SUITE FINISHED: %d/%d/%d --\n",success,failure,tests);
+	printf("-- SUITE FINISHED: %d/%d/%d --\n\n",success,failure,tests);
 
 	return failure == 0;
 }

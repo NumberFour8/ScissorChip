@@ -331,7 +331,7 @@ int main( void )
     register uint16_t g = 0xffed;
     if (g >= 2)
       g = g*100;
-
+    
     // Arithmetic tests
     suite arithmetic;
     createSuite("Arithmetic tests",&arithmetic);

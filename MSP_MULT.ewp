@@ -2205,6 +2205,9 @@
     <name>$PROJ_DIR$\msp_mul32_karatsuba.s43</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\msp_mul32_nkaratsuba.s43</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\msp_mul32_sos.s43</name>
   </file>
   <file>

@@ -106,6 +106,7 @@ extern void mp_mulmod32_fios(uint16_t* c,const uint16_t* a,const uint16_t* b,uin
 extern void mp_mulmod32_sos (uint16_t* c,const uint16_t* a,const uint16_t* b,uint16_t mode);
 extern void mp_mulmod32_cios(uint16_t* c,const uint16_t* a,const uint16_t* b,uint16_t mode);
 extern void mp_mulmod32_karatsuba(uint16_t* c,const uint16_t* a,const uint16_t* b);
+extern void mp_mulmod32_nkaratsuba(uint16_t* c,const uint16_t* a,const uint16_t* b);
 
 // Defines which reduction algorithm should be used
 #define mp_mod25519(a)    mp_mod32(a)                // Use 32-bit full reduction modulo 2^255-19

@@ -3,35 +3,9 @@ NAME msp_mul32_sos
 
 EXTERN mp_freeze
 EXTERN clear_mem
+EXTERN mp_cpropp
 
 RSEG CODE
-
-PUBLIC mp_cpropp
-
-; Propagates carry from address pointed by R10+2 until address given by R11 is reached (inclusive).
-
-mp_cpropp:
-
-  MOV SR,R5     ; Copy carry to R9
-  MOV R10,R4    ; Put R10 to R8
-  
-  CMP R11,R10 
-  JGE cpd       ; Do nothing if R10 >= R11
-cpg:
-  CMP R4,R11     ; Check if the last word was already processed
-  JZ cpd         ; If yes, quit
-  INCD R4        ; Move onto the next word
-  
-  MOV R5,SR
-  ADC 0x0(R4)  ; Add the carry to what R10 points to
-  MOV SR,R5    ; Put the carry to R9
-  
-  JMP cpg
-  
-cpd:
-  MOV R5,SR
-  
-  RETA
 
 PUBLIC mp_mulmod32_sos
 
@@ -160,7 +134,7 @@ limbs_done:
     
     ; --------------------- COPY BACK FROM THE STACK ---------------------------
 
-	MOV 80(SP),R12		; Utilize previously saved R12 on the stack
+    MOV 80(SP),R12		; Utilize previously saved R12 on the stack
     MOV R12,R13
     ADD #32,R13
 fcpy:

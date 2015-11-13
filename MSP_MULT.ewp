@@ -2169,6 +2169,9 @@
     <name>$PROJ_DIR$\msp_cond.s43</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\..\dl_5xx_6xx\msp_cpropp.s43</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\msp_invert.c</name>
   </file>
   <file>

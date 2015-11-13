@@ -2,9 +2,11 @@
 NAME msp_mul32_karatsuba
 
 EXTERN mp_freeze
+EXTERN mp_cpropp
+
+RSEG CODE
 
 PUBLIC mp_mulmod32_karatsuba
-RSEG CODE
 
 mp_mulmod32_karatsuba:
 
@@ -850,126 +852,66 @@ mp_mulmod32_karatsuba:
     ; Reduction
     ;;;;;;;;;;;;;;;;;;;;;;;
     
-    mov.w       144(SP),R12
+    ; ------------------------------- REDUCTION ----------------------------------
+    MOV SP,R9
+    MOV SP,R11
+    MOV #3,R8     ; In the worst-case scenario we need to reduce 3 times
+  
+    SUB #4, R9    ; Starting point
+    ADD #32,R11   ; Upper pointer bound (beyond the MS word, additions by 2)
+  
+reduce_limbs:
+    ADD #4,R9
+    CMP R9,R11
+    JZ limbs_done       ; If terminal address has been reached, go to round_done
     
+    MOV 0(R9),&MPY32L    ; LSB of LS half
+    MOV 2(R9),&MPY32H
+    MOV #1,&OP2L         ; 1
+    MOV #0,&OP2H
     
-    mov.w       #RES2,R14
+    MOV 0x20(R9),&MAC32L   ; LSB of MS half 
+    MOV 0x22(R9),&MAC32H
+    MOV #38,&OP2L         ; 38
+    MOV #0,&OP2H
     
-    mov.w       SP,R4
-    add.w       #32,R4
+    MOV R9,R10         ; Propagate the carry from here 
+    ADD #6,R10         ; R11 is already set as an inclusive upper bound +1
     
-    clr.w       &RES2
-    clr.w       &RES3
-     
-    mov.w       #38,&MAC32L
+    MOV  &RES0,0(R9)     ; Save S to LSB of LS half
+    MOV  &RES1,2(R9)
+    ADD  &RES2,4(R9)     ; Add the carry to the second-LSB of the LS half
+    ADDC &RES3,6(R9)
+    
+    CALLA #mp_cpropp     ; Propagate the carry further
+    
+    CLR 0x20(R9)        ; We don't need this MS limb anymore
+    CLR 0x22(R9)
+    JMP reduce_limbs    ; Proceed with the next digit
        
-    mov.w       @SP+,&RES0
-    mov.w       @SP+,&RES1
-    mov.w       @R4+,&OP2L
-    mov.w       @R4+,&OP2H
-    mov.w       &RES0,0(R12)
-    mov.w       @R15,2(R12)
-    mov.w       @R14,&RES0
-    clr.w       &RES1
-    clr.w       &RES2
+limbs_done:
+    MOV SP,R9
+    MOV SP,R11       
+    ADD #4,R11          ; We lower the terminal address as we don't need to go further than 1 limb  
+    SUB #4,R9           ; Rewind R9
+    DEC R8
+    JNZ reduce_limbs    ; If we didn't reduce 3 times, continue  
     
-    add.w       @SP+,&RES0
-    addc.w      @SP+,&RES1
-    mov.w       @R4+,&OP2L
-    mov.w       @R4+,&OP2H
-    mov.w       &RES0,4(R12)
-    mov.w       @R15,6(R12)
-    mov.w       @R14,&RES0
-    clr.w       &RES1
-    clr.w       &RES2
-    
-    add.w       @SP+,&RES0
-    addc.w      @SP+,&RES1
-    mov.w       @R4+,&OP2L
-    mov.w       @R4+,&OP2H
-    mov.w       &RES0,8(R12)
-    mov.w       @R15,10(R12)
-    mov.w       @R14,&RES0
-    clr.w       &RES1
-    clr.w       &RES2
-    
-    add.w       @SP+,&RES0
-    addc.w      @SP+,&RES1
-    mov.w       @R4+,&OP2L
-    mov.w       @R4+,&OP2H
-    mov.w       &RES0,12(R12)
-    mov.w       @R15,14(R12)
-    mov.w       @R14,&RES0
-    clr.w       &RES1
-    clr.w       &RES2
-    
-    add.w       @SP+,&RES0
-    addc.w      @SP+,&RES1
-    mov.w       @R4+,&OP2L
-    mov.w       @R4+,&OP2H
-    mov.w       &RES0,16(R12)
-    mov.w       @R15,18(R12)
-    mov.w       @R14,&RES0
-    clr.w       &RES1
-    clr.w       &RES2
-    
-    add.w       @SP+,&RES0
-    addc.w      @SP+,&RES1
-    mov.w       @R4+,&OP2L
-    mov.w       @R4+,&OP2H
-    mov.w       &RES0,20(R12)
-    mov.w       @R15,22(R12)
-    mov.w       @R14,&RES0
-    clr.w       &RES1
-    clr.w       &RES2
-    
-    add.w       @SP+,&RES0
-    addc.w      @SP+,&RES1
-    mov.w       @R4+,&OP2L
-    mov.w       @R4+,&OP2H
-    mov.w       &RES0,24(R12)
-    mov.w       @R15,26(R12)
-    mov.w       @R14,&RES0
-    clr.w       &RES1
-    clr.w       &RES2
-    
-    add.w       @SP+,&RES0
-    addc.w      @SP+,&RES1
-    mov.w       @R4+,&OP2L
-    mov.w       @R4,&OP2H
-    mov.w       &RES0,28(R12)
-    mov.w       @R15,30(R12)
-    
-    mov.w       #38,&MPY32L
-    mov.w       @R14,&OP2L
-    
-    add.w       &RES0,0(R12)
-    adc.w       2(R12)
-    adc.w       4(R12)
-    adc.w       6(R12)
-    adc.w       8(R12)
-    adc.w       10(R12)
-    adc.w       12(R12)
-    adc.w       14(R12)
-    adc.w       16(R12)
-    adc.w       18(R12)
-    adc.w       20(R12)
-    adc.w       22(R12)
-    adc.w       24(R12)
-    adc.w       26(R12)
-    adc.w       28(R12)
-    adc.w       30(R12)
-    
-    clr.w       R11
-    adc.w       R11
-    mov.w       R11,&OP2L
-    add.w       &RES0,0(R12)
+    ; --------------------- COPY BACK FROM THE STACK ---------------------------
 
-    add.w       #96,SP
+    MOV 144(SP),R12		; Utilize previously saved R12 on the stack
+    MOV R12,R13
+    ADD #32,R13
+fcpy:
+    MOV @SP+,0(R12)
+    INCD R12
+    CMP R12,R13
+    JNZ fcpy
+        
+    ADD #96,SP			; Restore stack to original position
+    POPM.W #9,R12
     
-    popm.w      #9,R12
-    eint
-    
+    ; ----------------------------- FREEZE -------------------------------------
     CLR R13
     CALLA #mp_freeze
     

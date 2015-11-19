@@ -2,8 +2,6 @@
 
 #define ROTL(x,s) ((x << s) | (x >> (16-s)))
 
-#define RC_LFSR
-
 #ifndef RC_LFSR
   const uint16_t roundc[20] = 
   {
@@ -69,7 +67,7 @@ void keccakf(keccak_ctx* ctx)
     uint8_t i, j, round;
     uint16_t* st = ctx->state, t, bc[5];
 
-    for (round = 0; round < KECCAK_ROUNDS; round++)
+    for (round = 0; round < KECCAK_ROUNDS; ++round)
     {
         // Theta
         for (i = 0; i < 5; i++)     
@@ -83,7 +81,7 @@ void keccakf(keccak_ctx* ctx)
 
         // Rho Pi
         t = st[1];
-        for (i = 0; i < 24; i++) {
+        for (i = 0; i < 24; ++i) {
             j = keccakf_piln[i];
             bc[0] = st[j];
             st[j] = ROTL(t, keccakf_rotc[i]);

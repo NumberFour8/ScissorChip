@@ -2233,6 +2233,9 @@
     <name>$PROJ_DIR$\test.c</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\tweetsha3.c</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\..\dl_5xx_6xx\ucs.c</name>
   </file>
 </project>

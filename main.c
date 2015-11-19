@@ -280,15 +280,20 @@ TEST_DEF(test_ladder_compress)
 
 TEST_DEF(test_keccak)
 {
-    uint16_t dat[18]    = {38976, 51875, 42674, 19019, 59674, 478, 61180, 29312, 49733, 46448, 33089, 2508, 16002, 30922,3,2,1,2};
+    uint8_t dat[36]    = {0x53,0x22,0xE6,0xBC,0xED,0x60,0x9A,0x21,0x77,0xC5,0xFD,0x2B,
+                          0xC9,0x5D,0xB4,0xB7,0xDE,0x2F,0x18,0x84,0xA8,0xD7,0x10,0xB4,
+                          0x1D,0x47,0x3B,0xD5,0x44,0xAB,0x3B,0x0D,0x81,0x26,0xCF,0xD0};
+    
     uint16_t digest[32] = {0};
   
     keccak_ctx ctx;
     
     keccak_init(&ctx);
-    keccak_update(&ctx,(uint8_t*)dat,36);
+    keccak_update(&ctx,dat,36);
     keccak_finish(&ctx,digest);   
 
+    ASSERT_ARRAYEQ_U32(digest, 0xc3cf, 0x7b76, 0x1330, 0xae4b, 0xd35b, 0x4683, 0xc616, 0x5ace, 0x25b8, 0x53c8, 0x6d2c, 0x0224, 0x9ef0, 0xd78a, 0xe31b, 0x48ee, 0x2bd6, 0x492a, 0x4ffa, 0xfa05, 0xc9af, 0xe4cb, 0xd394, 0x0df5, 0x6bd4, 0x8e01, 0x0705, 0x46ce, 0x1728, 0x8b67, 0xe08d, 0x00f9);
+    
     TEST_SUCCESS();
 }
 
@@ -353,18 +358,20 @@ int main( void )
     
     ADD_TEST(curve,test_ladderstep);
     ADD_TEST(curve,test_ladder_ecdh)->enable = false;
-    ADD_TEST(curve,test_ladder_compress);
+    ADD_TEST(curve,test_ladder_compress)->enable = false;
   
     runSuiteCareless(&curve);
     freeSuite(&curve);
     
     // Signing tests
-    //suite sign;
-    //createSuite("Signing tests",&sign);
-    // ADD_TEST(sign,test_keccak);
-
-    // ADD_TEST(sign,test_sha512);
+    suite sign;
+    createSuite("Signing tests",&sign);
+    ADD_TEST(sign,test_keccak);
     
+    runSuiteCareless(&sign);
+    freeSuite(&sign);
+    
+    // ADD_TEST(sign,test_sha512);
     // ADD_TEST(sign,test_keypair_sign);
 
     return 0;

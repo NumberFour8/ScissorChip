@@ -23,6 +23,12 @@
 #define ADD_TEST_ARG(s,name,arg,sz) addToSuite(&s,#name,name,arg,sz)
 #define ADD_TEST(s,name) ADD_TEST_ARG(s,name,NULL,0)
 
+#ifdef SIMULATOR
+  #define PRINTFM(...) printf(__VA_ARGS__)
+#else
+  #define PRINTFM(...)
+#endif
+
 typedef bool (*test_fnc)(const void*,const uint32_t);
 
 typedef struct {

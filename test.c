@@ -50,24 +50,24 @@ void runSuiteCritical(const suite* s)
 
 	test* ptr = s->first;
 
-	printf("-- STARTING SUITE %s -- \n",s->name);
+	PRINTFM("-- STARTING SUITE %s -- \n",s->name);
 	while (ptr != NULL)
 	{
-		printf("Running %s -> ",ptr->name);
+		PRINTFM("Running %s -> ",ptr->name);
 		if (!ptr->enable)
                 {
-                    printf("SKIP\n");
+                    PRINTFM("SKIP\n");
                     return;
                 }
                 else if (!ptr->fun(ptr->data,ptr->size))
 		{
-		    printf("FAIL\n");
+		    PRINTFM("FAIL\n");
 		    return;
 		}
-		else printf("SUCCESS\n");
+		else PRINTFM("SUCCESS\n");
 		ptr = ptr->next;
 	}
-	printf("-- SUITE SUCCEEDED --\n\n");
+	PRINTFM("-- SUITE SUCCEEDED --\n\n");
 }
 
 bool runSuiteCareless(const suite* s)
@@ -77,29 +77,29 @@ bool runSuiteCareless(const suite* s)
 	test* ptr = s->first;
 	int success = 0,failure = 0,tests = 0;
 
-	printf("-- STARTING SUITE %s -- \n",s->name);
+	PRINTFM("-- STARTING SUITE %s -- \n",s->name);
 	while (ptr != NULL)
 	{
-		printf("Running %s -> ",ptr->name);
+		PRINTFM("Running %s -> ",ptr->name);
 		if (!ptr->enable)
                 {
-                    printf("SKIP\n");
+                    PRINTFM("SKIP\n");
                 }
                 else if (!ptr->fun(ptr->data,ptr->size))
 		{
-                    printf("FAIL\n");
+                    PRINTFM("FAIL\n");
                     ++failure;
 		}
 		else
 		{
-                    printf("SUCCESS\n");
+                    PRINTFM("SUCCESS\n");
                     ++success;
 		}
 		ptr = ptr->next;
                 ++tests;
 	}
 
-	printf("-- SUITE FINISHED: %d/%d/%d --\n\n",success,failure,tests);
+	PRINTFM("-- SUITE FINISHED: %d/%d/%d --\n\n",success,failure,tests);
 
 	return failure == 0;
 }

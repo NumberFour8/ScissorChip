@@ -228,7 +228,8 @@
         <debug>1</debug>
         <option>
           <name>CCDefines</name>
-          <state></state>
+          <state>ENABLE_TEST_ASSERTION</state>
+          <state>SIMULATOR</state>
         </option>
         <option>
           <name>CCPreprocFile</name>

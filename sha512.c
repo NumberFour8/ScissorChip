@@ -102,8 +102,7 @@ uint64_t sha512_k[80] =
 
 /* SHA-512 functions */
 
-void sha512_transf(sha512_ctx *ctx, const unsigned char *message,
-                   unsigned int block_nb)
+void sha512_transf(sha512_ctx *ctx, uint8_t *message,uint16_t block_nb)
 {
     uint64_t w[80];
     uint64_t wv[8];
@@ -146,16 +145,6 @@ void sha512_transf(sha512_ctx *ctx, const unsigned char *message,
     }
 }
 
-void sha512(const unsigned char *message, unsigned int len,
-            unsigned char *digest)
-{
-    sha512_ctx ctx;
-
-    sha512_init(&ctx);
-    sha512_update(&ctx, message, len);
-    sha512_final(&ctx, digest);
-}
-
 void sha512_init(sha512_ctx *ctx)
 {
     int i;
@@ -167,12 +156,11 @@ void sha512_init(sha512_ctx *ctx)
     ctx->tot_len = 0;
 }
 
-void sha512_update(sha512_ctx *ctx, const unsigned char *message,
-                   unsigned int len)
+void sha512_update(sha512_ctx *ctx, uint8_t *message,uint16_t len)
 {
     unsigned int block_nb;
     unsigned int new_len, rem_len, tmp_len;
-    const unsigned char *shifted_message;
+    uint8_t *shifted_message;
 
     tmp_len = SHA512_BLOCK_SIZE - ctx->len;
     rem_len = len < tmp_len ? len : tmp_len;
@@ -201,7 +189,7 @@ void sha512_update(sha512_ctx *ctx, const unsigned char *message,
     ctx->tot_len += (block_nb + 1) << 7;
 }
 
-void sha512_final(sha512_ctx *ctx, unsigned char *digest)
+void sha512_final(sha512_ctx *ctx, uint8_t* digest)
 {
     unsigned int block_nb;
     unsigned int pm_len;

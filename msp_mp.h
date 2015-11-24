@@ -45,8 +45,8 @@
 
 #ifdef USE_MONTGOMERY
   #define TO_MONREP(x) x*38
-  #define FROM_MONREP(t,s) { uint32_t tt = 1; mp_mulmod1(t,&tt,x); }
-#else
+  #define FROM_MONREP(t,s) { uint32_t tt = 1; mp_mulmod1(t,&tt,s); }
+  #else
   #define TO_MONREP(x) x
   #define FROM_MONREP(t,s) coord_copy(t,s)
 #endif

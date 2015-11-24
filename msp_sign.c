@@ -10,7 +10,8 @@ void sign(const uint8_t* m,uint16_t size,const keypair* keyp,uint8_t* signature)
     digest_update(&ctx,keyp->sessionKey,16);
     digest_update(&ctx,m,size);
     digest_finish(&ctx,signature);
-
+    signature[64] = signature[65] = 0;
+    
     uint16_t r[40]; // Barrett requires 80 bytes of space
     
     // Reduce r mod l. 
@@ -21,7 +22,7 @@ void sign(const uint8_t* m,uint16_t size,const keypair* keyp,uint8_t* signature)
     B.z[0] = TO_MONREP(1);
     
     // Compute R = r*B and encode it
-    ladder(&R,&B,r); // After ladder: B = R + B always
+    ladder(&R,&B,r); // After ladder: B = R + Base always
     compress(&R,&B); // R->yed contains the encoding of R
     
     // Compute H(R,A,M)
@@ -48,4 +49,6 @@ void sign(const uint8_t* m,uint16_t size,const keypair* keyp,uint8_t* signature)
     // Craft the final signature
     coord_copy(signature,R.yed);
     coord_copy(signature+32,t1);
+    
+    signature[64] = signature[65] = 0;
 }

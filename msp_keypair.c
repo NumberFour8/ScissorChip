@@ -8,8 +8,8 @@ void genkeypair(keypair *kp,uint8_t* secret,uint16_t secretSize)
     digest_finish(&ctx,kp->secretKey); // sessionKey will be also set thanks to the natural structure alignment!
     
     // Clamp the secret key accordingly
-    kp->secretKey[31] &= 0x3FFF;
-    kp->secretKey[31] |= 0x2000;
+    kp->secretKey[31] &= 0x7FFF;
+    kp->secretKey[31] |= 0x4000;
     kp->secretKey[0]  &= 0xFFF8;
     
     monpoint B,A;  // 128B

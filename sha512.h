@@ -14,14 +14,9 @@ typedef struct {
     uint64_t h[8];
 } sha512_ctx;
 
-typedef sha512_ctx sha384_ctx;
-
 void sha512_init(sha512_ctx *ctx);
-void sha512_update(sha512_ctx *ctx, const unsigned char *message,
-                   unsigned int len);
-void sha512_final(sha512_ctx *ctx, unsigned char *digest);
-void sha512(const unsigned char *message, unsigned int len,
-            unsigned char *digest);
+void sha512_update(sha512_ctx *ctx, uint8_t* message, uint16_t len);
+void sha512_final(sha512_ctx *ctx, uint8_t* digest);
 
 #endif 
 

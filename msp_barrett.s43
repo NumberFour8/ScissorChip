@@ -20,7 +20,7 @@ RSEG CODE
 
 ; Performs Barrett reduction of number X given in R13
 ; modulo q = 2^252 + 27742317777372353535851937790883648493
-; and stores the result T in R12. Number pointed by R13 could be at most 66 bytes long.
+; and stores the result T in R12. Memory pointed by R13 must be 66 bytes long.
 ; R12 must point to a preallocated memory of at least 80 bytes.
 
 mp_barrett252
@@ -28,6 +28,7 @@ mp_barrett252
   ; -- First we perform multiplication of the MS half X with LS part of mu
 
   PUSHM.W #2,R13
+  CLR 0x40(R13)
   
   ADD   #8,R12
   ADD  #30,R13   ; MS half of R13 (this will misalign X) 

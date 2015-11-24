@@ -130,7 +130,7 @@ TEST_DEF(test_barrett)
 {
     uint16_t a[33] = {  856, 16739, 47055, 22265,  6768, 61654, 61200, 62652, 28318,  6238,
                       53022, 33759, 51219, 27590, 16289, 54396, 27313, 27344, 35817, 39058,
-                      38301, 60219, 5393,  28182, 54903, 54035, 52003, 14935, 21085, 41339, 7926, 5195, 0};
+                      38301, 60219, 5393,  28182, 54903, 54035, 52003, 14935, 21085, 41339, 7926, 5195, 0xbeef};
   
     uint16_t r[40] = {0};
     mp_barrett252(r,a);
@@ -211,7 +211,10 @@ TEST_DEF(test_ladderstep)
     mon_dbladd(&Q,&P);
 
     #ifdef USE_MONTGOMERY
-    
+      ASSERT_ARRAYEQ_U16(Q.x,38, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+      ASSERT_ARRAYEQ_U16(Q.z,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+      ASSERT_ARRAYEQ_U16(P.x,12312, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+      ASSERT_ARRAYEQ_U16(P.z,1368 , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     #else
       ASSERT_ARRAYEQ_U16(Q.x,1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
       ASSERT_ARRAYEQ_U16(Q.z,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
@@ -235,7 +238,15 @@ TEST_DEF(test_ladder_ecdh)
     ladder(&R,&B,k);
     
     #ifdef USE_MONTGOMERY
+      ASSERT_ARRAYEQ_U16(B.x, 5608, 19564, 28274, 54986, 56139, 62220, 55616, 44945, 24632, 13755, 17585, 15578, 17838, 52105, 5185, 15402);
+      ASSERT_ARRAYEQ_U16(B.z, 22789, 54162, 33712, 29424, 18046, 4153, 20839, 37087, 3449, 14723, 62287, 13510, 23811, 40509, 15292, 27778);
+      ASSERT_ARRAYEQ_U16(R.x, 27799, 26814, 59284, 58537, 43, 0, 0, 46406, 9600, 39253, 39885, 27273, 38649, 3773, 22609, 22933);
+      ASSERT_ARRAYEQ_U16(R.z, 19318, 8768, 48622, 16843, 32021, 0, 0, 41558, 39636, 14899, 23934,22031, 35760, 28664, 64915, 17114);
       
+      mp_invert(B.x,R.z);
+      mp_mulmod(in,R.x,B.x);
+    
+      ASSERT_ARRAYEQ_U16(in, 60228, 21198, 35871, 33148, 15698, 36905, 41816, 58199, 43772, 53277, 33698, 19037, 33838, 15107, 60396, 10951);
     #else
       ASSERT_ARRAYEQ_U16(B.x, 44984,24659,17990,37664,56665,60274,51477,1182,43764,15883,59100,52148,64280,44486,55324,7303);
       ASSERT_ARRAYEQ_U16(B.z, 10937,25570,56075,7672,22895,46674,50562,44091,5264,2112,39581,46920,60988,39007,41793,18839);
@@ -263,7 +274,10 @@ TEST_DEF(test_ladder_compress)
     ladder(&R,&B,k);
     
     #ifdef USE_MONTGOMERY
-      
+      ASSERT_ARRAYEQ_U16(R.x, 35027, 39932, 43686, 21375, 43895, 59145, 9187, 56566, 31519, 65306, 51550, 52908, 33294, 17848, 61073, 18884);
+      ASSERT_ARRAYEQ_U16(R.z, 4113, 26044, 9959, 16566, 36419, 12786, 38586, 58686, 29100, 9981, 57229, 56703, 24300, 61185, 48962, 14935);
+      ASSERT_ARRAYEQ_U16(B.x, 47246, 21687, 36621, 45597, 49774, 14253, 63254, 31666, 59854, 1407, 32635, 50342, 41587, 37729, 62566, 18307);
+      ASSERT_ARRAYEQ_U16(B.z, 17535, 10224, 30041, 45616, 45982, 52070, 13324, 15580, 11908, 56646,51585, 49646, 38325, 25615, 53112, 23647);
     #else
       ASSERT_ARRAYEQ_U16(R.x, 63006,28644,44265,9185,33923,48121,51980,23908,38771,1718,46197,32435,18122,53933,36099,4808);
       ASSERT_ARRAYEQ_U16(R.z, 3545,16207,41653,15957,25103,38278,42406,4993,36983,5436,48071,8390,2364,39552,61650,21950);
@@ -290,7 +304,7 @@ TEST_DEF(test_keccak)
     
     keccak_init(&ctx);
     keccak_update(&ctx,dat,36);
-    keccak_finish(&ctx,digest);   
+    keccak_finish(&ctx,(uint8_t*)digest);   
 
     ASSERT_ARRAYEQ_U32(digest, 0xc3cf, 0x7b76, 0x1330, 0xae4b, 0xd35b, 0x4683, 0xc616, 0x5ace, 0x25b8, 0x53c8, 0x6d2c, 0x0224, 0x9ef0, 0xd78a, 0xe31b, 0x48ee, 0x2bd6, 0x492a, 0x4ffa, 0xfa05, 0xc9af, 0xe4cb, 0xd394, 0x0df5, 0x6bd4, 0x8e01, 0x0705, 0x46ce, 0x1728, 0x8b67, 0xe08d, 0x00f9);
     
@@ -299,22 +313,31 @@ TEST_DEF(test_keccak)
 
 TEST_DEF(test_sha512)
 {
-    uint16_t dat[18]    = {38976, 51875, 42674, 19019, 59674, 478, 61180, 29312, 49733, 46448, 33089, 2508, 16002, 30922,3,2,1,2};
+    uint8_t dat[36]     = {0x53,0x22,0xE6,0xBC,0xED,0x60,0x9A,0x21,0x77,0xC5,0xFD,0x2B,
+                           0xC9,0x5D,0xB4,0xB7,0xDE,0x2F,0x18,0x84,0xA8,0xD7,0x10,0xB4,
+                           0x1D,0x47,0x3B,0xD5,0x44,0xAB,0x3B,0x0D,0x81,0x26,0xCF,0xD0};
+    
     uint16_t digest[32] = {0};
   
-    sha512((uint8_t*)dat,36,(uint8_t*)digest);
+    sha512_ctx ctx;
 
+    sha512_init(&ctx);
+    sha512_update(&ctx, dat, 36);
+    sha512_final(&ctx, (uint8_t*)digest);
+    
+    ASSERT_ARRAYEQ_U32(digest, 0x1914,0x3609,0xA79C,0xD660,0x3A4A,0x601B,0xF88E,0x17B9,0x9755,0x161A,0x09E2,0xE29F,0xA257,0x6BAE,0x6DDC,0xC03B,0xAB68,0x8B3F,0x2C3C,0xA1B8,0x75AE,0x755D,0x2765,0x3143,0xBBDB,0xC338,0x4FD7,0x5142,0x139E,0xE088,0x8A28,0xAF9B);
+    
     TEST_SUCCESS();
 }
 
 TEST_DEF(test_keypair_sign)
 {
     keypair kp;
-    uint64_t secret = 0xdeadbeeffeedcafe;
+    uint64_t secret = 0x00feeddeadbeef00;
     
     genkeypair(&kp,(uint8_t*)&secret,8);
     
-    uint8_t signature[66];
+    uint8_t signature[66] = {0};
     uint64_t msg = 0xdeadbabebaadcafe;
     
     sign((uint8_t*)&msg,8,&kp,signature);
@@ -347,7 +370,7 @@ int main( void )
     ADD_TEST(arithmetic,test_barrett);
     ADD_TEST(arithmetic,test_mul);
     ADD_TEST(arithmetic,test_square);
-    ADD_TEST(arithmetic,test_invert)->enable = false;
+    ADD_TEST(arithmetic,test_invert);//->enable = false;
 
     runSuiteCareless(&arithmetic);
     freeSuite(&arithmetic);
@@ -357,8 +380,8 @@ int main( void )
     createSuite("Curve tests",&curve);
     
     ADD_TEST(curve,test_ladderstep);
-    ADD_TEST(curve,test_ladder_ecdh)->enable = false;
-    ADD_TEST(curve,test_ladder_compress)->enable = false;
+    ADD_TEST(curve,test_ladder_ecdh);//->enable = false;
+    ADD_TEST(curve,test_ladder_compress);//->enable = false;
   
     runSuiteCareless(&curve);
     freeSuite(&curve);
@@ -367,12 +390,12 @@ int main( void )
     suite sign;
     createSuite("Signing tests",&sign);
     ADD_TEST(sign,test_keccak);
+    ADD_TEST(sign,test_sha512);
+    ADD_TEST(sign,test_keypair_sign);
     
     runSuiteCareless(&sign);
     freeSuite(&sign);
     
-    // ADD_TEST(sign,test_sha512);
-    // ADD_TEST(sign,test_keypair_sign);
 
     return 0;
 }

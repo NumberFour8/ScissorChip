@@ -370,7 +370,7 @@ int main( void )
     ADD_TEST(arithmetic,test_barrett);
     ADD_TEST(arithmetic,test_mul);
     ADD_TEST(arithmetic,test_square);
-    ADD_TEST(arithmetic,test_invert);//->enable = false;
+    ADD_TEST(arithmetic,test_invert)->enable = false;
 
     runSuiteCareless(&arithmetic);
     freeSuite(&arithmetic);
@@ -380,8 +380,8 @@ int main( void )
     createSuite("Curve tests",&curve);
     
     ADD_TEST(curve,test_ladderstep);
-    ADD_TEST(curve,test_ladder_ecdh);//->enable = false;
-    ADD_TEST(curve,test_ladder_compress);//->enable = false;
+    ADD_TEST(curve,test_ladder_ecdh)->enable = false;
+    ADD_TEST(curve,test_ladder_compress)->enable = false;
   
     runSuiteCareless(&curve);
     freeSuite(&curve);
@@ -390,8 +390,8 @@ int main( void )
     suite sign;
     createSuite("Signing tests",&sign);
     ADD_TEST(sign,test_keccak);
-    ADD_TEST(sign,test_sha512);
-    ADD_TEST(sign,test_keypair_sign);
+    ADD_TEST(sign,test_sha512)->enable = false;;
+    ADD_TEST(sign,test_keypair_sign)->enable = false;;
     
     runSuiteCareless(&sign);
     freeSuite(&sign);

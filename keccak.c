@@ -2,8 +2,8 @@
 
 #define ROTL(x,s) ((x << (s)) | (x >> (16-(s))))
 
-//#define USE_ROUND_CONST
-//#define USE_CONST_PI
+#define USE_ROUND_CONST
+#define USE_CONST_PI
 //#define USE_CONST_ROTC
 
 #ifdef USE_ROUND_CONST

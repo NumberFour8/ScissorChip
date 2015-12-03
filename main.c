@@ -11,6 +11,8 @@
 
 #include "test.h"
 
+// ON SIMULATOR: Define SIMULATOR at the top level (command line)
+
 // MCLK = Master Clock (CPU)
 #define MCLK_FREQ_KHZ 25000
 
@@ -390,7 +392,7 @@ int main( void )
     suite sign;
     createSuite("Signing tests",&sign);
     ADD_TEST(sign,test_keccak);
-    ADD_TEST(sign,test_sha512)->enable = false;;
+    ADD_TEST(sign,test_sha512);
     ADD_TEST(sign,test_keypair_sign)->enable = false;;
     
     runSuiteCareless(&sign);

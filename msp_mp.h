@@ -11,6 +11,7 @@
 #define digest_finish(a,b)      keccak_finish(a,b)
 
 #define SOS
+#define XZ
 
 #ifdef CIOS
   #define DIGITS 16
@@ -54,16 +55,29 @@
 typedef uint16_t  bigint[DIGITS];
 typedef uint16_t* bigintp;  
 
-// Montgomery XZ coordinates.
+// Curve coordinates
 // The coordinates itself must be in Montgomery representation
 typedef struct
 {
     union {
-       bigint x;    // The Montgomery X coordinate shares the same memory space
-       bigint yed;  // with the Edwards Y coordinate
+       bigint x;    
+       bigint xed;  // Share the memory space with the Edwards X coordinate
     };
-    bigint z;
-    #if DIGITS < 20
+    
+    union {
+      bigint z;
+      bigint yed; // Share the memory space with the Edwards Y coordinate
+    };
+    
+    #if defined(EXTENDED) || defined(PROJECTIVE) || defined(INVERTED)
+    bigint y;
+    #endif
+    
+    #if defined(EXTENDED) 
+    bigint t;
+    #endif
+    
+    #if DIGITS < 20 && defined(XZ)
     uint16_t reserved[40-2*DIGITS]; // In order to maintain in-memory consistency (see msp_sign.c)
     #endif
 } monpoint;

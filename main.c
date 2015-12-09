@@ -383,7 +383,7 @@ int main( void )
     
     ADD_TEST(curve,test_ladderstep);
     ADD_TEST(curve,test_ladder_ecdh)->enable = false;
-    ADD_TEST(curve,test_ladder_compress)->enable = false;
+    ADD_TEST(curve,test_ladder_compress);
   
     runSuiteCareless(&curve);
     freeSuite(&curve);

@@ -229,6 +229,7 @@
         <option>
           <name>CCDefines</name>
           <state>ENABLE_TEST_ASSERTION</state>
+          <state>SIMULATOR</state>
         </option>
         <option>
           <name>CCPreprocFile</name>

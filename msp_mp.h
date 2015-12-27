@@ -11,7 +11,7 @@
 #define digest_finish(a,b)      keccak_finish(a,b)
 
 #define SOS
-#define XZ
+#define EXTENDED
 
 #ifdef CIOS
   #define DIGITS 16

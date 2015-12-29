@@ -146,8 +146,8 @@ fcpy:
     POPM.W #9,R12
     
     ; ----------------------------- FREEZE -------------------------------------
-    CLR R13
-    CALLA #mp_freeze
+    ;CLR R13
+    ;CALLA #mp_freeze
    
     RETA
 

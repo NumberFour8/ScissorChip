@@ -32,6 +32,7 @@ cpd
   
 RETA
 
+
 PUBLIC mp_bprop
 RSEG CODE
 
@@ -62,5 +63,6 @@ bpd
   POPM.W #2,R9      ; Restore R8 and R9
   
 RETA
+
 
 END

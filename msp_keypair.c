@@ -13,8 +13,7 @@ void genkeypair(keypair *kp,uint8_t* secret,uint16_t secretSize)
     kp->secretKey[0]  &= 0xFFF8;
     
     monpoint B,A;  // 128B
-    B.x[0] = TO_MONREP(9); // Montgomery representation of the base point, X = 9
-    B.z[0] = TO_MONREP(1);
+    set_base(&B);
      
     // Compute R = r*B and encode it
     ladder(&A,&B,(bigintp)kp->secretKey); // After ladder: B = A + B always

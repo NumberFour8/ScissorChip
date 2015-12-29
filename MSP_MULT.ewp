@@ -97,7 +97,7 @@
         </option>
         <option>
           <name>OGChipSelectMenu</name>
-          <state>MSP430F5529	MSP430F5529</state>
+          <state>MSP430FR5969	MSP430FR5969</state>
         </option>
         <option>
           <name>GStackHeapOverride</name>
@@ -105,7 +105,7 @@
         </option>
         <option>
           <name>GStackSize2</name>
-          <state>2048</state>
+          <state>1024</state>
         </option>
         <option>
           <name>GHeapSize2</name>
@@ -229,7 +229,6 @@
         <option>
           <name>CCDefines</name>
           <state>ENABLE_TEST_ASSERTION</state>
-          <state>SIMULATOR</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -382,7 +381,7 @@
         </option>
         <option>
           <name>newCCIncludePaths</name>
-          <state>C:\Users\E869439\Desktop\workspace_ccs\dl_5xx_6xx</state>
+          <state>C:\Users\E869439\Desktop\workspace_ccs\dl_fr5xx_6xx</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -795,7 +794,7 @@
         </option>
         <option>
           <name>XclFile</name>
-          <state>$TOOLKIT_DIR$\config\linker\lnk430F5529.xcl</state>
+          <state>$TOOLKIT_DIR$\config\linker\lnk430FR5969.xcl</state>
         </option>
         <option>
           <name>XclFileSlave</name>
@@ -2213,6 +2212,9 @@
   </file>
   <file>
     <name>$PROJ_DIR$\msp_propagate.s43</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\msp_setbase.c</name>
   </file>
   <file>
     <name>$PROJ_DIR$\msp_sign.c</name>

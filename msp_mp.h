@@ -33,17 +33,6 @@
   #define mp_mulmod1(c,a,b) { uint32_t t[8] = {0}; t[0] = *a;  mp_mulmod32_karatsuba(c,(uint16_t*)t,b); } // Use 32-bit Karatsuba for multiplication by a single 32-bit number
 #endif
 
-// Macro for clearing the point structure
-#define clear_point(p)  clear_mem((p)->x,80)
-#define clear_coord(c)  clear_mem((c),DIGITS*2)
-
-// Macro for copying a point coordinate
-#define coord_copy(x,y) for (*(x) = 15;*(x);(*(x))--) (x)[*(x)] = (y)[*(x)]; \
-                        *(x) = *(y);
-
-// Macro for clearing memory of any size
-#define set_zero(x,c) for (*(x) = c;*(x);(*(x))--) (x)[*(x)] = 0; 
-
 #ifdef USE_MONTGOMERY
   #define TO_MONREP(x) x*38
   #define FROM_MONREP(t,s) { uint32_t tt = 1; mp_mulmod1(t,&tt,s); }
@@ -82,6 +71,19 @@ typedef struct
     #endif
 } monpoint;
 
+// Macro for clearing the point structure
+#define clear_point(p)  clear_mem((p)->x,sizeof(monpoint)>>2)
+#define clear_coord(c)  clear_mem((c),DIGITS*2)
+
+// Macro for copying a point coordinate
+#define coord_copy(x,y) for (*(x) = 15;*(x);(*(x))--) (x)[*(x)] = (y)[*(x)]; \
+                        *(x) = *(y);
+
+// Sets coordinate to the given value
+#define set_coord(x,...) { const uint16_t t[16] = {__VA_ARGS__}; coord_copy(x,t); }
+
+// Macro for clearing memory of any size
+#define set_zero(x,c) for (*(x) = c;*(x);(*(x))--) (x)[*(x)] = 0; 
 
 typedef struct {
   uint8_t publicKey[32];   // Contains compressed A = a*B
@@ -113,7 +115,6 @@ extern void mp_freeze(bigintp a,uint16_t add);
 // Barett reduction algorithm
 extern void mp_barrett252(bigintp r,bigintp x);
 
-
 // Multiplication algorithms
 extern void mp_mulmod16_fios(uint16_t* c,const uint16_t* a,const uint16_t* b,uint16_t mode);
 extern void mp_mulmod32_fios(uint16_t* c,const uint16_t* a,const uint16_t* b,uint16_t mode);
@@ -127,8 +128,8 @@ extern void mp_mulmod32_nkaratsuba(uint16_t* c,const uint16_t* a,const uint16_t*
 
 // Higher level functions //
 
-// Performs one ladder step
-void mon_dbladd(monpoint* dbl,monpoint* add);
+// Performs one unified addition (and doubling in case of XZ coordinates)
+void mon_unified_add(monpoint* dbl,monpoint* add);
 
 // Computes R = n*P using Montgomery ladder
 void ladder(monpoint* R,monpoint* P,const bigintp n);
@@ -152,5 +153,8 @@ void clear_mem(uint16_t* dest,const uint16_t count);
 
 // Performs full multiplication R = A*B where A and B n-digit number, n > 0
 void mp_mul32(bigintp r,const bigintp a,const bigintp b,uint16_t n);
+
+// Sets the base point of the Ed25519 or Curve25519
+void set_base(monpoint* P);
 
 #endif

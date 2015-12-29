@@ -42,11 +42,12 @@ void initClocks()
 			MCLK_FLLREF_RATIO
 		);
 	#elif defined(__MSP430FR5969__)
-    	CS_setDCOFreq(CS_DCORSEL_0, CS_DCOFSEL_6);
+                /*
+                CS_setDCOFreq(CS_DCORSEL_0, CS_DCOFSEL_6);
 
         CS_initClockSignal(CS_SMCLK,CS_DCOCLK_SELECT,CS_CLOCK_DIVIDER_1);
         CS_initClockSignal(CS_MCLK,CS_DCOCLK_SELECT,CS_CLOCK_DIVIDER_1);
-
+*/
         //Set wait state to 1
        /* FRAMCtl_configureWaitStateControl(FRAMCTL_ACCESS_TIME_CYCLES_1);
 
@@ -201,41 +202,41 @@ TEST_DEF(test_invert)
 TEST_DEF(test_ladderstep)
 {
     monpoint P,Q;
-    clear_point(&P);
+    set_base(&P);
+    
     clear_point(&Q);
-    
-    P.x[0] = TO_MONREP(9);
-    P.z[0] = TO_MONREP(1);
-    
     Q.x[0] = TO_MONREP(1);
-    Q.z[0] = 0;
     
-    mon_dbladd(&Q,&P);
+    mon_unified_add(&Q,&P);
 
-    #ifdef USE_MONTGOMERY
-      ASSERT_ARRAYEQ_U16(Q.x,38, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-      ASSERT_ARRAYEQ_U16(Q.z,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-      ASSERT_ARRAYEQ_U16(P.x,12312, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-      ASSERT_ARRAYEQ_U16(P.z,1368 , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-    #else
-      ASSERT_ARRAYEQ_U16(Q.x,1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-      ASSERT_ARRAYEQ_U16(Q.z,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-      ASSERT_ARRAYEQ_U16(P.x,324, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-      ASSERT_ARRAYEQ_U16(P.z, 36, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    #ifdef XZ
+      #ifdef USE_MONTGOMERY
+        ASSERT_ARRAYEQ_U16(Q.x,38, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        ASSERT_ARRAYEQ_U16(Q.z,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        ASSERT_ARRAYEQ_U16(P.x,12312, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        ASSERT_ARRAYEQ_U16(P.z,1368 , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+      #else
+        ASSERT_ARRAYEQ_U16(Q.x,1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        ASSERT_ARRAYEQ_U16(Q.z,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        ASSERT_ARRAYEQ_U16(P.x,324, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        ASSERT_ARRAYEQ_U16(P.z, 36, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+      #endif    
+    #elif defined(EXTENDED)
+
+    #elif defined(INVERTED)
+    
+    #elif defined(PROJECTIVE)
+    
     #endif
-      
     TEST_SUCCESS();
 }
 
 TEST_DEF(test_ladder_ecdh)
 {
     bigint k  = {3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-    bigint in = {0};
+    
     monpoint R,B;
-
-    clear_point(&B);
-    B.x[0] = TO_MONREP(9);
-    B.z[0] = TO_MONREP(1);
+    set_base(&B);
 
     ladder(&R,&B,k);
     
@@ -246,9 +247,9 @@ TEST_DEF(test_ladder_ecdh)
       ASSERT_ARRAYEQ_U16(R.z, 19318, 8768, 48622, 16843, 32021, 0, 0, 41558, 39636, 14899, 23934,22031, 35760, 28664, 64915, 17114);
       
       mp_invert(B.x,R.z);
-      mp_mulmod(in,R.x,B.x);
+      mp_mulmod(k,R.x,B.x);
     
-      ASSERT_ARRAYEQ_U16(in, 60228, 21198, 35871, 33148, 15698, 36905, 41816, 58199, 43772, 53277, 33698, 19037, 33838, 15107, 60396, 10951);
+      ASSERT_ARRAYEQ_U16(k, 60228, 21198, 35871, 33148, 15698, 36905, 41816, 58199, 43772, 53277, 33698, 19037, 33838, 15107, 60396, 10951);
     #else
       ASSERT_ARRAYEQ_U16(B.x, 44984,24659,17990,37664,56665,60274,51477,1182,43764,15883,59100,52148,64280,44486,55324,7303);
       ASSERT_ARRAYEQ_U16(B.z, 10937,25570,56075,7672,22895,46674,50562,44091,5264,2112,39581,46920,60988,39007,41793,18839);
@@ -256,9 +257,9 @@ TEST_DEF(test_ladder_ecdh)
       ASSERT_ARRAYEQ_U16(R.z, 34997,10578,3004,43559,842,0,0,32137,13115,27986,54093,14376,42332,50768,60345,7348);
    
       mp_invert(B.x,R.z);
-      mp_mulmod(in,R.x,B.x);
+      mp_mulmod(k,R.x,B.x);
     
-      ASSERT_ARRAYEQ_U16(in, 15378, 64369, 943, 49162, 2137, 25116, 20071, 63618, 47716, 49691, 19857, 17747, 44006, 27991, 48154, 7186);
+      ASSERT_ARRAYEQ_U16(k, 15378, 64369, 943, 49162, 2137, 25116, 20071, 63618, 47716, 49691, 19857, 17747, 44006, 27991, 48154, 7186);
     #endif
     
     TEST_SUCCESS();
@@ -372,7 +373,7 @@ int main( void )
     ADD_TEST(arithmetic,test_barrett);
     ADD_TEST(arithmetic,test_mul);
     ADD_TEST(arithmetic,test_square);
-    ADD_TEST(arithmetic,test_invert)->enable = false;
+    ADD_TEST(arithmetic,test_invert);
 
     runSuiteCareless(&arithmetic);
     freeSuite(&arithmetic);
@@ -381,9 +382,9 @@ int main( void )
     suite curve;
     createSuite("Curve tests",&curve);
     
-    ADD_TEST(curve,test_ladderstep);
-    ADD_TEST(curve,test_ladder_ecdh)->enable = false;
-    ADD_TEST(curve,test_ladder_compress);
+    ADD_TEST(curve,test_ladderstep)->enable = false;
+    ADD_TEST(curve,test_ladder_ecdh);
+    ADD_TEST(curve,test_ladder_compress)->enable = false;
   
     runSuiteCareless(&curve);
     freeSuite(&curve);
